@@ -23,3 +23,7 @@ class Index(View):
 
         return render(request, 'core/index.html', context)
 
+
+def move(request):
+    position = int(request.POST.get("position"))
+    return JsonResponse({"position": position + 1})
