@@ -1,0 +1,98 @@
+html,
+body,
+main {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  body {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+}
+
+main {
+  margin: 10px 20px;
+}
+
+#container {
+  display: flex;
+  flex-direction: row;
+}
+
+.plot-area {
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.control-area {
+  margin: 0 10px;
+}
+
+#sampling-rate-area {
+  width: 50px;
+}
+
+#measurement-time-area {
+  width: 50px;
+}
+
+#start-button {
+  font-size: 1.2em;
+  width: 100px;
+  height: 40px;
+}
+
+#save-area {
+  width: 300px;
+}
+
+.invalid-value {
+  border-color: red;
+  color: red;
+}
+
+.hide {
+  display: none;
+}
+
+#coord,
+#status {
+  color: grey;
+  font-size: 10px;
+  height: 15px;
+}
+
+#control {
+  margin-top: 1em;
+}
+
+#control label {
+  font-weight: bold;
+  margin-right: 1em;
+}
+
+#control select {
+  padding: 0.25em 0.5em;
+}
+
+footer {
+  margin-top: 2em;
+  font-size: 12px;
+  text-align: center;
+}
+
+.hide {
+  visibility: hidden;
+  height: 0px;
+}

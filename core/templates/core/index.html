@@ -1,0 +1,59 @@
+{% load static %}
+<html>
+  <header>
+    <meta charset="utf-8" />
+    <title>THz-TDS measurement</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'core/css/index.css' %}"
+    />
+    <script
+      type="text/javascript"
+      src="{% static 'core/js/index.js' %}"
+      defer
+    ></script>
+  </header>
+  <body>
+    <main>
+      <h1>THz-TDS measurement</h1>
+      <div id="container">
+        <div class="plot-area">
+          <div id="coord"></div>
+          <canvas id="canvas" width="600" height="400"></canvas>
+        </div>
+        <div class="control-area">
+          <div class="slow-stage">
+            <h3>Slow stage controller</h3>
+            <input type="text" name="slow-stage-position" />
+            <input type="button" value="Move" id="slow-stge-move" />
+          </div>
+          <div class="fast-stage">
+            <h3>Fast stage controller</h3>
+            <p>Sampling rate (kHz):</p>
+            <input type="text" id="sampling-rate-area" name="sampling-rate" />
+            <input type="button" value="Set" id="set-sampling-rate" />
+            <p class="hide invalid-value" id="sampling-rate-alert">
+              Sampling rate should be between 0 and 100 kHz
+            </p>
+            <p>Measurement time (s):</p>
+            <input
+              type="text"
+              id="measurement-time-area"
+              name="measurement-time"
+            />
+            <input type="button" value="Set" id="set-measurement-time" />
+            <p></p>
+            <input type="button" value="Start" id="start-button" />
+            <p></p>
+            <input type="text" id="save-area" />
+            <!--
+            <input type="file" value="..." id="select-folder" />
+            -->
+            <input type="button" value="Save" id="save-button" />
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
