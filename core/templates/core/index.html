@@ -13,6 +13,14 @@
       src="{% static 'core/js/index.js' %}"
       defer
     ></script>
+    <script
+      type="text/javascript"
+      src="{% static 'core/js/chart.min.js' %}"
+    ></script>
+    <script type="text/javascript">
+      let x = {{ position }};
+      let y = {{ intensity }};
+    </script>
   </header>
   <body>
     <main>
