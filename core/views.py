@@ -5,6 +5,7 @@ import os
 import pandas as pd
 
 from core.waveform import WaveForm
+from core.utils.SR830 import SR830
 
 wave = WaveForm()
 
@@ -64,3 +65,13 @@ def scan(request):
     x = [i for i in range(10)]
     y = [i ** 3 for i in range(10)]
     return JsonResponse({"x": x, "y": y, "running": False})
+
+
+def gpib(request):
+    try:
+        with SR830(11) as sr830:
+            intensity = float(sr830.get_intensity())
+    except:
+        intensity = 0
+
+    return JsonResponse({"intensity": intensity})

@@ -8,4 +8,5 @@ urlpatterns = [
     path('move/', views.move, name='move'),
     path('save/', views.save, name='save'),
     path('scan/', views.scan, name='scan'),
+    path('gpib/', views.gpib, name='gpib'),
 ]

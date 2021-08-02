@@ -96,4 +96,29 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
   }
 });
 
+window.addEventListener("load", async () => {
+  setInterval(async () => {
+    let gpib_intensity = document.getElementById("sr830-gpib-intensity");
+
+    let url = "http://localhost:8000/core/gpib/";
+    let intensity;
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        intensity = responseJson.intensity;
+        intensity = Math.round(intensity * 1e6) / 1e3;
+      })
+      .catch((err) => {
+        intensity = "NaN";
+      });
+
+    gpib_intensity.innerHTML = `Intensity: ${intensity} mV`;
+  }, 2000);
+});
+
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
