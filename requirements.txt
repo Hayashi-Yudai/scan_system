@@ -1,0 +1,5 @@
+django
+django-cors-header
+pandas
+numpy
+pyvisa
