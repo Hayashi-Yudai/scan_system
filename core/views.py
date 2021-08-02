@@ -37,3 +37,30 @@ class Index(View):
 def move(request):
     position = int(request.POST.get("position"))
     return JsonResponse({"position": position + 1})
+
+
+def save(request):
+    save_path = request.POST.get("path")
+    directory = save_path.rsplit("/", 1)[0]
+    if not os.path.exists(directory):
+        return JsonResponse({"success": False})
+
+    df = pd.DataFrame({"x": wave.x, "y": wave.y})
+
+    if save_path.endswith(".csv"):
+        df.to_csv(save_path, index=False)
+    else:
+        df.to_csv(save_path + ".csv", index=False)
+
+    return JsonResponse({"success": True})
+
+
+# TODO: A/Dコンバータでの処理と合わせる
+# TODO: A/Dコンバータのデータ取り込み開始は一回だけ実行される必要がある
+def scan(request):
+    duration = request.POST.get("duration")
+    sample_rate = request.POST.get("sampling_rate")
+    # output = raster_scan(duration, sample_rate);
+    x = [i for i in range(10)]
+    y = [i ** 3 for i in range(10)]
+    return JsonResponse({"x": x, "y": y, "running": False})

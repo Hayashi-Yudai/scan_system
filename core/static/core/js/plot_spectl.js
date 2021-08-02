@@ -8,4 +8,5 @@ let data = {
 var myChart = new Chart(ctx, {
   type: "line",
   data: data,
+  // options: { animation: { duration: 0 } },
 });
