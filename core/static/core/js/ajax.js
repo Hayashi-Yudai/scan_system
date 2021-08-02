@@ -1,8 +1,7 @@
 document.getElementById("ajax-slow-stage").addEventListener("submit", (e) => {
-  // デフォルトのイベントをキャンセルし、ページ遷移しないように!
   e.preventDefault();
 
-  const url = slow_stage; //"http://localhost:8000/core/move/";
+  const url = slow_stage;
   const position = document.getElementById("slow-stage-position").value;
   fetch(url, {
     method: "POST",
