@@ -102,6 +102,7 @@ window.addEventListener("load", async () => {
 
     let url = "http://localhost:8000/core/gpib/";
     let intensity;
+    let connection;
     await fetch(url, {
       method: "POST",
       headers: {
@@ -112,12 +113,17 @@ window.addEventListener("load", async () => {
       .then((responseJson) => {
         intensity = responseJson.intensity;
         intensity = Math.round(intensity * 1e6) / 1e3;
+
+        connection = responseJson.connection;
       })
       .catch((err) => {
         intensity = "NaN";
       });
-
-    gpib_intensity.innerHTML = `Intensity: ${intensity} mV`;
+    let text = `Intensity: ${intensity} mV`;
+    if (!connection) {
+      text += " (No GPIB connection)";
+    }
+    gpib_intensity.innerHTML = text;
   }, 2000);
 });
 

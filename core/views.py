@@ -71,7 +71,8 @@ def gpib(request):
     try:
         with SR830(11) as sr830:
             intensity = float(sr830.get_intensity())
+        connection = True
     except:
         intensity = 0
-
-    return JsonResponse({"intensity": intensity})
+        connection = False
+    return JsonResponse({"intensity": intensity, "connection": connection})
