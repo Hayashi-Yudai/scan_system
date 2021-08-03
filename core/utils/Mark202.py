@@ -16,7 +16,7 @@ class Mark202:
     def wait_while_busy(self):
         while True:
             status = self.instr.query("!:")
-            if status == "R\r\n":
+            if "R" in status:
                 break
             time.sleep(0.5)
 

@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %} {% load static %}{% block jsload %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'core/css/index.css' %}"
+/>
+<script type="text/javascript">
+  let x = [1, 2, 3]; // {{ position }};
+  let y = [1, 2, 3]; // {{ intensity }};
+
+  let save_data = "http://localhost:8000/core/save/";
+  let tds_validate_url = "http://localhost:8000/core/tds-validate/";
+  let tds_scan_url = "http://localhost:8000/core/tds-data/";
+  let tds_boot_url = "http://localhost:8000/core/tds-boot/";
+</script>
+<script src="{% static 'core/js/plot_spectl.js' %}" defer></script>
+<script src="{% static 'core/js/ajax_tds.js' %}" defer></script>
+{% endblock %} {% block content %}
+<div class="plot-area">
+  <div id="coord"></div>
+  <canvas id="canvas" width="600" height="400"></canvas>
+</div>
+<div class="control-area">
+  <form id="stage-move">
+    <p>Move stage:</p>
+    <input type="number" /> &mu;m
+    <input type="submit" value="Move" />
+  </form>
+  <form id="tds-settings">
+    <p>Start:</p>
+    <input type="number" id="start-position" /> &mu;m
+    <p>End:</p>
+    <input type="number" id="end-position" /> &mu;m
+    <p>Step:</p>
+    <input type="number" id="moving-step" /> &mu;m
+    <p>Lock-in time:</p>
+    <input type="number" id="lockin-time" /> ms
+    <p></p>
+    <input type="submit" value="Start" />
+  </form>
+  <form id="save-data">
+    <p>Save Data:</p>
+    <input type="text" id="save-area" />
+    <input type="submit" id="save-button" value="Save" />
+  </form>
+</div>
+{% endblock %}

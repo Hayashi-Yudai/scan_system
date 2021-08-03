@@ -7,6 +7,10 @@ class WaveForm:
         self.x = x
         self.y = y
 
+    def push(self, x, y):
+        self.x += x
+        self.y += y
+
     def clear(self):
         self.x = []
         self.y = []

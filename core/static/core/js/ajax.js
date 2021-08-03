@@ -25,10 +25,11 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
   e.preventDefault();
 
   const url = save_data;
+  const type = "RAPID";
   const path = document.getElementById("save-area").value;
   fetch(url, {
     method: "POST",
-    body: `path=${path}`,
+    body: `path=${path}&type=${RAPID}`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     },
