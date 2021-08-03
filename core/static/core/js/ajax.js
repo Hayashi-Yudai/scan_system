@@ -14,7 +14,7 @@ document.getElementById("ajax-slow-stage").addEventListener("submit", (e) => {
       return response.json();
     })
     .then((response) => {
-      console.log(response.position);
+      console.log(response.success);
     })
     .catch((error) => {
       console.log("Error");
