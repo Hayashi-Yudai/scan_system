@@ -2,10 +2,9 @@ import pyvisa as visa
 
 
 class SR830:
-    def __init__(self, gpib=11):
-        self.gpib = gpib
+    def __init__(self, gpib=10):
         self.instr = visa.ResourceManager().open_resource(
-            'GPIB::{}::INSTR'.format(self.gpib))
+            'GPIB::{}::INSTR'.format(gpib))
 
     def __enter__(self):
         return self

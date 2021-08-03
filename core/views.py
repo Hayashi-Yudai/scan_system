@@ -1,19 +1,22 @@
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
+import numpy as np
 import os
 import pandas as pd
 
-from core.waveform import WaveForm
+from core.utils.waveform import WaveForm
 from core.utils.SR830 import SR830
+from core.utils.Mark202 import Mark202
 
+# global variable
 wave = WaveForm()
+scan_running = False
 
 
 class Index(View):
     def __init__(self, *args, **kwargs):
         super(Index, self).__init__(*args, **kwargs)
-
         self.x = wave.x
         self.y = wave.y
 
@@ -27,17 +30,33 @@ class Index(View):
 
         context = {"position": self.x, "intensity": self.y}
 
-        return render(request, 'core/index.html', context)
+        return render(request, 'core/raster.html', context)
 
     def post(self, request):
         context = {"position": self.x, "intensity": self.y}
 
-        return render(request, 'core/index.html', context)
+        return render(request, 'core/raster.html', context)
+
+
+class TDS(View):
+    def get(self, request):
+        return render(request, 'core/tds.html')
+
+# JSON APIs
 
 
 def move(request):
     position = int(request.POST.get("position"))
-    return JsonResponse({"position": position + 1})
+    succeed = False
+    try:
+        with Mark202() as stage:
+            stage.move(position)
+
+        succeed = True
+    except Exception as e:
+        print(e)
+
+    return JsonResponse({"success": succeed})
 
 
 def save(request):
