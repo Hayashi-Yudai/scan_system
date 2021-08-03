@@ -143,11 +143,11 @@ def tds_boot(request):
                 intensity = amp.get_intensity()
 
                 wave_tds.push([position_now], [intensity])
-                stage.move(start + step)
+                stage.move(position_now + step)
                 position_now += step
                 stage.wait_while_busy()
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
     tds_running = False
 

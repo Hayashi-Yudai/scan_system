@@ -25,7 +25,8 @@ class Mark202:
         self.instr.write("H:W")
 
     def move(self, position):
-        self.instr.write(f"A:1+P{position // 2}")
+        query = f"A:1+P{position // 2}"
+        self.instr.write(query)
         self.instr.write("G:")
 
     def get_position(self):

@@ -8,6 +8,7 @@
   let x = [1, 2, 3]; // {{ position }};
   let y = [1, 2, 3]; // {{ intensity }};
 
+  let slow_stage = "http://localhost:8000/core/move/";
   let save_data = "http://localhost:8000/core/save/";
   let tds_validate_url = "http://localhost:8000/core/tds-validate/";
   let tds_scan_url = "http://localhost:8000/core/tds-data/";
@@ -23,7 +24,7 @@
 <div class="control-area">
   <form id="stage-move">
     <p>Move stage:</p>
-    <input type="number" /> &mu;m
+    <input type="number" id="stage-position" /> &mu;m
     <input type="submit" value="Move" />
   </form>
   <form id="tds-settings">
