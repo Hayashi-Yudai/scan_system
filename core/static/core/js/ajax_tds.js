@@ -49,21 +49,14 @@ async function tds_measurement() {
         }
         let x = responseJson.x;
         let y = responseJson.y;
-
-        myChart.destroy();
-        var ctx = document.getElementById("canvas");
-
-        let data = {
-          labels: x,
-          datasets: [
-            { data: y, fill: false, borderColor: "rgba(255, 0, 0, 0.5)" },
-          ],
+        trace1 = {
+          x: x,
+          y: y,
+          type: "scatter",
         };
-        myChart = new Chart(ctx, {
-          type: "line",
-          data: data,
-          options: { animation: { duration: 0 } },
-        });
+
+        data = [trace1];
+        Plotly.newPlot("canvas", data, layout);
       })
       .catch((error) => {
         console.log(error);
