@@ -87,7 +87,7 @@ def scan(request):
     sample_rate = request.POST.get("sampling_rate")
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
-    x = np.linspace(0, 8 * np.pi, 2500)
+    x = np.linspace(0, 8 * np.pi, 2000)
     y = np.sin(x)
     return JsonResponse({"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False})
 

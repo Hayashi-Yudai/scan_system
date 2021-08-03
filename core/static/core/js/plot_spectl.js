@@ -1,12 +1,16 @@
-var ctx = document.getElementById("canvas");
-
-// TODO: stream data
-let data = {
-  labels: x,
-  datasets: [{ data: y, fill: false, borderColor: "rgba(255, 0, 0, 0.5)" }],
+var trace1 = {
+  x: x,
+  y: y,
+  type: "scatter",
 };
-var myChart = new Chart(ctx, {
-  type: "line",
-  data: data,
-  // options: { animation: { duration: 0 } },
-});
+
+var data = [trace1];
+var layout = {
+  width: 550,
+  height: 400,
+  margin: { l: 30, r: 0, b: 3, t: 3, pad: 5 },
+  showlegend: true,
+  legend: { orientation: "h" },
+};
+
+Plotly.newPlot("canvas", data, layout);
