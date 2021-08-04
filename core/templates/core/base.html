@@ -23,6 +23,7 @@
         <div class="plot-area">
           <div id="canvas" style="width: 700px; height: 400px"></div>
           <div class="toggle-switch">
+            {% block fft-type %}{% endblock %}
             <label class="switch__label">
               <input
                 type="checkbox"

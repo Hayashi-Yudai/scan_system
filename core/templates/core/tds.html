@@ -13,7 +13,9 @@
   let tds_boot_url = "http://localhost:8000/core/tds-boot/";
 </script>
 <script src="{% static 'core/js/ajax_tds.js' %}" defer></script>
-{% endblock %} {% block content %}
+{% endblock %} {% block fft-type %}
+<input type="hidden" id="fft-type" value="TDS" />
+{% endblock %}{% block content %}
 <form id="stage-move">
   <p>Move stage:</p>
   <input type="number" id="stage-position" /> &mu;m

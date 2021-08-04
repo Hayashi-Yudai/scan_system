@@ -15,6 +15,8 @@
   let scan_url = "http://localhost:8000/core/scan/";
 </script>
 <script src="{% static 'core/js/ajax.js' %}" defer></script>
+{% endblock %} {%block fft-type %}
+<input type="hidden" id="fft-type" value="RAPID" />
 {% endblock %} {% block content %}
 <div class="slow-stage">
   <h3>Slow stage controller</h3>
