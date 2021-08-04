@@ -20,8 +20,8 @@
   <h3>Slow stage controller</h3>
   <p id="sr830-gpib-intensity">Intensity:</p>
   <form id="stage-move" action="" method="POST">
-    {% csrf_token %}
     <input type="text" name="slow-stage-target-position" id="stage-position" />
+    <input type="hidden" id="save-type" value="RAPID" />
     <input type="submit" value="Move" id="slow-stage-move" />
   </form>
 </div>

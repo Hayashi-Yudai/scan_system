@@ -1,31 +1,3 @@
-document.getElementById("save-data").addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const url = save_data;
-  const type = "RAPID";
-  const path = document.getElementById("save-area").value;
-  fetch(url, {
-    method: "POST",
-    body: `path=${path}&type=${RAPID}`,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-    },
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((responseJson) => {
-      if (responseJson.success) {
-        console.log("valid directory");
-      } else {
-        console.log("invlid directory");
-      }
-    })
-    .catch((_) => {
-      console.log("error in save data");
-    });
-});
-
 document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
   e.preventDefault();
 
