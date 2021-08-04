@@ -1,5 +1,5 @@
-django
+django ~= 3.1
 django-cors-header
-pandas
-numpy
-pyvisa
+pandas ~= 1.2
+numpy ~= 1.20
+PyVISA ~= 1.11
