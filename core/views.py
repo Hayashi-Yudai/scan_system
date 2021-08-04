@@ -118,9 +118,6 @@ def gpib(request):
 def calc_fft(request):
     if request.POST.get('fft') == "true":
         if request.POST.get("type") == "RAPID":
-            # TODO: FIX IT
-            wave.x = list(map(float, wave.x))
-            wave.y = list(map(float, wave.y))
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})
             delta_time = (wave.x[1] - wave.x[0]) * 1e-6 * 2 / 2.9979e8
@@ -130,9 +127,6 @@ def calc_fft(request):
 
             return JsonResponse({"x": freq, "y": abs(fft).tolist()})
         if request.POST.get("type") == "TDS":
-            # TODO: FIX IT
-            wave_tds.x = list(map(float, wave_tds.x))
-            wave_tds.y = list(map(float, wave_tds.y))
             if len(wave_tds.x) == 0:
                 return JsonResponse({"x": [], "y": []})
             delta_time = (wave_tds.x[1] - wave_tds.x[0]) * 1e-6 * 2 / 2.9979e8
