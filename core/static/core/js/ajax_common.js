@@ -1,5 +1,6 @@
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Move the step motor stage to the specified position
 document.getElementById("stage-move").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -40,10 +41,8 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
       return response.json();
     })
     .then((responseJson) => {
-      if (responseJson.success) {
-        console.log("valid directory");
-      } else {
-        console.log("invlid directory");
+      if (!responseJson.success) {
+        alert("Invalid directory");
       }
     })
     .catch((_) => {
@@ -51,54 +50,46 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
     });
 });
 
+// Calculate the FFT or back to the raw wave by the toggle button
 document
   .querySelector("input[name=fft-checkbox]")
   .addEventListener("change", async (e) => {
     let url = fft_url;
     let type = document.getElementById("fft-type").value;
-    let fftx;
-    let ffty;
-    if (e.target.checked) {
-      await fetch(url, {
-        method: "POST",
-        body: `fft=true&type=${type}`,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+    await fetch(url, {
+      method: "POST",
+      body: `fft=${e.target.checked}&type=${type}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    })
+      .then((response) => {
+        return response.json();
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseJson) => {
-          fftx = responseJson.x;
-          ffty = responseJson.y;
-        })
-        .catch((error) => {});
-    } else {
-      await fetch(url, {
-        method: "POST",
-        body: `fft=false&type=${type}`,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+      .then((responseJson) => {
+        x = responseJson.x;
+        y = responseJson.y;
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((responseJson) => {
-          fftx = responseJson.x;
-          ffty = responseJson.y;
-        })
-        .catch((error) => {
-          console.log("FFT error");
-        });
-    }
+      .catch((error) => {});
+
     trace1 = {
-      x: fftx,
-      y: ffty,
+      x: x,
+      y: y,
       type: "scatter",
     };
 
     data = [trace1];
-    Plotly.newPlot("canvas", data, layout);
+
+    if (e.target.checked) {
+      let log_layout = {
+        yaxis: {
+          type: "log",
+          autorange: true,
+        },
+      };
+
+      Plotly.newPlot("canvas", data, log_layout);
+    } else {
+      Plotly.newPlot("canvas", data, layout);
+    }
   });
