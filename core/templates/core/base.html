@@ -3,16 +3,34 @@
   <header>
     <meta charset="utf-8" />
     <title>THz-TDS measurement</title>
+    <script type="text/javascript">
+      let slow_stage = "http://localhost:8000/core/move/";
+      let save_data = "http://localhost:8000/core/save/";
+    </script>
     <script
       type="text/javascript"
       src="{% static 'core/js/plotly-2.3.0.min.js' %}"
     ></script>
+    <script src="{% static 'core/js/plot_spectl.js' %}" defer></script>
     {% block jsload %} {% endblock %}
   </header>
   <body>
     <main>
       <h1>THz-TDS measurement</h1>
-      <div id="container">{% block content %} {% endblock %}</div>
+      <div id="container">
+        <div class="plot-area">
+          <div id="canvas" style="width: 700px; height: 400px"></div>
+          <div class="toggle-switch">
+            <label class="switch__label">
+              <input type="checkbox" class="switch__input" name="fftcheckbox" />
+              <span class="switch__content"></span>
+              <span class="switch__circle"></span>
+            </label>
+            <div class="fft-label">FFT</div>
+          </div>
+        </div>
+        <div class="control-area">{% block content %} {% endblock %}</div>
+      </div>
     </main>
   </body>
 </html>
