@@ -10,7 +10,7 @@ urlpatterns = [
     path('save/', views.save, name='save'),
     path('scan/', views.scan, name='scan'),
     path('gpib/', views.gpib, name='gpib'),
-    path('tds-validate/', views.tds_validate, name='tds_validate'),
+    path('calc-fft/', views.calc_fft, name='calc_fft'),
     path('tds-data/', views.tds_data, name='tds_data'),
     path('tds-boot/', views.tds_boot, name='tds_boot'),
 ]

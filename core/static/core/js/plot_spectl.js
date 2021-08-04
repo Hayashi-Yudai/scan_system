@@ -6,9 +6,9 @@ var trace1 = {
 
 var data = [trace1];
 var layout = {
-  width: 550,
+  width: 600,
   height: 400,
-  margin: { l: 30, r: 0, b: 3, t: 3, pad: 5 },
+  margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
   showlegend: true,
   legend: { orientation: "h" },
 };

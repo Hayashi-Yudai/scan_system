@@ -1,0 +1,13 @@
+#stage-position,
+#start-position,
+#end-position {
+  width: 80px;
+}
+
+#moving-step {
+  width: 40px;
+}
+
+p {
+  margin-bottom: 0px;
+}

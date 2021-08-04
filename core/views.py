@@ -88,7 +88,7 @@ def scan(request):
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
     x = np.linspace(0, 8 * np.pi, 2000)
-    y = np.sin(x)
+    y = 1e-6*np.sin(x)
     return JsonResponse({"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False})
 
 
@@ -103,24 +103,35 @@ def gpib(request):
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
-def tds_validate(request):
-    start = request.POST.get("start")
-    end = request.POST.get("end")
-    step = request.POST.get("step")
-    lockin = request.POST.get("lockin")
+def calc_fft(request):
+    if request.POST.get('fft'):
+        if request.POST.get("type") == "RAPID":
+            # TODO: FIX IT
+            wave.x = list(map(int, wave.x))
+            wave.y = list(map(float, wave.y))
+            if len(wave.x) == 0:
+                return JsonResponse({"x": [], "y": []})
+            delta_time = (wave.x[1] - wave.x[0]) * 1e-6 * 2 / 2.9979e8
+            freq = [i / delta_time / 4096 for i in range(4096)]
+            fft = np.fft.fft(wave.y, 4096)
 
-    status = "ok"
-    try:
-        start = int(start)
-        end = int(end)
-        step = int(step)
-        lockin = float(lockin)
-        if start > end or start < 0 or end < 0 or step < 0 or lockin < 0:
-            status = "NG"
-    except Exception as e:
-        status = "NG"
+            return JsonResponse({"x": freq, "y": abs(fft).tolist()})
+        if request.POST.get("type") == "TDS":
+            # TODO: FIX IT
+            wave_tds.x = list(map(float, wave_tds.x))
+            wave_tds.y = list(map(float, wave_tds.y))
+            if len(wave_tds.x) == 0:
+                return JsonResponse({"x": [], "y": []})
+            delta_time = (wave_tds.x[1] - wave_tds.x[0]) * 1e-6 * 2 / 2.9979e8
+            freq = [i / delta_time / 4096 for i in range(4096)]
+            fft = np.fft.fft(wave_tds.y, 4096)
 
-    return JsonResponse({"status": status})
+            return JsonResponse({"x": freq, "y": abs(fft).tolist()})
+    else:
+        if request.POST.get("type") == "RAPID":
+            return JsonResponse({"x": wave.x, "y": wave.y})
+        elif request.POST.get("type") == "TDS":
+            return JsonResponse({"x": wave_tds.x, "y": wave_tds.y})
 
 
 def tds_boot(request):

@@ -4,13 +4,13 @@
   type="text/css"
   href="{% static 'core/css/index.css' %}"
 />
+<link rel="stylesheet" type="text/css" href="{% static 'core/css/tds.css' %}" />
 <script type="text/javascript">
   let x = [1, 2, 3]; // {{ position }};
   let y = [1, 2, 3]; // {{ intensity }};
 
   let slow_stage = "http://localhost:8000/core/move/";
   let save_data = "http://localhost:8000/core/save/";
-  let tds_validate_url = "http://localhost:8000/core/tds-validate/";
   let tds_scan_url = "http://localhost:8000/core/tds-data/";
   let tds_boot_url = "http://localhost:8000/core/tds-boot/";
 </script>
@@ -18,7 +18,15 @@
 <script src="{% static 'core/js/ajax_tds.js' %}" defer></script>
 {% endblock %} {% block content %}
 <div class="plot-area">
-  <div id="canvas" style="width: 600px; height: 400px"></div>
+  <div id="canvas" style="width: 700px; height: 400px"></div>
+  <div class="toggle-switch">
+    <label class="switch__label">
+      <input type="checkbox" class="switch__input" name="fftcheckbox" />
+      <span class="switch__content"></span>
+      <span class="switch__circle"></span>
+    </label>
+    <div class="fft-label">FFT</div>
+  </div>
 </div>
 <div class="control-area">
   <form id="stage-move">
@@ -36,7 +44,7 @@
     <p>Lock-in time:</p>
     <input type="number" id="lockin-time" /> ms
     <p></p>
-    <input type="submit" value="Start" />
+    <input type="submit" value="Start" id="start-button" />
   </form>
   <form id="save-data">
     <p>Save Data:</p>

@@ -118,3 +118,54 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
       console.log("error in save data");
     });
 });
+
+document
+  .querySelector("input[name=fftcheckbox]")
+  .addEventListener("change", async (e) => {
+    let url = "http://localhost:8000/core/calc-fft/";
+    let fftx;
+    let ffty;
+    if (e.target.checked) {
+      await fetch(url, {
+        method: "POST",
+        body: "fft=true&type=TDS",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseJson) => {
+          fftx = responseJson.x;
+          ffty = responseJson.y;
+        })
+        .catch((error) => {});
+    } else {
+      await fetch(url, {
+        method: "POST",
+        body: "fft=false&type=TDS",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseJson) => {
+          fftx = responseJson.x;
+          ffty = responseJson.y;
+        })
+        .catch((error) => {
+          console.log("FFT error");
+        });
+    }
+    trace1 = {
+      x: fftx,
+      y: ffty,
+      type: "scatter",
+    };
+
+    data = [trace1];
+    Plotly.newPlot("canvas", data, layout);
+  });
