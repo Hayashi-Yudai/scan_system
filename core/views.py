@@ -61,7 +61,7 @@ def move(request):
     position = int(request.POST.get("position"))
     succeed = False
     try:
-        with Mark202() as stage:
+        with Mark202(int(os.environ["MARK202_GPIB_ADDRESS"])) as stage:
             stage.move(position)
 
         succeed = True
@@ -106,7 +106,7 @@ def scan(request):
 
 def gpib(request):
     try:
-        with SR830() as sr830:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as sr830:
             intensity = float(sr830.get_intensity())
         connection = True
     except:
@@ -157,7 +157,7 @@ def tds_boot(request):
     step = int(request.POST.get("step"))
     lockin = float(request.POST.get("lockin"))
     try:
-        with SR830() as amp, Mark202() as stage:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
             stage.move(start)
             stage.wait_while_busy()
 
