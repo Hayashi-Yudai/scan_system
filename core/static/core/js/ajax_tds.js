@@ -19,7 +19,7 @@ document.getElementById("stage-move").addEventListener("submit", (event) => {
       console.log(response.success);
     })
     .catch((error) => {
-      console.log("Error");
+      console.log("Error in moving step stage");
     });
 });
 
@@ -120,9 +120,9 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
 });
 
 document
-  .querySelector("input[name=fftcheckbox]")
+  .querySelector("input[name=fft-checkbox]")
   .addEventListener("change", async (e) => {
-    let url = "http://localhost:8000/core/calc-fft/";
+    let url = fft_url;
     let fftx;
     let ffty;
     if (e.target.checked) {

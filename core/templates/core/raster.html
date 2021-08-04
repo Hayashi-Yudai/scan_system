@@ -12,60 +12,44 @@
 <script type="text/javascript">
   let x = {{ position }};
   let y = {{ intensity }};
-  let slow_stage = "http://localhost:8000/core/move/";
-  let save_data = "http://localhost:8000/core/save/";
   let scan_url = "http://localhost:8000/core/scan/";
 </script>
-<script src="{% static 'core/js/plot_spectl.js' %}" defer></script>
 <script src="{% static 'core/js/ajax.js' %}" defer></script>
 {% endblock %} {% block content %}
-<div class="plot-area">
-  <div id="canvas" style="width: 700px; height: 400px"></div>
-  <div class="toggle-switch">
-    <label class="switch__label">
-      <input type="checkbox" class="switch__input" name="fftcheckbox" />
-      <span class="switch__content"></span>
-      <span class="switch__circle"></span>
-    </label>
-    <div class="fft-label">FFT</div>
-  </div>
+<div class="slow-stage">
+  <h3>Slow stage controller</h3>
+  <p id="sr830-gpib-intensity">Intensity:</p>
+  <form id="ajax-slow-stage" action="" method="POST">
+    {% csrf_token %}
+    <input
+      type="text"
+      name="slow-stage-target-position"
+      id="slow-stage-position"
+    />
+    <input type="submit" value="Move" id="slow-stage-move" />
+  </form>
 </div>
-<div class="control-area">
-  <div class="slow-stage">
-    <h3>Slow stage controller</h3>
-    <p id="sr830-gpib-intensity">Intensity:</p>
-    <form id="ajax-slow-stage" action="" method="POST">
-      {% csrf_token %}
-      <input
-        type="text"
-        name="slow-stage-target-position"
-        id="slow-stage-position"
-      />
-      <input type="submit" value="Move" id="slow-stage-move" />
-    </form>
-  </div>
-  <div class="fast-stage">
-    <h3>Fast stage controller</h3>
-    <p>Sampling rate (kHz):</p>
-    <form id="sampling-rate-form" action="" method="POST">
-      <input type="text" id="sampling-rate-area" name="sampling-rate" />
-      <input type="submit" value="Set" id="set-sampling-rate" />
-    </form>
-    <p class="hide invalid-value" id="sampling-rate-alert">
-      Sampling rate should be between 0 and 100 kHz
-    </p>
-    <p>Measurement time (s):</p>
-    <form id="rapid-scan" action="" method="POST">
-      <input type="text" id="measurement-time-area" name="measurement-time" />
-      <input type="button" value="Set" id="set-measurement-time" />
-      <p></p>
-      <input type="submit" value="Start" id="start-button" />
-    </form>
+<div class="fast-stage">
+  <h3>Fast stage controller</h3>
+  <p>Sampling rate (kHz):</p>
+  <form id="sampling-rate-form" action="" method="POST">
+    <input type="text" id="sampling-rate-area" name="sampling-rate" />
+    <input type="submit" value="Set" id="set-sampling-rate" />
+  </form>
+  <p class="hide invalid-value" id="sampling-rate-alert">
+    Sampling rate should be between 0 and 100 kHz
+  </p>
+  <p>Measurement time (s):</p>
+  <form id="rapid-scan" action="" method="POST">
+    <input type="text" id="measurement-time-area" name="measurement-time" />
+    <input type="button" value="Set" id="set-measurement-time" />
     <p></p>
-    <form id="save-data" action="" method="POST">
-      <input type="text" id="save-area" />
-      <input type="submit" value="Save" id="save-button" />
-    </form>
-  </div>
+    <input type="submit" value="Start" id="start-button" />
+  </form>
+  <p></p>
+  <form id="save-data" action="" method="POST">
+    <input type="text" id="save-area" />
+    <input type="submit" value="Save" id="save-button" />
+  </form>
 </div>
 {% endblock %}

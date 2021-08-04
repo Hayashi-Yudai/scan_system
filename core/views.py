@@ -20,10 +20,13 @@ tds_running = False
 class Index(View):
     def __init__(self, *args, **kwargs):
         super(Index, self).__init__(*args, **kwargs)
+
+        # TODO: Remove
         self.x = wave.x
         self.y = wave.y
 
     def get(self, request):
+        # TODO: Remove
         wave.set(
             [1, 2, 3, 4, 5, 6, 7],
             [1, 4, 9, 16, 25, 36, 49]
@@ -31,13 +34,16 @@ class Index(View):
         self.x = wave.x
         self.y = wave.y
 
+        # TODO: context is not necessary
         context = {"position": self.x, "intensity": self.y}
 
         return render(request, 'core/raster.html', context)
 
+    # TODO: remove
     def post(self, request):
         context = {"position": self.x, "intensity": self.y}
 
+        # TODO: context is not necessary
         return render(request, 'core/raster.html', context)
 
 
@@ -45,7 +51,10 @@ class TDS(View):
     def get(self, request):
         return render(request, 'core/tds.html')
 
+
+#####################################
 # JSON APIs
+#####################################
 
 
 def move(request):
@@ -57,6 +66,7 @@ def move(request):
 
         succeed = True
     except Exception as e:
+        print("Error occurred in move()")
         print(e)
 
     return JsonResponse({"success": succeed})
@@ -83,12 +93,14 @@ def save(request):
 
 # TODO: A/Dコンバータでの処理と合わせる
 def scan(request):
-    duration = request.POST.get("duration")
-    sample_rate = request.POST.get("sampling_rate")
+    duration = float(request.POST.get("duration"))
+    sample_rate = float(request.POST.get("sampling_rate"))
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
-    x = np.linspace(0, 8 * np.pi, 2000)
+    x = np.linspace(0, 8 * np.pi, 200)
     y = 1e-6*np.sin(x)
+    wave.x = x
+    wave.y = y
     return JsonResponse({"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False})
 
 
@@ -104,14 +116,15 @@ def gpib(request):
 
 
 def calc_fft(request):
-    if request.POST.get('fft'):
+    if request.POST.get('fft') == "true":
         if request.POST.get("type") == "RAPID":
             # TODO: FIX IT
-            wave.x = list(map(int, wave.x))
+            wave.x = list(map(float, wave.x))
             wave.y = list(map(float, wave.y))
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})
             delta_time = (wave.x[1] - wave.x[0]) * 1e-6 * 2 / 2.9979e8
+            print("wave.x = ", wave.x)
             freq = [i / delta_time / 4096 for i in range(4096)]
             fft = np.fft.fft(wave.y, 4096)
 
@@ -153,11 +166,12 @@ def tds_boot(request):
                 time.sleep(lockin / 1000)
                 intensity = amp.get_intensity()
 
-                wave_tds.push([position_now], [intensity])
+                wave_tds.push([position_now], [float(intensity)])
                 stage.move(position_now + step)
                 position_now += step
                 stage.wait_while_busy()
     except Exception as e:
+        print("Error in tds_boot()")
         print(e)
 
     tds_running = False
