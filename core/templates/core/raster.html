@@ -15,17 +15,15 @@
   let scan_url = "http://localhost:8000/core/scan/";
 </script>
 <script src="{% static 'core/js/ajax.js' %}" defer></script>
+{% endblock %} {%block fft-type %}
+<input type="hidden" id="fft-type" value="RAPID" />
 {% endblock %} {% block content %}
 <div class="slow-stage">
   <h3>Slow stage controller</h3>
   <p id="sr830-gpib-intensity">Intensity:</p>
-  <form id="ajax-slow-stage" action="" method="POST">
-    {% csrf_token %}
-    <input
-      type="text"
-      name="slow-stage-target-position"
-      id="slow-stage-position"
-    />
+  <form id="stage-move" action="" method="POST">
+    <input type="text" name="slow-stage-target-position" id="stage-position" />
+    <input type="hidden" id="save-type" value="RAPID" />
     <input type="submit" value="Move" id="slow-stage-move" />
   </form>
 </div>
