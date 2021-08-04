@@ -94,7 +94,7 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
 document
   .querySelector("input[name=fftcheckbox]")
   .addEventListener("change", async (e) => {
-    let url = "http://localhost:8000/core/calc-fft/";
+    let url = fft_url;
     let fftx;
     let ffty;
     if (e.target.checked) {
