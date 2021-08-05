@@ -9,7 +9,6 @@
   let x = [1, 2, 3]; // {{ position }};
   let y = [1, 2, 3]; // {{ intensity }};
 
-  let tds_scan_url = "http://localhost:8000/core/tds-data/";
   let tds_boot_url = "http://localhost:8000/core/tds-boot/";
 </script>
 <script src="{% static 'core/js/ajax_tds.js' %}" defer></script>
@@ -21,7 +20,7 @@
   <input type="number" id="stage-position" /> &mu;m
   <input type="submit" value="Move" />
 </form>
-<form id="tds-settings">
+<form id="tds-settings" action="{% url 'core:tds_data' %}">
   <p>Start:</p>
   <input type="number" id="start-position" /> &mu;m
   <p>End:</p>

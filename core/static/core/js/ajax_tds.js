@@ -6,7 +6,7 @@ document
   });
 
 async function tds_measurement() {
-  let url = tds_scan_url;
+  let url = document.getElementById("tds-settings").action;
   let boot = tds_boot_url;
 
   let start = document.getElementById("start-position").value;

@@ -1,7 +1,7 @@
 document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  let url = scan_url;
+  let url = document.getElementById("rapid-scan").action;
   let duration = document.getElementById("measurement-time-area").value;
   let sampling_rate = document.getElementById("sampling-rate-area").value;
 
