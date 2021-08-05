@@ -97,20 +97,20 @@ def calc_fft(request):
         if request.POST.get("type") == "RAPID":
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})
-            freq, fft = api_ops.calc_fft([wave.x, wave.y])
+            freq, fft = api_ops.calc_fft([wave.x, wave.y])  # (list, list)
 
             return JsonResponse({"x": freq, "y": fft})
         if request.POST.get("type") == "TDS":
             if len(wave_tds.x) == 0:
                 return JsonResponse({"x": [], "y": []})
-            freq, fft = api_ops.calc_fft([wave_tds.x, wave_tds.y])
+            freq, fft = api_ops.calc_fft([wave_tds.x, wave_tds.y])  # (list, list)
 
             return JsonResponse({"x": freq, "y": fft})
     else:
         if request.POST.get("type") == "RAPID":
             return JsonResponse({"x": wave.x, "y": wave.y})
         elif request.POST.get("type") == "TDS":
-            return JsonResponse({"x": wave_tds, "y": wave_tds.y})
+            return JsonResponse({"x": wave_tds.x, "y": wave_tds.y})
 
 
 def tds_boot(request):
