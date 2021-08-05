@@ -4,8 +4,6 @@
     <meta charset="utf-8" />
     <title>THz-TDS measurement</title>
     <script type="text/javascript">
-      let slow_stage = "http://localhost:8000/core/move/";
-      let save_data = "http://localhost:8000/core/save/";
       let fft_url = "http://localhost:8000/core/calc-fft/";
     </script>
     <script
@@ -29,6 +27,7 @@
                 type="checkbox"
                 class="switch__input"
                 name="fft-checkbox"
+                id="fft-calc"
               />
               <span class="switch__content"></span>
               <span class="switch__circle"></span>

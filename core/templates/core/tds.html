@@ -16,7 +16,7 @@
 {% endblock %} {% block fft-type %}
 <input type="hidden" id="fft-type" value="TDS" />
 {% endblock %}{% block content %}
-<form id="stage-move">
+<form id="stage-move" action="{% url 'core:move' %}">
   <p>Move stage:</p>
   <input type="number" id="stage-position" /> &mu;m
   <input type="submit" value="Move" />
@@ -33,7 +33,7 @@
   <p></p>
   <input type="submit" value="Start" id="start-button" />
 </form>
-<form id="save-data">
+<form id="save-data" action="{% url 'core:save' %}">
   <p>Save Data:</p>
   <input type="text" id="save-area" />
   <input type="hidden" id="save-type" value="TDS" />

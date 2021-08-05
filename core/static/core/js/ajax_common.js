@@ -4,7 +4,7 @@ const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 document.getElementById("stage-move").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const url = slow_stage;
+  const url = document.getElementById("stage-move").action;
   const position = document.getElementById("stage-position").value;
   fetch(url, {
     method: "POST",
@@ -27,7 +27,7 @@ document.getElementById("stage-move").addEventListener("submit", (e) => {
 document.getElementById("save-data").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const url = save_data;
+  const url = document.getElementById("save-data").action;
   const type = document.getElementById("save-type").value;
   const path = document.getElementById("save-area").value;
   fetch(url, {

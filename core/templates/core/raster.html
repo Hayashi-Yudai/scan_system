@@ -21,7 +21,7 @@
 <div class="slow-stage">
   <h3>Slow stage controller</h3>
   <p id="sr830-gpib-intensity">Intensity:</p>
-  <form id="stage-move" action="" method="POST">
+  <form id="stage-move" action="{% url 'core:move' %}" method="POST">
     <input type="text" name="slow-stage-target-position" id="stage-position" />
     <input type="hidden" id="save-type" value="RAPID" />
     <input type="submit" value="Move" id="slow-stage-move" />
@@ -45,7 +45,7 @@
     <input type="submit" value="Start" id="start-button" />
   </form>
   <p></p>
-  <form id="save-data" action="" method="POST">
+  <form id="save-data" action="{% url 'core:save' %}" method="POST">
     <input type="text" id="save-area" />
     <input type="submit" value="Save" id="save-button" />
   </form>
