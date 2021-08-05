@@ -6,7 +6,7 @@ document
   });
 
 async function tds_measurement() {
-  let url = tds_scan_url;
+  let url = document.getElementById("tds-settings").action;
   let boot = tds_boot_url;
 
   let start = document.getElementById("start-position").value;
@@ -47,14 +47,10 @@ async function tds_measurement() {
         }
         let x = responseJson.x;
         let y = responseJson.y;
-        trace1 = {
-          x: x,
-          y: y,
-          type: "scatter",
-        };
+        data[0].x = x;
+        data[0].y = y;
 
-        data = [trace1];
-        Plotly.newPlot("canvas", data, layout);
+        Plotly.update("canvas", data, layout);
       })
       .catch((error) => {
         console.log(error);

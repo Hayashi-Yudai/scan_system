@@ -12,7 +12,6 @@
 <script type="text/javascript">
   let x = {{ position }};
   let y = {{ intensity }};
-  let scan_url = "http://localhost:8000/core/scan/";
 </script>
 <script src="{% static 'core/js/ajax.js' %}" defer></script>
 {% endblock %} {%block fft-type %}
@@ -21,7 +20,7 @@
 <div class="slow-stage">
   <h3>Slow stage controller</h3>
   <p id="sr830-gpib-intensity">Intensity:</p>
-  <form id="stage-move" action="" method="POST">
+  <form id="stage-move" action="{% url 'core:move' %}" method="POST">
     <input type="text" name="slow-stage-target-position" id="stage-position" />
     <input type="hidden" id="save-type" value="RAPID" />
     <input type="submit" value="Move" id="slow-stage-move" />
@@ -38,14 +37,14 @@
     Sampling rate should be between 0 and 100 kHz
   </p>
   <p>Measurement time (s):</p>
-  <form id="rapid-scan" action="" method="POST">
+  <form id="rapid-scan" action="{% url 'core:scan' %}" method="POST">
     <input type="text" id="measurement-time-area" name="measurement-time" />
     <input type="button" value="Set" id="set-measurement-time" />
     <p></p>
     <input type="submit" value="Start" id="start-button" />
   </form>
   <p></p>
-  <form id="save-data" action="" method="POST">
+  <form id="save-data" action="{% url 'core:save' %}" method="POST">
     <input type="text" id="save-area" />
     <input type="submit" value="Save" id="save-button" />
   </form>

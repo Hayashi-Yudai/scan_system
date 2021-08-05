@@ -4,7 +4,7 @@ const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 document.getElementById("stage-move").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const url = slow_stage;
+  const url = document.getElementById("stage-move").action;
   const position = document.getElementById("stage-position").value;
   fetch(url, {
     method: "POST",
@@ -27,7 +27,7 @@ document.getElementById("stage-move").addEventListener("submit", (e) => {
 document.getElementById("save-data").addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const url = save_data;
+  const url = document.getElementById("save-data").action;
   const type = document.getElementById("save-type").value;
   const path = document.getElementById("save-area").value;
   fetch(url, {
@@ -70,15 +70,12 @@ document
         x = responseJson.x;
         y = responseJson.y;
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log("error in fft");
+      });
 
-    trace1 = {
-      x: x,
-      y: y,
-      type: "scatter",
-    };
-
-    data = [trace1];
+    data[0].x = x;
+    data[0].y = y;
 
     if (e.target.checked) {
       let log_layout = {
@@ -87,7 +84,6 @@ document
           autorange: true,
         },
       };
-
       Plotly.newPlot("canvas", data, log_layout);
     } else {
       Plotly.newPlot("canvas", data, layout);

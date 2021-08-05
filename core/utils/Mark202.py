@@ -4,8 +4,7 @@ import time
 
 class Mark202:
     def __init__(self, gpib=12):
-        self.instr = visa.ResourceManager().open_resource(
-            f"GPIB0::{gpib}::INSTR")
+        self.instr = visa.ResourceManager().open_resource(f"GPIB0::{gpib}::INSTR")
 
     def __enter__(self):
         return self
