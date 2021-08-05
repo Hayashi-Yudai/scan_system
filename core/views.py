@@ -1,14 +1,11 @@
-import time
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 import numpy as np
 import os
-import pandas as pd
 
 from core.utils.waveform import WaveForm
-from core.utils.SR830 import SR830
-from core.utils.Mark202 import Mark202
+from core.utils import api_ops
 
 # global variable
 wave = WaveForm()
@@ -58,16 +55,8 @@ class TDS(View):
 
 
 def move(request):
-    position = int(request.POST.get("position"))
-    succeed = False
-    try:
-        with Mark202(int(os.environ["MARK202_GPIB_ADDRESS"])) as stage:
-            stage.move(position)
-
-        succeed = True
-    except Exception as e:
-        print("Error occurred in move()")
-        print(e)
+    position: int = int(request.POST.get("position"))
+    succeed: bool = api_ops.move_stage(position)
 
     return JsonResponse({"success": succeed})
 
@@ -79,14 +68,9 @@ def save(request):
         return JsonResponse({"success": False})
 
     if request.POST.get("type") == "TDS":
-        df = pd.DataFrame({"x": wave_tds.x, "y": wave_tds.y})
+        api_ops.save_data_as_csv(save_path, [wave_tds.x, wave_tds.y])
     else:
-        df = pd.DataFrame({"x": wave.x, "y": wave.y})
-
-    if save_path.endswith(".csv"):
-        df.to_csv(save_path, index=False)
-    else:
-        df.to_csv(save_path + ".csv", index=False)
+        api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
 
     return JsonResponse({"success": True})
 
@@ -105,13 +89,7 @@ def scan(request):
 
 
 def gpib(request):
-    try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as sr830:
-            intensity = float(sr830.get_intensity())
-        connection = True
-    except:
-        intensity = 0
-        connection = False
+    intensity, connection = api_ops.get_lockin_intensity()
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
@@ -120,24 +98,20 @@ def calc_fft(request):
         if request.POST.get("type") == "RAPID":
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})
-            delta_time = (wave.x[1] - wave.x[0]) * 1e-6 * 2 / 2.9979e8
-            freq = [i / delta_time / 4096 for i in range(4096)]
-            fft = np.fft.fft(wave.y, 4096)
+            freq, fft = api_ops.calc_fft([wave.x, wave.y])
 
-            return JsonResponse({"x": freq, "y": abs(fft).tolist()})
+            return JsonResponse({"x": freq, "y": fft})
         if request.POST.get("type") == "TDS":
             if len(wave_tds.x) == 0:
                 return JsonResponse({"x": [], "y": []})
-            delta_time = (wave_tds.x[1] - wave_tds.x[0]) * 1e-6 * 2 / 2.9979e8
-            freq = [i / delta_time / 4096 for i in range(4096)]
-            fft = np.fft.fft(wave_tds.y, 4096)
+            freq, fft = api_ops.calc_fft([wave_tds.x, wave_tds.y])
 
-            return JsonResponse({"x": freq, "y": abs(fft).tolist()})
+            return JsonResponse({"x": freq, "y": fft})
     else:
         if request.POST.get("type") == "RAPID":
-            return JsonResponse({"x": wave.x.tolist(), "y": wave.y.tolist()})
+            return JsonResponse({"x": wave.x, "y": wave.y})
         elif request.POST.get("type") == "TDS":
-            return JsonResponse({"x": wave_tds.x.tolist(), "y": wave_tds.y.tolist()})
+            return JsonResponse({"x": wave_tds, "y": wave_tds.y})
 
 
 def tds_boot(request):
@@ -149,23 +123,8 @@ def tds_boot(request):
     end = int(request.POST.get("end"))
     step = int(request.POST.get("step"))
     lockin = float(request.POST.get("lockin"))
-    try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
-            stage.move(start)
-            stage.wait_while_busy()
 
-            position_now = start
-            while position_now <= end:
-                time.sleep(lockin / 1000)
-                intensity = amp.get_intensity()
-
-                wave_tds.push([position_now], [float(intensity)])
-                stage.move(position_now + step)
-                position_now += step
-                stage.wait_while_busy()
-    except Exception as e:
-        print("Error in tds_boot()")
-        print(e)
+    api_ops.tds_scan(start, end, step, lockin, wave_tds)
 
     tds_running = False
 
