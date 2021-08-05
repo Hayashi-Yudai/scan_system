@@ -24,29 +24,26 @@ class Index(View):
 
     def get(self, request):
         # TODO: Remove
-        wave.set(
-            [1, 2, 3, 4, 5, 6, 7],
-            [1, 4, 9, 16, 25, 36, 49]
-        )
+        wave.set([1, 2, 3, 4, 5, 6, 7], [1, 4, 9, 16, 25, 36, 49])
         self.x = wave.x
         self.y = wave.y
 
         # TODO: context is not necessary
         context = {"position": self.x, "intensity": self.y}
 
-        return render(request, 'core/raster.html', context)
+        return render(request, "core/raster.html", context)
 
     # TODO: remove
     def post(self, request):
         context = {"position": self.x, "intensity": self.y}
 
         # TODO: context is not necessary
-        return render(request, 'core/raster.html', context)
+        return render(request, "core/raster.html", context)
 
 
 class TDS(View):
     def get(self, request):
-        return render(request, 'core/tds.html')
+        return render(request, "core/tds.html")
 
 
 #####################################
@@ -82,10 +79,12 @@ def scan(request):
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
     x = np.linspace(0, 8 * np.pi, 200)
-    y = 1e-6*np.sin(x)
+    y = 1e-6 * np.sin(x)
     wave.x = x
     wave.y = y
-    return JsonResponse({"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False})
+    return JsonResponse(
+        {"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False}
+    )
 
 
 def gpib(request):
@@ -94,7 +93,7 @@ def gpib(request):
 
 
 def calc_fft(request):
-    if request.POST.get('fft') == "true":
+    if request.POST.get("fft") == "true":
         if request.POST.get("type") == "RAPID":
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})

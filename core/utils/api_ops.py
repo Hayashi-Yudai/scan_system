@@ -44,7 +44,9 @@ def calc_fft(data: list) -> list:
     return freq, abs(np.fft.fft(data[1], 4096)).tolist()
 
 
-def tds_scan(start: int, end: int, step: int, lockin_time: float, wave: WaveForm) -> None:
+def tds_scan(
+    start: int, end: int, step: int, lockin_time: float, wave: WaveForm
+) -> None:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
             stage.move(start)
