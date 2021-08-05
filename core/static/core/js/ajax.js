@@ -21,14 +21,9 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
         let x = responseJson.x;
         let y = responseJson.y;
 
-        trace1 = {
-          x: x,
-          y: y,
-          type: "scatter",
-        };
-
-        data = [trace1];
-        Plotly.newPlot("canvas", data, layout);
+        data[0].x = x;
+        data[0].y = y;
+        Plotly.update("canvas", data, layout);
         running = responseJson.running;
       })
       .catch((_) => {

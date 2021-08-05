@@ -70,15 +70,12 @@ document
         x = responseJson.x;
         y = responseJson.y;
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log("error in fft");
+      });
 
-    trace1 = {
-      x: x,
-      y: y,
-      type: "scatter",
-    };
-
-    data = [trace1];
+    data[0].x = x;
+    data[0].y = y;
 
     if (e.target.checked) {
       let log_layout = {
@@ -87,7 +84,6 @@ document
           autorange: true,
         },
       };
-
       Plotly.newPlot("canvas", data, log_layout);
     } else {
       Plotly.newPlot("canvas", data, layout);
