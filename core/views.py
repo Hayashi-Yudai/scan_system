@@ -121,7 +121,6 @@ def calc_fft(request):
             if len(wave.x) == 0:
                 return JsonResponse({"x": [], "y": []})
             delta_time = (wave.x[1] - wave.x[0]) * 1e-6 * 2 / 2.9979e8
-            print("wave.x = ", wave.x)
             freq = [i / delta_time / 4096 for i in range(4096)]
             fft = np.fft.fft(wave.y, 4096)
 
@@ -136,9 +135,9 @@ def calc_fft(request):
             return JsonResponse({"x": freq, "y": abs(fft).tolist()})
     else:
         if request.POST.get("type") == "RAPID":
-            return JsonResponse({"x": wave.x, "y": wave.y})
+            return JsonResponse({"x": wave.x.tolist(), "y": wave.y.tolist()})
         elif request.POST.get("type") == "TDS":
-            return JsonResponse({"x": wave_tds.x, "y": wave_tds.y})
+            return JsonResponse({"x": wave_tds.x.tolist(), "y": wave_tds.y.tolist()})
 
 
 def tds_boot(request):
