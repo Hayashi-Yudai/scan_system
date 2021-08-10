@@ -68,7 +68,7 @@ input[name="tab_item"] {
 
 #tds:checked ~ #tds_content,
 #sr830:checked ~ #sr830_content,
-#temp-field:checked ~ #temp_field_content {
+#temp_field:checked ~ #temp_field_content {
   display: block;
 }
 
@@ -76,4 +76,17 @@ input[name="tab_item"] {
 .tabs input:checked + .tab_item {
   background-color: lightblue;
   color: #fff;
+}
+
+#sr830-sensitivity,
+#sr830-time-const {
+  display: inline-flex;
+  margin-top: 10px;
+}
+
+#sens-highest-order,
+#sens-order,
+#time-highest-order,
+#time-order {
+  margin-right: 25px;
 }

@@ -20,8 +20,8 @@
   <label class="tab_item" for="tds">TDS</label>
   <input id="sr830" type="radio" name="tab_item" />
   <label class="tab_item" for="sr830">Lock-in</label>
-  <input id="temp-field" type="radio" name="tab_item" />
-  <label class="tab_item" for="temp-field">Temp. & Field</label>
+  <input id="temp_field" type="radio" name="tab_item" />
+  <label class="tab_item" for="temp_field">Temp. & Field</label>
   <div class="tab_content" id="tds_content">
     <form id="stage-move" action="{% url 'core:move' %}">
       <p>Move stage:</p>
@@ -54,6 +54,107 @@
       <input type="submit" id="save-button" value="Save" />
     </form>
   </div>
-  <div class="tab_content" id="sr830_content">aaaa</div>
+  <div class="tab_content" id="sr830_content">
+    <p id="sr830-gpib-intensity">Intensity:</p>
+    <div id="sr830-sensitivity">
+      <p>Sensitivity:</p>
+      <div id="sens-highest-order">
+        <div>
+          <input type="radio" id="one" name="sensitivity-num" />
+          <label for="one">1</label>
+        </div>
+        <div>
+          <input type="radio" id="two" name="sensitivity-num" />
+          <label for="two">2</label>
+        </div>
+        <div>
+          <input type="radio" id="five" name="sensitivity-num" />
+          <label for="five">5</label>
+        </div>
+      </div>
+      <div id="sens-order">
+        <div>
+          <input type="radio" id="uni" name="sensitivity-order" />
+          <label for="uni">1</label>
+        </div>
+        <div>
+          <input type="radio" id="ten" name="sensitivity-order" />
+          <label for="ten">10</label>
+        </div>
+        <div>
+          <input type="radio" id="hundred" name="sensitivity-order" />
+          <label for="hundred">100</label>
+        </div>
+      </div>
+      <div id="sens-unit">
+        <div>
+          <input type="radio" id="micro" name="sensitivity-unit" />
+          <label for="micro">&mu;V</label>
+        </div>
+        <div>
+          <input type="radio" id="milli" name="sensitivity-unit" />
+          <label for="milli">mV</label>
+        </div>
+        <div>
+          <input type="radio" id="volt" name="sensitivity-unit" />
+          <label for="sec">V</label>
+        </div>
+      </div>
+    </div>
+    <div id="sr830-time-const">
+      <p>Time-Constant:</p>
+      <div id="time-highest-order">
+        <div>
+          <input type="radio" id="one" name="time-num" />
+          <label for="one">1</label>
+        </div>
+        <div>
+          <input type="radio" id="three" name="time-num" />
+          <label for="three">3</label>
+        </div>
+      </div>
+      <div id="sens-order">
+        <div>
+          <input type="radio" id="uni" name="time-order" />
+          <label for="uni">1</label>
+        </div>
+        <div>
+          <input type="radio" id="ten" name="time-order" />
+          <label for="ten">10</label>
+        </div>
+        <div>
+          <input type="radio" id="hundred" name="time-order" />
+          <label for="hundred">100</label>
+        </div>
+      </div>
+      <div id="sens-unit">
+        <div>
+          <input type="radio" id="micro" name="time-unit" />
+          <label for="micro">&mu;s</label>
+        </div>
+        <div>
+          <input type="radio" id="milli" name="time-unit" />
+          <label for="milli">ms</label>
+        </div>
+        <div>
+          <input type="radio" id="sec" name="time-unit" />
+          <label for="sec">s</label>
+        </div>
+      </div>
+    </div>
+    <div><input type="button" value="Auto Phase"></input></div>
+  </div>
+  <div class="tab_content" id="temp_field_content">
+    <form id="temp-control">
+      <p>Temperature (K): </p>
+      <input type="number" id="target-temp" />
+      <input type="submit" id="set-temp" value="Set"/>
+    </form>
+    <form id="field-control">
+      <p>Magnetic Field (T): </p>
+      <input type="number" id="target-field" />
+      <input type="submit" id="set-field" value="Set"/>
+    </form>
+  </div>
 </div>
 {% endblock %}
