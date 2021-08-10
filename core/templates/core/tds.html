@@ -15,27 +15,45 @@
 {% endblock %} {% block fft-type %}
 <input type="hidden" id="fft-type" value="TDS" />
 {% endblock %}{% block content %}
-<form id="stage-move" action="{% url 'core:move' %}">
-  <p>Move stage:</p>
-  <input type="number" id="stage-position" /> &mu;m
-  <input type="submit" value="Move" />
-</form>
-<form id="tds-settings" action="{% url 'core:tds_data' %}">
-  <p>Start:</p>
-  <input type="number" id="start-position" /> &mu;m
-  <p>End:</p>
-  <input type="number" id="end-position" /> &mu;m
-  <p>Step:</p>
-  <input type="number" id="moving-step" /> &mu;m
-  <p>Lock-in time:</p>
-  <input type="number" id="lockin-time" /> ms
-  <p></p>
-  <input type="submit" value="Start" id="start-button" />
-</form>
-<form id="save-data" action="{% url 'core:save' %}">
-  <p>Save Data:</p>
-  <input type="text" id="save-area" />
-  <input type="hidden" id="save-type" value="TDS" />
-  <input type="submit" id="save-button" value="Save" />
-</form>
+<div class="tabs">
+  <input id="tds" type="radio" name="tab_item" checked />
+  <label class="tab_item" for="tds">TDS</label>
+  <input id="sr830" type="radio" name="tab_item" />
+  <label class="tab_item" for="sr830">Lock-in</label>
+  <input id="temp-field" type="radio" name="tab_item" />
+  <label class="tab_item" for="temp-field">Temp. & Field</label>
+  <div class="tab_content" id="tds_content">
+    <form id="stage-move" action="{% url 'core:move' %}">
+      <p>Move stage:</p>
+      <input type="number" id="stage-position" /> &mu;m
+      <input type="submit" value="Move" />
+    </form>
+    <form id="tds-settings" action="{% url 'core:tds_data' %}">
+      <div id="stage-position-settings">
+        <div id="start">
+          <p>Start:</p>
+          <input type="number" id="start-position" /> &mu;m
+        </div>
+        <div id="end">
+          <p>End:</p>
+          <input type="number" id="end-position" /> &mu;m
+        </div>
+        <div id="step">
+          <p>Step:</p>
+          <input type="number" id="moving-step" /> &mu;m
+        </div>
+      </div>
+      <p>Lock-in time:</p>
+      <input type="number" id="lockin-time" /> ms
+      <input type="submit" value="Start" id="start-button" />
+    </form>
+    <form id="save-data" action="{% url 'core:save' %}">
+      <p>Save Data:</p>
+      <input type="text" id="save-area" />
+      <input type="hidden" id="save-type" value="TDS" />
+      <input type="submit" id="save-button" value="Save" />
+    </form>
+  </div>
+  <div class="tab_content" id="sr830_content">aaaa</div>
+</div>
 {% endblock %}
