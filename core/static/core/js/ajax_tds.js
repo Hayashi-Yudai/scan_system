@@ -61,3 +61,102 @@ async function tds_measurement() {
     await _sleep(500);
   }
 }
+
+document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
+  e.preventDefault();
+
+  let url = document.getElementById("sr830-sensitivity").action;
+  let num = document.getElementsByName("sensitivity-num");
+  let order = document.getElementsByName("sensitivity-order");
+  let unit = document.getElementsByName("sensitivity-unit");
+
+  for (let i = 0; i < num.length; i++) {
+    if (num.item(i).checked) {
+      checkedNum = num.item(i).value;
+    }
+  }
+  for (let i = 0; i < order.length; i++) {
+    if (order.item(i).checked) {
+      checkedOrder = order.item(i).value;
+    }
+  }
+  for (let i = 0; i < unit.length; i++) {
+    if (unit.item(i).checked) {
+      checkedUnit = unit.item(i).value;
+    }
+  }
+
+  if (
+    typeof checkedNum !== "undefined" &&
+    typeof checkedOrder !== "undefined" &&
+    typeof checkedUnit !== "undefined"
+  ) {
+    let value = Number(checkedNum) * Number(checkedOrder);
+
+    fetch(url, {
+      method: "POST",
+      body: `value=${value}&unit=${checkedUnit}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    }).catch((error) => {
+      alert("Failed to change sensitivity");
+    });
+  }
+});
+
+document.getElementById("sr830-time-const").addEventListener("change", (e) => {
+  e.preventDefault();
+
+  let url = document.getElementById("sr830-time-const").action;
+  let num = document.getElementsByName("time-num");
+  let order = document.getElementsByName("time-order");
+  let unit = document.getElementsByName("time-unit");
+
+  for (let i = 0; i < num.length; i++) {
+    if (num.item(i).checked) {
+      checkedNum = num.item(i).value;
+    }
+  }
+  for (let i = 0; i < order.length; i++) {
+    if (order.item(i).checked) {
+      checkedOrder = order.item(i).value;
+    }
+  }
+  for (let i = 0; i < unit.length; i++) {
+    if (unit.item(i).checked) {
+      checkedUnit = unit.item(i).value;
+    }
+  }
+
+  if (
+    typeof checkedNum !== "undefined" &&
+    typeof checkedOrder !== "undefined" &&
+    typeof checkedUnit !== "undefined"
+  ) {
+    let value = Number(checkedNum) * Number(checkedOrder);
+
+    fetch(url, {
+      method: "POST",
+      body: `value=${value}&unit=${checkedUnit}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+    }).catch((error) => {
+      alert("Failed to change sensitivity");
+    });
+  }
+});
+
+document.getElementById("auto-phase").addEventListener("submit", (e) => {
+  e.preventDefault();
+  url = document.getElementById("auto-phase").action;
+
+  fetch(url, {
+    method: "POST",
+    body: "",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    },
+  }).catch((error) => {});
+});
