@@ -6,6 +6,6 @@ set CONDA_ENV=thz
 
 start chrome.exe http://localhost:%PORT%/core/
 
-call conda activate %CONDA_ENV%
+call activate %CONDA_ENV%
 call python.exe manage.py runserver %PORT%
-call conda deactivate
+call deactivate
