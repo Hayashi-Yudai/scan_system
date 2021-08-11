@@ -80,8 +80,8 @@ def scan(request):
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
     x = np.linspace(0, 8 * np.pi, 200)
     y = 1e-6 * np.sin(x)
-    wave.x = x
-    wave.y = y
+    wave.x = x.tolist()
+    wave.y = y.tolist()
     return JsonResponse(
         {"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False}
     )
@@ -137,3 +137,26 @@ def tds_data(request):
     status = "running" if tds_running else "finished"
 
     return JsonResponse({"x": x, "y": y, "status": status})
+
+
+def change_sensitivity(request):
+    value = int(request.POST.get("value"))
+    unit = request.POST.get("unit")
+    api_ops.set_lockin_sensitivity(value, unit)
+
+    return JsonResponse({"status": "ok"})
+
+
+def change_time_const(request):
+    value = int(request.POST.get("value"))
+    unit = request.POST.get("unit")
+    api_ops.set_lockin_time_const(value, unit)
+
+    return JsonResponse({"status": "ok"})
+
+
+def auto_phase(request):
+    status = api_ops.auto_phase_lockin()
+    print(status)
+
+    return JsonResponse({"status": "ok"})

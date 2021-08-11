@@ -37,6 +37,33 @@ def get_lockin_intensity() -> tuple:
         return 0, False
 
 
+def auto_phase_lockin():
+    try:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+            lockin.auto_phase()
+        return True
+    except:
+        return False
+
+
+def set_lockin_sensitivity(value, unit):
+    try:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+            lockin.set_sensitivity(value, unit)
+        return True
+    except:
+        return False
+
+
+def set_lockin_time_const(value, unit):
+    try:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+            lockin.set_time_const(value, unit)
+        return True
+    except:
+        return False
+
+
 def calc_fft(data: list) -> list:
     delta_time = (data[0][1] - data[0][0]) * 1e-6 * 2 / 2.9979e8
     freq = [i / delta_time / 4096 for i in range(4096)]
