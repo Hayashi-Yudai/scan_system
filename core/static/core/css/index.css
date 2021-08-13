@@ -187,7 +187,7 @@ input[type="text"] {
 
 input[type="number"]:focus,
 input[type="text"]:focus {
-  border: 1px solid dodgerblue;
+  border: 0.5px solid dodgerblue;
   outline: 0;
 }
 
@@ -195,4 +195,16 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type="submit"] {
+  background-color: rgb(245, 245, 245);
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 5px 15px;
+}
+
+input[type="submit"]:hover {
+  border: 1px solid green;
+  background-color: rgba(0, 255, 0, 0.1);
 }
