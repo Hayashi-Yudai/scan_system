@@ -23,6 +23,10 @@ main {
   margin: 10px 20px;
 }
 
+p {
+  color: rgba(130, 130, 130);
+}
+
 #container {
   display: flex;
   flex-direction: row;
@@ -187,7 +191,7 @@ input[type="text"] {
 
 input[type="number"]:focus,
 input[type="text"]:focus {
-  border: 0.5px solid dodgerblue;
+  border: 1.5px solid dodgerblue;
   outline: 0;
 }
 
