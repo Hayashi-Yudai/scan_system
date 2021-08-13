@@ -9,67 +9,90 @@
     />
     <script
       type="text/javascript"
+      src="{% static 'core/js/plotly-2.3.0.min.js' %}"
+      defer
+    ></script>
+    <script
+      type="text/javascript"
+      src="{% static 'archive/js/plot.js' %}"
+      defer
+    ></script>
+    <script
+      type="text/javascript"
       src="{% static 'archive/js/bootstrap.min.js' %}"
     ></script>
   </head>
   <body>
     <h1>Data Archive</h1>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <td>Date</td>
-          <td>Start</td>
-          <td>End</td>
-          <td>Step</td>
-          <td>Lock-in const.</td>
-        </tr>
-      </thead>
-      <tbody>
-        {% for data in object_list %}
-        <tr>
-          <td>{{ data.measured_date }}</td>
-          <td>{{ data.start_position }}</td>
-          <td>{{ data.end_position }}</td>
-          <td>{{ data.step }}</td>
-          <td>{{ data.lockin_time }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a
-            class="page-link"
-            href="?page={{ page_obj.previous_page_number }}"
-            aria-label="Previous"
-          >
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        {% endif %} {% for page_num in page_obj.paginator.page_range %}
-        <!---->
-        {% if page_num == page_obj.number %}
-        <li class="page-item active">
-          <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-        </li>
-        {% else %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
-        </li>
-        {% endif %} {% endfor %} {% if page_obj.has_next %}
-        <li class="page-item">
-          <a
-            class="page-link"
-            href="?page={{ page_obj.next_page_number}}"
-            aria-label="Next"
-          >
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-    </nav>
+    <div class="container" style="max-width: 90%">
+      <div class="row">
+        <div class="align-items-center col">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <td>Date</td>
+                <td>Start</td>
+                <td>End</td>
+                <td>Step</td>
+                <td>Lock-in const.</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in object_list %}
+              <tr>
+                <td>{{ data.measured_date }}</td>
+                <td>{{ data.start_position }}</td>
+                <td>{{ data.end_position }}</td>
+                <td>{{ data.step }}</td>
+                <td>{{ data.lockin_time }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page={{ page_obj.previous_page_number }}"
+                  aria-label="Previous"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% endif %} {% for page_num in page_obj.paginator.page_range %}
+              <!---->
+              {% if page_num == page_obj.number %}
+              <li class="page-item active">
+                <a class="page-link" href="?page={{ page_num }}"
+                  >{{ page_num }}</a
+                >
+              </li>
+              {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_num }}"
+                  >{{ page_num }}</a
+                >
+              </li>
+              {% endif %} {% endfor %} {% if page_obj.has_next %}
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page={{ page_obj.next_page_number}}"
+                  aria-label="Next"
+                >
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+        <div class="col plot-area">
+          <div id="canvas" style="width: 500px; height: 400px"></div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
