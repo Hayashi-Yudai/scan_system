@@ -9,12 +9,12 @@ async function tds_measurement() {
   let url = document.getElementById("tds-settings").action;
   let boot = tds_boot_url;
 
-  let start = document.getElementById("start-position").value;
-  let end = document.getElementById("end-position").value;
-  let step = document.getElementById("moving-step").value;
-  let lockin = document.getElementById("lockin-time").value;
+  let start = Number(document.getElementById("start-position").value);
+  let end = Number(document.getElementById("end-position").value);
+  let step = Number(document.getElementById("moving-step").value);
+  let lockin = Number(document.getElementById("lockin-time").value);
 
-  if (start > end || start < 0 || end < 0 || step < 0 || lockin < 0) {
+  if (start >= end || start < 0 || end <= 0 || step <= 0 || lockin <= 0) {
     alert("Invalid Parameters");
     return;
   }
