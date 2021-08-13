@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "core.apps.CoreConfig",
+    "archive.apps.ArchiveConfig",
     "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
