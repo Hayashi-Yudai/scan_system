@@ -177,3 +177,22 @@ footer {
   margin-top: 4px;
   margin-left: 8px;
 }
+
+input[type="number"],
+input[type="text"] {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px 5px;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus {
+  border: 1px solid dodgerblue;
+  outline: 0;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
