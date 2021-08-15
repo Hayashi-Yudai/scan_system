@@ -5,4 +5,5 @@ from . import views
 app_name = "archive"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
+    path("get_archive_data/", views.get_archive_data, name="get_archive_data"),
 ]
