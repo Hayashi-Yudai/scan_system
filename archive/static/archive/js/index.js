@@ -14,12 +14,17 @@ let colorMap = {
   9: "rgba(146, 7, 131, 0.4)",
 };
 
+let pkInGraph = [];
+
 for (ele of table_elements) {
   ele.addEventListener("click", async (e) => {
     let target = e.currentTarget;
     if (target.classList.contains("colored")) {
       target.style.backgroundColor = "rgba(255, 255, 255, 1)";
       target.classList.toggle("colored");
+      let deleteIdx = pkInGraph.indexOf(target.id);
+      pkInGraph.splice(deleteIdx, 1);
+      Plotly.deleteTraces(canvas, deleteIdx + 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
@@ -50,6 +55,7 @@ for (ele of table_elements) {
         .catch((error) => {
           console.log(error);
         });
+      pkInGraph.push(target.id);
       counter++;
     }
   });
