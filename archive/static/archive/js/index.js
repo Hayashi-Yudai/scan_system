@@ -48,8 +48,8 @@ for (ele of table_elements) {
             x: x,
             y: y,
             type: "scatter",
-            line: { color: colorMap[counter] },
-            marker: { color: colorMap[counter] },
+            line: { color: colorMap[counter % 10] },
+            marker: { color: colorMap[counter % 10] },
           });
         })
         .catch((error) => {
