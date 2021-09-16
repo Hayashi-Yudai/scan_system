@@ -7,6 +7,11 @@
       type="text/css"
       href="{% static 'archive/css/bootstrap.min.css' %}"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'archive/css/index.css' %}"
+    />
     <script
       type="text/javascript"
       src="{% static 'core/js/plotly-2.3.0.min.js' %}"
@@ -96,6 +101,19 @@
         </div>
         <div class="col plot-area">
           <div id="canvas" style="width: 500px; height: 400px"></div>
+          <div class="toggle-switch">
+            {% block fft-type %}{% endblock %}
+            <label class="switch__label">
+              <input
+                type="checkbox"
+                class="switch__input"
+                name="fft-checkbox"
+              />
+              <span class="switch__content"></span>
+              <span class="switch__circle"></span>
+            </label>
+            <div class="fft-label">FFT</div>
+          </div>
         </div>
       </div>
     </div>
