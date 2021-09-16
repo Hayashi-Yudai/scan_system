@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class TDSData(models.Model):
     measured_date = models.DateTimeField(auto_now_add=True)
@@ -9,3 +10,4 @@ class TDSData(models.Model):
     lockin_time = models.PositiveIntegerField()
     position_data = models.TextField(blank=False)
     intensity_data = models.TextField(blank=False)
+    file_name = models.TextField(blank=True)
