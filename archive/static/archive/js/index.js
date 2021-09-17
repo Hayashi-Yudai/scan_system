@@ -1,5 +1,4 @@
 let table_elements = document.getElementsByName("data-element");
-let counter = 0;
 
 let colorMap = {
   0: "rgba(230, 0, 18, 0.4)",
@@ -14,8 +13,9 @@ let colorMap = {
   9: "rgba(146, 7, 131, 0.4)",
 };
 
-let counters = [];
-let pkInGraph = [];
+let counter = 0;
+let graphColors = [];
+let pkInGraph = [];  // プロットされているグラフのprimary keyを格納. 1はじまり
 let first = true;
 
 for (ele of table_elements) {
@@ -29,12 +29,12 @@ for (ele of table_elements) {
 
       pkInGraph.splice(deleteIdx, 1);
       Plotly.deleteTraces(canvas, deleteIdx);
+      graphColors = graphColors.splice(deleteIdx, 1);
       if (first) {
         Plotly.deleteTraces(canvas, deleteIdx);
         first = false;
       }
 
-      counters = counters.splice(deleteIdx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
@@ -64,7 +64,7 @@ for (ele of table_elements) {
             marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
           });
 
-          counters.push(counter % 10);
+          graphColors.push(counter % 10);
         })
         .catch((error) => {
           console.log(error);
@@ -100,8 +100,8 @@ document
         x: xs_resp[i],
         y: ys_resp[i],
         type: "scatter",
-        line: { color: colorMap[counters[i]].replace("0.4", "1.0") },
-        marker: { color: colorMap[counters[i]].replace("0.4", "1.0") },
+        line: { color: colorMap[graphColors[i]].replace("0.4", "1.0") },
+        marker: { color: colorMap[graphColors[i]].replace("0.4", "1.0") },
       });
     }
 
@@ -110,6 +110,7 @@ document
         yaxis: {
           type: "log",
           autorange: true,
+          showlegend: false,
         },
       };
       Plotly.newPlot("canvas", data, log_layout);

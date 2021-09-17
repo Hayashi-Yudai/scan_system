@@ -10,7 +10,7 @@ var layout = {
   height: 400,
   margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
   showlegend: true,
-  legend: { orientation: "h" },
+  showlegend: false ,
 };
 
 Plotly.newPlot("canvas", data, layout);
