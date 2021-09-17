@@ -14,10 +14,9 @@ let colorMap = {
   9: "rgba(146, 7, 131, 0.4)",
 };
 
-let ids = [];
 let counters = [];
-
 let pkInGraph = [];
+let first = true;
 
 for (ele of table_elements) {
   ele.addEventListener("click", async (e) => {
@@ -29,19 +28,23 @@ for (ele of table_elements) {
       let deleteIdx = pkInGraph.indexOf(target.id);
 
       pkInGraph.splice(deleteIdx, 1);
-      Plotly.deleteTraces(canvas, deleteIdx + 1);
+      Plotly.deleteTraces(canvas, deleteIdx);
+      if (first) {
+        Plotly.deleteTraces(canvas, deleteIdx);
+        first = false;
+      }
 
-      let data_idx = ids.indexOf(target.id);
-      ids = ids.splice(data_idx + 1, 1);
-      counters = counters.splice(data_idx + 1, 1);
+      counters = counters.splice(deleteIdx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
 
+      let fftIsChecked = document.querySelector("input[name = fft-checkbox]").checked;
+
       let url = "http://localhost:8000/archive/get_archive_data/";
       await fetch(url, {
         method: "POST",
-        body: `pk=${target.id}`,
+        body: `pk=${target.id}&fft=${fftIsChecked}`,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         },
@@ -61,7 +64,6 @@ for (ele of table_elements) {
             marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
           });
 
-          ids.push(target.id);
           counters.push(counter % 10);
         })
         .catch((error) => {
@@ -80,7 +82,7 @@ document
 
     await fetch(url, {
       method: "POST",
-      body: JSON.stringify({ids: ids, fft: e.target.checked}),
+      body: JSON.stringify({ids: pkInGraph, fft: e.target.checked}),
       headers: {"Content-Type": "application/json"}
     })
       .then((response) => { return response.json(); })
