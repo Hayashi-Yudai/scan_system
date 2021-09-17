@@ -57,8 +57,8 @@ for (ele of table_elements) {
             x: x,
             y: y,
             type: "scatter",
-            line: { color: colorMap[counter % 10] },
-            marker: { color: colorMap[counter % 10] },
+            line: { color: colorMap[counter % 10].replace("0.4", "1.0") },
+            marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
           });
 
           ids.push(target.id);
@@ -96,8 +96,8 @@ document
         x: xs_resp[i],
         y: ys_resp[i],
         type: "scatter",
-        line: { color: colorMap[counters[i]] },
-        marker: { color: colorMap[counters[i]] },
+        line: { color: colorMap[counters[i]].replace("0.4", "1.0") },
+        marker: { color: colorMap[counters[i]].replace("0.4", "1.0") },
       });
     }
 
