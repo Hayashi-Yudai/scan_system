@@ -80,6 +80,8 @@ document
   .addEventListener("change", async (e) => {
     let url = fft_url;
 
+    first = false;
+
     await fetch(url, {
       method: "POST",
       body: JSON.stringify({ids: pkInGraph, fft: e.target.checked}),
