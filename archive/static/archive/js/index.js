@@ -14,9 +14,7 @@ let colorMap = {
   9: "rgba(146, 7, 131, 0.4)",
 };
 
-let ids = [];
 let counters = [];
-
 let pkInGraph = [];
 
 for (ele of table_elements) {
@@ -31,8 +29,6 @@ for (ele of table_elements) {
       pkInGraph.splice(deleteIdx, 1);
       Plotly.deleteTraces(canvas, deleteIdx + 1);
 
-      let data_idx = ids.indexOf(target.id);
-      ids = ids.splice(data_idx + 1, 1);
       counters = counters.splice(data_idx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
@@ -61,7 +57,6 @@ for (ele of table_elements) {
             marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
           });
 
-          ids.push(target.id);
           counters.push(counter % 10);
         })
         .catch((error) => {
@@ -80,7 +75,7 @@ document
 
     await fetch(url, {
       method: "POST",
-      body: JSON.stringify({ids: ids, fft: e.target.checked}),
+      body: JSON.stringify({ids: pkInGraph, fft: e.target.checked}),
       headers: {"Content-Type": "application/json"}
     })
       .then((response) => { return response.json(); })
