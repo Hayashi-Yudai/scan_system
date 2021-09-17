@@ -14,6 +14,8 @@ let colorMap = {
   9: "rgba(146, 7, 131, 0.4)",
 };
 
+let ids = [];
+
 let pkInGraph = [];
 
 for (ele of table_elements) {
@@ -22,9 +24,14 @@ for (ele of table_elements) {
     if (target.classList.contains("colored")) {
       target.style.backgroundColor = "rgba(255, 255, 255, 1)";
       target.classList.toggle("colored");
+
       let deleteIdx = pkInGraph.indexOf(target.id);
+
       pkInGraph.splice(deleteIdx, 1);
       Plotly.deleteTraces(canvas, deleteIdx + 1);
+
+      let data_idx = ids.indexOf(target.id);
+      ids = ids.splice(data_idx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
@@ -51,6 +58,8 @@ for (ele of table_elements) {
             line: { color: colorMap[counter % 10] },
             marker: { color: colorMap[counter % 10] },
           });
+
+          ids.push(target.id);
         })
         .catch((error) => {
           console.log(error);
@@ -60,3 +69,38 @@ for (ele of table_elements) {
     }
   });
 }
+
+document
+  .querySelector("input[name=fft-checkbox]")
+  .addEventListener("change", async (e) => {
+    let url = fft_url;
+
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ids: ids, fft: e.target.checked}),
+      headers: {"Content-Type": "application/json"}
+    })
+      .then((response) => { return response.json(); })
+      .then((responseJson) => {
+        xs_resp = responseJson.xs;
+        ys_resp = responseJson.ys;
+      })
+      .catch((err) => { console.log("Error in FFT");})
+
+    data.length = 0;
+    for (i = 0; i < xs_resp.length; i++) {
+      data.push({ x: xs_resp[i], y: ys_resp[i], type: "scatter" });
+    }
+
+    if (e.target.checked) {
+      let log_layout = {
+        yaxis: {
+          type: "log",
+          autorange: true,
+        },
+      };
+      Plotly.newPlot("canvas", data, log_layout);
+    } else {
+      Plotly.newPlot("canvas", data, layout);
+    }
+  });
