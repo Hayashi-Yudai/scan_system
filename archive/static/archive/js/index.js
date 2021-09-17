@@ -16,6 +16,7 @@ let colorMap = {
 
 let counters = [];
 let pkInGraph = [];
+let first = true;
 
 for (ele of table_elements) {
   ele.addEventListener("click", async (e) => {
@@ -27,9 +28,13 @@ for (ele of table_elements) {
       let deleteIdx = pkInGraph.indexOf(target.id);
 
       pkInGraph.splice(deleteIdx, 1);
-      Plotly.deleteTraces(canvas, deleteIdx + 1);
+      Plotly.deleteTraces(canvas, deleteIdx);
+      if (first) {
+        Plotly.deleteTraces(canvas, deleteIdx);
+        first = false;
+      }
 
-      counters = counters.splice(data_idx + 1, 1);
+      counters = counters.splice(deleteIdx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
