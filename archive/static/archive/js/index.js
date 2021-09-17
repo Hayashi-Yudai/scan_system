@@ -39,10 +39,12 @@ for (ele of table_elements) {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
 
+      let fftIsChecked = document.querySelector("input[name = fft-checkbox]").checked;
+
       let url = "http://localhost:8000/archive/get_archive_data/";
       await fetch(url, {
         method: "POST",
-        body: `pk=${target.id}`,
+        body: `pk=${target.id}&fft=${fftIsChecked}`,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         },
