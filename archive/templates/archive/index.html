@@ -1,0 +1,118 @@
+{% load static %}
+<html>
+<head>
+    <title>Data Archive</title>
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="{% static 'archive/css/bootstrap.min.css' %}"
+    />
+    <link
+            rel="stylesheet"
+            type="text/css"
+            href="{% static 'archive/css/index.css' %}"
+    />
+    <script
+            type="text/javascript"
+            src="{% static 'core/js/plotly-2.3.0.min.js' %}"
+            defer
+    ></script>
+    <script
+            type="text/javascript"
+            src="{% static 'archive/js/plot.js' %}"
+            defer
+    ></script>
+    <script
+            type="text/javascript"
+            src="{% static 'archive/js/index.js' %}"
+            defer
+    ></script>
+    <script
+            type="text/javascript"
+            src="{% static 'archive/js/bootstrap.min.js' %}"
+    ></script>
+    <script type="text/javascript">
+        let fft_url = "http://localhost:8000/archive/calc-fft/";
+    </script>
+</head>
+<body>
+<h1>Data Archive</h1>
+<div class="container" style="max-width: 90%">
+    <div class="row">
+        <div class="col">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>File name</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for data in object_list %}
+                    <tr id="{{ data.pk }}" name="data-element">
+                        <td>{{ data.measured_date }}</td>
+                        <td>{{ data.file_name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a
+                                    class="page-link"
+                                    href="?page={{ page_obj.previous_page_number }}"
+                                    aria-label="Previous"
+                            >
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %} {% for page_num in page_obj.paginator.page_range %}
+                    <!---->
+                    {% if page_num == page_obj.number %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ page_num }}"
+                            >{{ page_num }}</a
+                            >
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_num }}"
+                            >{{ page_num }}</a
+                            >
+                        </li>
+                    {% endif %} {% endfor %} {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a
+                                class="page-link"
+                                href="?page={{ page_obj.next_page_number }}"
+                                aria-label="Next"
+                        >
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+                </ul>
+            </nav>
+        </div>
+        <div class="col plot-area">
+            <div id="canvas" style="width: 500px; height: 400px"></div>
+            <div class="toggle-switch">
+                {% block fft-type %}{% endblock %}
+                <label class="switch__label">
+                    <input
+                            type="checkbox"
+                            class="switch__input"
+                            name="fft-checkbox"
+                    />
+                    <span class="switch__content"></span>
+                    <span class="switch__circle"></span>
+                </label>
+                <div class="fft-label">FFT</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

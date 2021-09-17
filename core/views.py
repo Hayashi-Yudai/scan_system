@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
@@ -6,6 +7,7 @@ import os
 
 from core.utils.waveform import WaveForm
 from core.utils import api_ops
+from core.models import TDSData
 
 # global variable
 wave = WaveForm()
@@ -69,6 +71,10 @@ def save(request):
     else:
         api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
 
+    data = TDSData.objects.order_by("-measured_date").first()
+    data.file_name = save_path.rsplit("/", 1)[1]
+    data.save()
+
     return JsonResponse({"success": True})
 
 
@@ -126,6 +132,17 @@ def tds_boot(request):
     api_ops.tds_scan(start, end, step, lockin, wave_tds)
 
     tds_running = False
+    data = TDSData(
+        measured_date=datetime.datetime.now(),
+        start_position=start,
+        end_position=end,
+        step=step,
+        lockin_time=lockin,
+        position_data=",".join(list(map(str, wave_tds.x))),
+        intensity_data=",".join(list(map(str, wave_tds.y))),
+        file_name="",
+    )
+    data.save()
 
     return JsonResponse({})
 
