@@ -36,8 +36,15 @@
     </script>
 </head>
 <body>
-<h1>Data Archive</h1>
 <div class="container" style="max-width: 90%">
+    <div style="margin-bottom: 35px;">
+        <h1>Data Archive</h1>
+    </div>
+    <div class="links">
+        <a class="link" href="{% url 'core:tds' %}">Step Scan</a>
+        <a class="link" href="{% url 'core:index' %}">Raster Scan</a>
+        <a class="link" href="{% url 'archive:index' %}">Data Archive</a>
+    </div>
     <div class="row">
         <div class="col">
             <table class="table table-hover">
