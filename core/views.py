@@ -71,6 +71,10 @@ def save(request):
     else:
         api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
 
+    data = TDSData.objects.order_by("-measured_date").first()
+    data.file_name = save_path.rsplit("/", 1)[1]
+    data.save()
+
     return JsonResponse({"success": True})
 
 
@@ -136,6 +140,7 @@ def tds_boot(request):
         lockin_time=lockin,
         position_data=",".join(list(map(str, wave_tds.x))),
         intensity_data=",".join(list(map(str, wave_tds.y))),
+        file_name="",
     )
     data.save()
 
