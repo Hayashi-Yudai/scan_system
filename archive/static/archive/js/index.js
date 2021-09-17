@@ -15,6 +15,7 @@ let colorMap = {
 };
 
 let ids = [];
+let counters = [];
 
 let pkInGraph = [];
 
@@ -32,6 +33,7 @@ for (ele of table_elements) {
 
       let data_idx = ids.indexOf(target.id);
       ids = ids.splice(data_idx + 1, 1);
+      counters = counters.splice(data_idx + 1, 1);
     } else {
       target.style.backgroundColor = colorMap[counter % 10];
       target.classList.toggle("colored");
@@ -60,6 +62,7 @@ for (ele of table_elements) {
           });
 
           ids.push(target.id);
+          counters.push(counter % 10);
         })
         .catch((error) => {
           console.log(error);
@@ -89,7 +92,13 @@ document
 
     data.length = 0;
     for (i = 0; i < xs_resp.length; i++) {
-      data.push({ x: xs_resp[i], y: ys_resp[i], type: "scatter" });
+      data.push({
+        x: xs_resp[i],
+        y: ys_resp[i],
+        type: "scatter",
+        line: { color: colorMap[counters[i]] },
+        marker: { color: colorMap[counters[i]] },
+      });
     }
 
     if (e.target.checked) {
