@@ -73,7 +73,7 @@ def calc_fft(data: list) -> list:
 
 def tds_scan(
     start: int, end: int, step: int, lockin_time: float, wave: WaveForm
-) -> None:
+) -> bool:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
             stage.move(start)
@@ -88,6 +88,10 @@ def tds_scan(
                 stage.move(position_now + step)
                 position_now += step
                 stage.wait_while_busy()
+
+        return True
     except Exception as e:
         print("Error in tds_boot()")
         print(e)
+
+        return False

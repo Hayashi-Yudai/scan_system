@@ -129,20 +129,22 @@ def tds_boot(request):
     step = int(request.POST.get("step"))
     lockin = float(request.POST.get("lockin"))
 
-    api_ops.tds_scan(start, end, step, lockin, wave_tds)
+    success = api_ops.tds_scan(start, end, step, lockin, wave_tds)
 
     tds_running = False
-    data = TDSData(
-        measured_date=datetime.datetime.now(),
-        start_position=start,
-        end_position=end,
-        step=step,
-        lockin_time=lockin,
-        position_data=",".join(list(map(str, wave_tds.x))),
-        intensity_data=",".join(list(map(str, wave_tds.y))),
-        file_name="",
-    )
-    data.save()
+
+    if success:
+        data = TDSData(
+            measured_date=datetime.datetime.now(),
+            start_position=start,
+            end_position=end,
+            step=step,
+            lockin_time=lockin,
+            position_data=",".join(list(map(str, wave_tds.x))),
+            intensity_data=",".join(list(map(str, wave_tds.y))),
+            file_name="",
+        )
+        data.save()
 
     return JsonResponse({})
 
