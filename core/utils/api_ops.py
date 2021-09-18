@@ -12,7 +12,7 @@ def move_stage(position: int) -> bool:
         with Mark202(int(os.environ["MARK202_GPIB_ADDRESS"])) as stage:
             stage.move(position)
         return True
-    except:
+    except Exception:
         print("Error in moving stage")
         return False
 
@@ -33,7 +33,7 @@ def get_lockin_intensity() -> tuple:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             return float(lockin.get_intensity()), True
-    except:
+    except Exception:
         return 0, False
 
 
@@ -42,7 +42,7 @@ def auto_phase_lockin():
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.auto_phase()
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -51,7 +51,7 @@ def set_lockin_sensitivity(value, unit):
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.set_sensitivity(value, unit)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -60,7 +60,7 @@ def set_lockin_time_const(value, unit):
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.set_time_const(value, unit)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -73,7 +73,7 @@ def calc_fft(data: list) -> list:
 
 def tds_scan(
     start: int, end: int, step: int, lockin_time: float, wave: WaveForm
-) -> None:
+) -> bool:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
             stage.move(start)
@@ -88,6 +88,10 @@ def tds_scan(
                 stage.move(position_now + step)
                 position_now += step
                 stage.wait_while_busy()
+
+        return True
     except Exception as e:
         print("Error in tds_boot()")
         print(e)
+
+        return False

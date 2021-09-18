@@ -5,6 +5,10 @@
   width: 80px;
 }
 
+#multiscan {
+  width: 40px;
+}
+
 #stage-position-settings {
   display: inline-flex;
 }
