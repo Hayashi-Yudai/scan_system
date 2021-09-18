@@ -11,6 +11,7 @@ from core.models import TDSData
 class Index(ListView):
     template_name = "archive/index.html"
     model = TDSData
+    ordering = ["-measured_date"]
     paginate_by = 4
 
 
@@ -31,10 +32,10 @@ def get_archive_data(request):
 
 def calc_fft(request):
     body = json.loads(request.body)
-    dataset = TDSData.objects.filter(pk__in=body["ids"])
     xs = []
     ys = []
-    for data in dataset:
+    for pk in body["ids"]:
+        data = TDSData.objects.filter(pk=pk)[0]
         x = list(map(float, data.position_data.split(",")))
         y = list(map(float, data.intensity_data.split(",")))
 
