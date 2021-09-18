@@ -45,11 +45,14 @@
       </div>
       <p>Lock-in time:</p>
       <input type="number" id="lockin-time" /> ms
+      <p>Multi scan:</p>
+      <input type="number" id="multiscan" value="1" /> times
       <input type="submit" value="Start" id="start-button" />
+      <div id="scan-status"></div>
     </form>
     <form id="save-data" action="{% url 'core:save' %}">
       <p>Save Data:</p>
-      <input type="text" id="save-area" />
+      <input type="text" id="save-area" value="C:/Users/" />
       <input type="hidden" id="save-type" value="TDS" />
       <input type="submit" id="save-button" value="Save" />
     </form>

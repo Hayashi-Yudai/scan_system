@@ -13,53 +13,97 @@ async function tds_measurement() {
   let end = Number(document.getElementById("end-position").value);
   let step = Number(document.getElementById("moving-step").value);
   let lockin = Number(document.getElementById("lockin-time").value);
+  let multiscan = Number(document.getElementById("multiscan").value);
+  let path = document.getElementById("save-area").value;
 
-  if (start >= end || start < 0 || end <= 0 || step <= 0 || lockin <= 0) {
+  if (start >= end || start < 0 || end <= 0 || step <= 0 || lockin <= 0 || multiscan <= 0) {
     alert("Invalid Parameters");
     return;
   }
 
-  let finished = false;
-  fetch(boot, {
-    method: "POST",
-    body: `start=${start}&end=${end}&step=${step}&lockin=${lockin}`,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-    },
-  }).catch((error) => {
-    finished = true;
-  });
-  await _sleep(1000);
-  while (!finished) {
-    await fetch(url, {
+  if (multiscan > 1 && (path == "" || path.endsWith("/"))) {
+    alert("Invalid path. If multiscanning, specify the path to 'file' where data are saved.");
+    return;
+  }
+
+  for (let i = 0; i < multiscan; i++) {
+    let finished = false;
+    fetch(boot, {
       method: "POST",
-      body: "",
+      body: `start=${start}&end=${end}&step=${step}&lockin=${lockin}`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
-    })
-      .then((response) => {
-        return response.json();
+    }).catch((error) => {
+      finished = true;
+    });
+    await _sleep(1000);
+
+    let scanStatus = document.getElementById("scan-status");
+    while (!finished) {
+      await fetch(url, {
+        method: "POST",
+        // body: "",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
       })
-      .then((responseJson) => {
-        if (responseJson.status === "finished") {
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseJson) => {
+          if (responseJson.status === "finished") {
+            finished = true;
+          }
+          let x = responseJson.x;
+          let y = responseJson.y;
+          data[0].x = x;
+          data[0].y = y;
+
+          Plotly.update(canvas, data, layout);
+          scanStatus.innerText = `Scanning ${i}/${multiscan}...`;
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Error while measurement");
           finished = true;
-        }
-        let x = responseJson.x;
-        let y = responseJson.y;
-        data[0].x = x;
-        data[0].y = y;
+        });
 
-        Plotly.update("canvas", data, layout);
+      await _sleep(300);
+    }
+
+    if (multiscan > 1) {
+      const url = document.getElementById("save-data").action;
+      const type = document.getElementById("save-type").value;
+      let path = document.getElementById("save-area").value;
+
+      let path_split = path.split(".");
+      path = path_split
+        .slice(0, path_split.length - 1)
+        .join(".") + `_${i}`
+      path = path + "." + path_split[path_split.length - 1];
+
+      fetch(url, {
+        method: "POST",
+        body: `path=${path}&type=${type}`,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
       })
-      .catch((error) => {
-        console.log(error);
-        alert("Error while measurement");
-        finished = true;
-      });
-
-    await _sleep(500);
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseJson) => {
+          if (!responseJson.success) {
+            alert("Invalid directory");
+          }
+        })
+        .catch((_) => {
+          console.log("error in save data");
+        });
+    }
   }
+  scanStatus.innerText = "";
 }
 
 document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
