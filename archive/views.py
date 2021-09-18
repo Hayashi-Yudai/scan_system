@@ -11,7 +11,7 @@ from core.models import TDSData
 class Index(ListView):
     template_name = "archive/index.html"
     model = TDSData
-    paginate_by = 2
+    paginate_by = 4
 
 
 def get_archive_data(request):
@@ -19,7 +19,6 @@ def get_archive_data(request):
     x = list(map(float, entry.position_data.split(",")))
     y = list(map(float, entry.intensity_data.split(",")))
 
-    print(request.POST.get("fft") == "true")
     if request.POST.get("fft") == "true":
         delta_time = (x[1] - x[0]) * 1e-6 * 2 / 2.9979e8
         freq = [i / delta_time / 4096 for i in range(4096)]
@@ -48,6 +47,5 @@ def calc_fft(request):
         else:
             xs.append(x)
             ys.append(y)
-
 
     return JsonResponse({"xs": xs, "ys": ys})

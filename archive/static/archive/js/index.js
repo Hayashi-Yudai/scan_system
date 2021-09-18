@@ -1,3 +1,15 @@
+class GraphInfo {
+  constructor(pk, colorKey) {
+    /*
+     * pk: primary key (id in HTML)
+     * color: key of colorMap
+     */
+    this.pk = pk;
+    this.colorKey = colorKey;
+  }
+}
+
+
 let table_elements = document.getElementsByName("data-element");
 
 let colorMap = {
@@ -14,8 +26,7 @@ let colorMap = {
 };
 
 let counter = 0;
-let graphColors = [];
-let pkInGraph = [];  // プロットされているグラフのprimary keyを格納. 1はじまり
+let graphs = [];
 let first = true;
 
 for (ele of table_elements) {
@@ -25,11 +36,10 @@ for (ele of table_elements) {
       target.style.backgroundColor = "rgba(255, 255, 255, 1)";
       target.classList.toggle("colored");
 
-      let deleteIdx = pkInGraph.indexOf(target.id);
+      let deleteIdx = graphs.findIndex((e) => e.pk === target.id);
+      graphs.splice(deleteIdx, 1);
 
-      pkInGraph.splice(deleteIdx, 1);
       Plotly.deleteTraces(canvas, deleteIdx);
-      graphColors = graphColors.splice(deleteIdx, 1);
       if (first) {
         Plotly.deleteTraces(canvas, deleteIdx);
         first = false;
@@ -64,13 +74,12 @@ for (ele of table_elements) {
             marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
           });
 
-          graphColors.push(counter % 10);
+          graphs.push(new GraphInfo(target.id, counter % 10));
+          counter++;
         })
         .catch((error) => {
           console.log(error);
         });
-      pkInGraph.push(target.id);
-      counter++;
     }
   });
 }
@@ -82,9 +91,11 @@ document
 
     first = false;
 
+    let pks = graphs.map((graph) => graph.pk);
+
     await fetch(url, {
       method: "POST",
-      body: JSON.stringify({ids: pkInGraph, fft: e.target.checked}),
+      body: JSON.stringify({ids: pks, fft: e.target.checked}),
       headers: {"Content-Type": "application/json"}
     })
       .then((response) => { return response.json(); })
@@ -100,8 +111,8 @@ document
         x: xs_resp[i],
         y: ys_resp[i],
         type: "scatter",
-        line: { color: colorMap[graphColors[i]].replace("0.4", "1.0") },
-        marker: { color: colorMap[graphColors[i]].replace("0.4", "1.0") },
+        line: { color: colorMap[graphs[i].colorKey].replace("0.4", "1.0") },
+        marker: { color: colorMap[graphs[i].colorKey].replace("0.4", "1.0") },
       });
     }
 
