@@ -2,7 +2,7 @@ class GraphInfo {
   constructor(pk, colorKey) {
     /*
      * pk: primary key (id in HTML)
-     * color: key of colorMap
+     * colorKey: key of colorMap
      */
     this.pk = pk;
     this.colorKey = colorKey;
@@ -10,23 +10,60 @@ class GraphInfo {
 }
 
 
+class GraphList {
+  constructor() {
+    this.graphs = []; // List of GraphInfo objects
+    this.counter = 0;
+    this.colorMap = {
+      0: "rgba(230, 0, 18, 0.4)",
+      1: "rgba(235, 97, 0, 0.4)",
+      2: "rgba(252, 200, 0, 0.4)",
+      3: "rgba(143, 195, 31, 0.4)",
+      4: "rgba(0, 153, 68, 0.4)",
+      5: "rgba(0, 158, 150, 0.4)",
+      6: "rgba(0, 160, 233, 0.4)",
+      7: "rgba(0, 104, 183, 0.4)",
+      8: "rgba(29, 32, 136, 0.4)",
+      9: "rgba(146, 7, 131, 0.4)",
+    };
+  }
+
+  getPks() {
+    return this.graphs.map((graph) => graph.pk);
+  }
+
+  getColors(opaque=false) {
+    if (opaque) {
+      return this.graphs.map((graph) => this.colorMap[graph.colorKey].replace("0.4", "1.0"));
+    } else {
+      return this.graphs.map((graph) => this.colorMap[graph.colorKey]);
+    }
+  }
+
+  deleteIndex(idx) {
+    let targetIndex = this.graphs.findIndex((e) => e.pk === idx);
+    this.graphs.splice(targetIndex, 1);
+
+    return targetIndex;
+  }
+
+  getPresentColor(opaque=false) {
+    if (opaque) {
+      return this.colorMap[this.counter % 10].replace("0.4", "1.0");
+    } else {
+      return this.colorMap[this.counter % 10];
+    }
+  }
+
+  push(id) {
+    this.graphs.push(new GraphInfo(id, this.counter % 10));
+    this.counter++;
+  }
+}
+
+
 let table_elements = document.getElementsByName("data-element");
-
-let colorMap = {
-  0: "rgba(230, 0, 18, 0.4)",
-  1: "rgba(235, 97, 0, 0.4)",
-  2: "rgba(252, 200, 0, 0.4)",
-  3: "rgba(143, 195, 31, 0.4)",
-  4: "rgba(0, 153, 68, 0.4)",
-  5: "rgba(0, 158, 150, 0.4)",
-  6: "rgba(0, 160, 233, 0.4)",
-  7: "rgba(0, 104, 183, 0.4)",
-  8: "rgba(29, 32, 136, 0.4)",
-  9: "rgba(146, 7, 131, 0.4)",
-};
-
-let counter = 0;
-let graphs = [];
+let graphs = new GraphList();
 let first = true;
 
 for (ele of table_elements) {
@@ -36,17 +73,17 @@ for (ele of table_elements) {
       target.style.backgroundColor = "rgba(255, 255, 255, 1)";
       target.classList.toggle("colored");
 
-      let deleteIdx = graphs.findIndex((e) => e.pk === target.id);
-      graphs.splice(deleteIdx, 1);
+      let deleteIdx = graphs.deleteIndex(target.id);
 
       Plotly.deleteTraces(canvas, deleteIdx);
       if (first) {
+        // bug in Plotly.js?
         Plotly.deleteTraces(canvas, deleteIdx);
         first = false;
       }
 
     } else {
-      target.style.backgroundColor = colorMap[counter % 10];
+      target.style.backgroundColor = graphs.getPresentColor();
       target.classList.toggle("colored");
 
       let fftIsChecked = document.querySelector("input[name = fft-checkbox]").checked;
@@ -70,12 +107,11 @@ for (ele of table_elements) {
             x: x,
             y: y,
             type: "scatter",
-            line: { color: colorMap[counter % 10].replace("0.4", "1.0") },
-            marker: { color: colorMap[counter % 10].replace("0.4", "1.0") },
+            line: { color: graphs.getPresentColor(opaque=true) },
+            marker: { color: graphs.getPresentColor(opaque=true) },
           });
 
-          graphs.push(new GraphInfo(target.id, counter % 10));
-          counter++;
+          graphs.push(target.id);
         })
         .catch((error) => {
           console.log(error);
@@ -91,7 +127,7 @@ document
 
     first = false;
 
-    let pks = graphs.map((graph) => graph.pk);
+    pks = graphs.getPks();
 
     await fetch(url, {
       method: "POST",
@@ -106,13 +142,14 @@ document
       .catch((err) => { console.log("Error in FFT");})
 
     data.length = 0;
+    colors = graphs.getColors(opaque=true);
     for (i = 0; i < xs_resp.length; i++) {
       data.push({
         x: xs_resp[i],
         y: ys_resp[i],
         type: "scatter",
-        line: { color: colorMap[graphs[i].colorKey].replace("0.4", "1.0") },
-        marker: { color: colorMap[graphs[i].colorKey].replace("0.4", "1.0") },
+        line: { color: colors[i] },
+        marker: { color: colors[i] },
       });
     }
 
