@@ -1,3 +1,6 @@
+/*
+ * Base layout
+ */
 html,
 body,
 main {
@@ -34,11 +37,15 @@ a:active {
   color: inherit;
 }
 
-.links {
+/*
+ * Module
+ */
+
+#main > .links {
   margin-bottom: 10px;
 }
 
-.link {
+.links > a.link {
   margin-right: 10px;
   padding: 5px;
   border: 1px solid rgba(130, 130, 130);
@@ -46,7 +53,7 @@ a:active {
   text-decoration: none;
 }
 
-.link:hover {
+.links > a.link:hover {
   background-color: rgba(130, 130, 130, 0.3);
 }
 
@@ -55,32 +62,37 @@ a:active {
   flex-direction: row;
 }
 
-.plot-area {
+#plot-area {
   margin: 0 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.control-area {
+#plot-area > #canvas {
+  width: 700px;
+  height: 400px;
+}
+
+#control-area {
   margin: 0 10px;
 }
 
-#sampling-rate-area {
+#control-area #sampling-rate-area {
   width: 50px;
 }
 
-#measurement-time-area {
+#control-area #measurement-time-area {
   width: 50px;
 }
 
-#start-button {
+#control-area #start-button {
   font-size: 1.2em;
   width: 100px;
   height: 40px;
 }
 
-#save-area {
+#control-area #save-area {
   width: 300px;
 }
 
@@ -100,6 +112,7 @@ a:active {
   height: 15px;
 }
 
+/*
 #control {
   margin-top: 1em;
 }
@@ -112,6 +125,7 @@ a:active {
 #control select {
   padding: 0.25em 0.5em;
 }
+*/
 
 footer {
   margin-top: 2em;
@@ -127,12 +141,13 @@ footer {
 .toggle-switch {
   display: flex;
 }
-.switch__label {
+
+.toggle-switch .switch__label {
   width: 50px;
   position: relative;
   display: inline-block;
 }
-.switch__content {
+.toggle-switch .switch__content {
   display: block;
   cursor: pointer;
   position: relative;
@@ -140,7 +155,7 @@ footer {
   height: 31px;
   overflow: hidden;
 }
-.switch__content:before {
+.toggle-switch .switch__content:before {
   content: "";
   display: block;
   position: absolute;
@@ -152,7 +167,7 @@ footer {
   border-radius: 30px;
   background-color: #fff;
 }
-.switch__content:after {
+.toggle-switch .switch__content:after {
   content: "";
   display: block;
   position: absolute;
@@ -168,10 +183,10 @@ footer {
   -o-transition: all 0.2s;
   transition: all 0.2s;
 }
-.switch__input {
+.toggle-switch .switch__input {
   display: none;
 }
-.switch__circle {
+.toggle-switch .switch__circle {
   display: block;
   top: 2px;
   left: 2px;
@@ -189,10 +204,10 @@ footer {
   -o-transition: all 0.5s;
   transition: all 0.5s;
 }
-.switch__input:checked ~ .switch__circle {
+.toggle-switch .switch__input:checked ~ .switch__circle {
   left: 21px;
 }
-.switch__input:checked ~ .switch__content:after {
+.toggle-switch .switch__input:checked ~ .switch__content:after {
   background-color: #00c4cc;
   top: 0;
   left: 0;
@@ -200,7 +215,7 @@ footer {
   height: 100%;
 }
 
-.fft-label {
+.toggle-switch .fft-label {
   margin-top: 4px;
   margin-left: 8px;
 }

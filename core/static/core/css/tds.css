@@ -57,12 +57,11 @@ p {
 .tab_item:hover {
   opacity: 0.75;
 }
-/*ラジオボタンを全て消す*/
+
 input[name="tab_item"] {
   display: none;
 }
 
-/*タブ切り替えの中身のスタイル*/
 .tab_content {
   display: none;
   padding: 30px 10px 0;
@@ -76,7 +75,6 @@ input[name="tab_item"] {
   display: block;
 }
 
-/*選択されているタブのスタイルを変える*/
 .tabs input:checked + .tab_item {
   background-color: lightblue;
   color: #fff;
