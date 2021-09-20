@@ -33,19 +33,19 @@ class Index(View):
         # TODO: context is not necessary
         context = {"position": self.x, "intensity": self.y}
 
-        return render(request, "core/raster.html", context)
+        return render(request, "core/index_rapid.html", context)
 
     # TODO: remove
     def post(self, request):
         context = {"position": self.x, "intensity": self.y}
 
         # TODO: context is not necessary
-        return render(request, "core/raster.html", context)
+        return render(request, "core/index_rapid.html", context)
 
 
 class TDS(View):
     def get(self, request):
-        return render(request, "core/tds.html")
+        return render(request, "core/index_tds.html")
 
 
 #####################################
