@@ -12,7 +12,7 @@ class Index(ListView):
     template_name = "archive/index.html"
     model = TDSData
     ordering = ["-measured_date"]
-    paginate_by = 4
+    paginate_by = 20
 
 
 def get_archive_data(request):

@@ -2,4 +2,4 @@ from django.shortcuts import redirect
 
 
 def index(request):
-    return redirect("core/tds")
+    return redirect("core/step")
