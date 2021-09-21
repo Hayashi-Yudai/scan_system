@@ -17,31 +17,8 @@ tds_running = False
 
 
 class RapidScan(View):
-    def __init__(self, *args, **kwargs):
-        super(RapidScan, self).__init__(*args, **kwargs)
-
-        # TODO: Remove
-        self.x = wave.x
-        self.y = wave.y
-
     def get(self, request):
-        # TODO: Remove
-        wave.set([1, 2, 3, 4, 5, 6, 7], [1, 4, 9, 16, 25, 36, 49])
-        self.x = wave.x
-        self.y = wave.y
-
-        # TODO: context is not necessary
-        context = {"position": self.x, "intensity": self.y}
-
-        return render(request, "core/index_rapid.html", context)
-
-    # TODO: remove
-    def post(self, request):
-        context = {"position": self.x, "intensity": self.y}
-
-        # TODO: context is not necessary
-        return render(request, "core/index_rapid.html", context)
-
+        return render(request, "core/index_rapid.html")
 
 class StepScan(View):
     def get(self, request):
