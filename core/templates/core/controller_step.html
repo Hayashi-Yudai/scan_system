@@ -1,0 +1,169 @@
+<div id="control-area">
+  <div class="tabs">
+    <input id="tds" type="radio" name="tab_item" checked />
+    <label class="tab_item" for="tds">TDS</label>
+    <input id="sr830" type="radio" name="tab_item" />
+    <label class="tab_item" for="sr830">Lock-in</label>
+    <input id="temp_field" type="radio" name="tab_item" />
+    <label class="tab_item" for="temp_field">Temp. & Field</label>
+    <div class="tab_content" id="tds_content">
+      <form id="stage-move" action="{% url 'core:move' %}">
+        <p>Move stage:</p>
+        <input type="number" id="stage-position" /> &mu;m
+        <input type="submit" value="Move" />
+      </form>
+      <form id="tds-settings" action="{% url 'core:tds_data' %}">
+        <div id="stage-position-settings">
+          <div id="start">
+            <p>Start:</p>
+            <input type="number" id="start-position" /> &mu;m
+          </div>
+          <div id="end">
+            <p>End:</p>
+            <input type="number" id="end-position" /> &mu;m
+          </div>
+          <div id="step">
+            <p>Step:</p>
+            <input type="number" id="moving-step" /> &mu;m
+          </div>
+        </div>
+        <p>Lock-in time:</p>
+        <input type="number" id="lockin-time" /> ms
+        <p>Multi scan:</p>
+        <input type="number" id="multiscan" value="1" /> times
+        <input type="submit" value="Start" id="start-button" />
+        <div id="scan-status"></div>
+      </form>
+      <form id="save-data" action="{% url 'core:save' %}">
+        <p>Save Data:</p>
+        <input type="text" id="save-area" value="C:/Users/suzuki/Desktop" />
+        <input type="hidden" id="save-type" value="TDS" />
+        <input type="submit" id="save-button" value="Save" />
+      </form>
+    </div>
+    <div class="tab_content" id="sr830_content">
+      <p id="sr830-gpib-intensity">Intensity:</p>
+      <form id="sr830-sensitivity" action="{% url 'core:change_sensitivity' %}">
+        <p>Sensitivity:</p>
+        <div id="sens-highest-order">
+          <div>
+            <input type="radio" id="one-s" name="sensitivity-num" value="1" />
+            <label for="one-s">1</label>
+          </div>
+          <div>
+            <input type="radio" id="two-s" name="sensitivity-num" value="2" />
+            <label for="two-s">2</label>
+          </div>
+          <div>
+            <input type="radio" id="five-s" name="sensitivity-num" value="5" />
+            <label for="five-s">5</label>
+          </div>
+        </div>
+        <div id="sens-order">
+          <div>
+            <input type="radio" id="uni-s" name="sensitivity-order" value="1" />
+            <label for="uni-s">1</label>
+          </div>
+          <div>
+            <input type="radio" id="ten-s" name="sensitivity-order" value="10" />
+            <label for="ten-s">10</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="hundred-s"
+              name="sensitivity-order"
+              value="100"
+            />
+            <label for="hundred-s">100</label>
+          </div>
+        </div>
+        <div id="sens-unit">
+          <div>
+            <input
+              type="radio"
+              id="micro-s"
+              name="sensitivity-unit"
+              value="micro-volt"
+            />
+            <label for="micro-s">&mu;V</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="milli-s"
+              name="sensitivity-unit"
+              value="milli-volt"
+            />
+            <label for="milli-s">mV</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              id="volt-s"
+              name="sensitivity-unit"
+              value="volt"
+            />
+            <label for="sec">V</label>
+          </div>
+        </div>
+      </form>
+      <form id="sr830-time-const" action="{% url 'core:change_time_const' %}">
+        <p>Time-Constant:</p>
+        <div id="time-highest-order">
+          <div>
+            <input type="radio" id="one-t" name="time-num" value="1" />
+            <label for="one">1</label>
+          </div>
+          <div>
+            <input type="radio" id="three-t" name="time-num" value="3" />
+            <label for="three">3</label>
+          </div>
+        </div>
+        <div id="sens-order">
+          <div>
+            <input type="radio" id="uni-t" name="time-order" value="1" />
+            <label for="uni">1</label>
+          </div>
+          <div>
+            <input type="radio" id="ten-t" name="time-order" value="10" />
+            <label for="ten">10</label>
+          </div>
+          <div>
+            <input type="radio" id="hundred-t" name="time-order" value="100" />
+            <label for="hundred">100</label>
+          </div>
+        </div>
+        <div id="sens-unit">
+          <div>
+            <input type="radio" id="micro-t" name="time-unit" value="micro-sec" />
+            <label for="micro">&mu;s</label>
+          </div>
+          <div>
+            <input type="radio" id="milli-t" name="time-unit" value="milli-sec" />
+            <label for="milli">ms</label>
+          </div>
+          <div>
+            <input type="radio" id="sec-t" name="time-unit" value="sec" />
+            <label for="sec">s</label>
+          </div>
+        </div>
+      </form>
+      <form id="auto-phase" action="{%url 'core:auto_phase' %}">
+        <input type="submit" value="Auto Phase" />
+      </form>
+    </div>
+    <div class="tab_content" id="temp_field_content">
+      <form id="temp-control">
+        <p>Temperature (K):</p>
+        <input type="number" id="target-temp" />
+        <input type="submit" id="set-temp" value="Set" />
+      </form>
+      <form id="field-control">
+        <p>Magnetic Field (T):</p>
+        <input type="number" id="target-field" />
+        <input type="submit" id="set-field" value="Set" />
+      </form>
+    </div>
+  </div>
+</div>

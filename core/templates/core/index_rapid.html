@@ -1,0 +1,41 @@
+{% load static %}
+<html>
+  <header>
+    <meta charset="utf-8" />
+    <title>THz-TDS measurement</title>
+    <script type="text/javascript">
+      let fft_url = "http://localhost:8000/core/calc-fft/";
+    </script>
+    <script
+      type="text/javascript"
+      src="{% static 'core/js/plotly-2.3.0.min.js' %}"
+    ></script>
+    <script src="{% static 'core/js/ajax_common.js' %}" defer></script>
+    <script src="{% static 'core/js/plot_spectl.js' %}" defer></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'core/css/index.css' %}"
+    />
+    <script
+      type="text/javascript"
+      src="{% static 'core/js/index.js' %}"
+      defer
+    ></script>
+    <script type="text/javascript">
+      let x = {{ position }};
+      let y = {{ intensity }};
+    </script>
+    <script src="{% static 'core/js/ajax.js' %}" defer></script>
+  </header>
+  <body>
+    <main id="main">
+      {% include "core/header.html" %}
+      {% include "core/links.html" %}
+      <div id="container">
+        {% include "core/plot_rapid.html" %}
+        {% include "core/controller_rapid.html" %}
+      </div>
+    </main>
+  </body>
+</html>

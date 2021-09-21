@@ -75,8 +75,9 @@ async function tds_measurement() {
     if (multiscan > 1) {
       const url = document.getElementById("save-data").action;
       const type = document.getElementById("save-type").value;
+      let path = document.getElementById("save-area").value;
 
-      if (path.endsWith(".csv") || path.endsWith(".txt")) {
+      if (!path.endsWith(".csv") && !path.endsWith(".txt")) {
         path += ".csv";
       }
 

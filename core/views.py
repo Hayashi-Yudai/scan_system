@@ -16,9 +16,9 @@ scan_running = False
 tds_running = False
 
 
-class Index(View):
+class RapidScan(View):
     def __init__(self, *args, **kwargs):
-        super(Index, self).__init__(*args, **kwargs)
+        super(RapidScan, self).__init__(*args, **kwargs)
 
         # TODO: Remove
         self.x = wave.x
@@ -33,19 +33,19 @@ class Index(View):
         # TODO: context is not necessary
         context = {"position": self.x, "intensity": self.y}
 
-        return render(request, "core/raster.html", context)
+        return render(request, "core/index_rapid.html", context)
 
     # TODO: remove
     def post(self, request):
         context = {"position": self.x, "intensity": self.y}
 
         # TODO: context is not necessary
-        return render(request, "core/raster.html", context)
+        return render(request, "core/index_rapid.html", context)
 
 
-class TDS(View):
+class StepScan(View):
     def get(self, request):
-        return render(request, "core/tds.html")
+        return render(request, "core/index_step.html")
 
 
 #####################################
