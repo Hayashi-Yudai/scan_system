@@ -15,6 +15,7 @@ async function tds_measurement() {
   let lockin = Number(document.getElementById("lockin-time").value);
   let multiscan = Number(document.getElementById("multiscan").value);
   let path = document.getElementById("save-area").value;
+  let scanStatus = document.getElementById("scan-status");
 
   if (start >= end || start < 0 || end <= 0 || step <= 0 || lockin <= 0 || multiscan <= 0) {
     alert("Invalid Parameters");
@@ -39,7 +40,6 @@ async function tds_measurement() {
     });
     await _sleep(1000);
 
-    let scanStatus = document.getElementById("scan-status");
     while (!finished) {
       await fetch(url, {
         method: "POST",
@@ -61,7 +61,7 @@ async function tds_measurement() {
           data[0].y = y;
 
           Plotly.update(canvas, data, layout);
-          scanStatus.innerText = `Scanning ${i}/${multiscan}...`;
+          scanStatus.innerText = `Scanning ${i + 1}/${multiscan}...`;
         })
         .catch((error) => {
           console.log(error);
