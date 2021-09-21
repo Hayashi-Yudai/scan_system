@@ -1,6 +1,7 @@
 from core.utils.Mark202 import Mark202
 from core.utils.SR830 import SR830
 from core.utils.waveform import WaveForm
+from core.models import TemporalData
 import os
 import pandas as pd
 import numpy as np
@@ -26,7 +27,7 @@ def save_data_as_csv(save_path: str, data: list) -> None:
         df.to_csv(save_path + ".csv", index=False)
 
 
-def get_lockin_intensity() -> tuple:
+def get_lockin_intensity() -> tuple[float, bool]:
     """
     Returns the lockin intensity and status
     """
@@ -37,7 +38,7 @@ def get_lockin_intensity() -> tuple:
         return 0, False
 
 
-def auto_phase_lockin():
+def auto_phase_lockin() -> bool:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.auto_phase()
@@ -46,7 +47,7 @@ def auto_phase_lockin():
         return False
 
 
-def set_lockin_sensitivity(value, unit):
+def set_lockin_sensitivity(value: int, unit: str) -> bool:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.set_sensitivity(value, unit)
@@ -55,7 +56,7 @@ def set_lockin_sensitivity(value, unit):
         return False
 
 
-def set_lockin_time_const(value, unit):
+def set_lockin_time_const(value: int, unit: str) -> bool:
     try:
         with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
             lockin.set_time_const(value, unit)
@@ -72,10 +73,13 @@ def calc_fft(data: list) -> list:
 
 
 def tds_scan(
-    start: int, end: int, step: int, lockin_time: float, wave: WaveForm
+    start: int, end: int, step: int, lockin_time: float, entry: TemporalData
 ) -> bool:
+    wave = WaveForm.new(entry)
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202() as stage:
+        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202(
+            int(os.environ["MARK202_GPIB_ADDRESS"])
+        ) as stage:
             stage.move(start)
             stage.wait_while_busy()
 
@@ -85,6 +89,9 @@ def tds_scan(
                 intensity = amp.get_intensity()
 
                 wave.push([position_now], [float(intensity)])
+                entry.position_data = ",".join(map(str, wave.x))
+                entry.intensity_data = ",".join(map(str, wave.y))
+                entry.save()
                 stage.move(position_now + step)
                 position_now += step
                 stage.wait_while_busy()
