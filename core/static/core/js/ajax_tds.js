@@ -1,3 +1,5 @@
+let tds_boot_url = "http://localhost:8000/core/tds-boot/";
+
 document
   .getElementById("tds-settings")
   .addEventListener("submit", async (e) => {

@@ -1,3 +1,5 @@
+let fft_url = "http://localhost:8000/core/calc-fft/";
+
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Move the step motor stage to the specified position

@@ -1,3 +1,6 @@
+let x;
+let y;
+
 var trace1 = {
   x: x,
   y: y,
