@@ -1,6 +1,7 @@
 .env
 .vscode
 .venv
+node_modules
 __pycache__
 db.sqlite3
 Pipfile.lock
