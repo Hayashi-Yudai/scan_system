@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class TDSData(models.Model):
     measured_date = models.DateTimeField(auto_now_add=True)
     start_position = models.PositiveIntegerField()
@@ -10,7 +11,8 @@ class TDSData(models.Model):
     intensity_data = models.TextField(blank=False)
     file_name = models.TextField(blank=True)
 
-class TemporalData(models. Model):
+
+class TemporalData(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     data_type = models.TextField(blank=False)
     position_data = models.TextField(blank=True)

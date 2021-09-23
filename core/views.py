@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import render
 from django.views import View
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 import numpy as np
 import os
 
@@ -39,20 +39,34 @@ class StepScan(View):
 #####################################
 
 
-def move(request):
-    position: int = int(request.POST.get("position"))
+def move(request) -> HttpResponse:
+    try:
+        position = int(request.POST.get("position"))
+    except (TypeError, ValueError):
+        return HttpResponseBadRequest("Invalid parameter")
+
+    if position < 0:
+        return HttpResponseBadRequest("'position' must be positive or zero")
+
     succeed: bool = api_ops.move_stage(position)
 
     return JsonResponse({"success": succeed})
 
 
-def save(request):
-    save_path = request.POST.get("path")
+def save(request) -> HttpResponse:
+    if (save_path := request.POST.get("path")) is None:
+        return HttpResponseBadRequest("Invalid parameter")
+
+    if save_path.count("/") < 1:
+        return HttpResponseBadRequest("Invalid path")
+
     directory = save_path.rsplit("/", 1)[0]
     if not os.path.exists(directory):
-        return JsonResponse({"success": False})
+        return HttpResponseBadRequest("Invalid path")
 
-    data_type = request.POST.get("type")
+    if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        return HttpResponseBadRequest("Invalid parameter")
+
     present_data = (
         TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
@@ -90,16 +104,21 @@ def scan(request):
 
 
 def gpib(request) -> JsonResponse:
-    intensity, connection = api_ops.get_lockin_intensity()
+    intensity, connection = api_ops.get_lockin_intensity()  # float, bool
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
 def calc_fft(request) -> JsonResponse:
-    data_type = request.POST.get("type")
+    if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        return HttpResponseBadRequest("Invalid parameter")
+
     present_data = (
         TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
+
+    if request.POST.get("fft") not in ["true", "false"]:
+        return HttpResponseBadRequest("Invalid parameter")
 
     if request.POST.get("fft") == "true":
         if len(wave.x) == 0:
@@ -120,12 +139,15 @@ def tds_boot(request) -> JsonResponse:
     present_data.position_data = ""
     present_data.intensity_data = ""
 
-    tds_running = True
-    start = int(request.POST.get("start"))
-    end = int(request.POST.get("end"))
-    step = int(request.POST.get("step"))
-    lockin = float(request.POST.get("lockin"))
+    try:
+        start = int(request.POST.get("start"))
+        end = int(request.POST.get("end"))
+        step = int(request.POST.get("step"))
+        lockin = float(request.POST.get("lockin"))
+    except (ValueError, TypeError):
+        return HttpResponseBadRequest("Invalid parameter(s)")
 
+    tds_running = True
     success = api_ops.tds_scan(start, end, step, lockin, present_data)
 
     tds_running = False
@@ -156,16 +178,24 @@ def tds_data(request) -> JsonResponse:
     return JsonResponse({"x": wave.x, "y": wave.y, "status": status})
 
 
-def change_sensitivity(request) -> JsonResponse:
-    value = int(request.POST.get("value"))
+def change_sensitivity(request) -> HttpResponse:
+    try:
+        value = int(request.POST.get("value"))
+    except (ValueError, TypeError):
+        return HttpResponseBadRequest("Invalid parameter")
+
     unit = request.POST.get("unit")
     api_ops.set_lockin_sensitivity(value, unit)
 
     return JsonResponse({"status": "ok"})
 
 
-def change_time_const(request) -> JsonResponse:
-    value = int(request.POST.get("value"))
+def change_time_const(request) -> HttpResponse:
+    try:
+        value = int(request.POST.get("value"))
+    except (ValueError, TypeError):
+        return HttpResponseBadRequest("Invalid parameter")
+
     unit = request.POST.get("unit")
     api_ops.set_lockin_time_const(value, unit)
 
@@ -173,7 +203,6 @@ def change_time_const(request) -> JsonResponse:
 
 
 def auto_phase(request) -> JsonResponse:
-    status = api_ops.auto_phase_lockin()
-    print(status)
+    api_ops.auto_phase_lockin()
 
     return JsonResponse({"status": "ok"})
