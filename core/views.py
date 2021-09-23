@@ -81,8 +81,8 @@ def scan(request):
     y = 1e-6 * np.sin(x)
     wave.x = x.tolist()
     wave.y = y.tolist()
-    present_data.position_data = ",".join(list(map(str, wave.x)))
-    present_data.intensity_data = ",".join(list(map(str, wave.y)))
+    present_data.position_data = ",".join(map(str, wave.x))
+    present_data.intensity_data = ",".join(map(str, wave.y))
     present_data.save()
     return JsonResponse(
         {"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False}
