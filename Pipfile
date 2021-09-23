@@ -15,3 +15,7 @@ Django = "~=3.1"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+server = "python manage.py runserver"
+test = "python manage.py test"
