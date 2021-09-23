@@ -1,5 +1,7 @@
 # Scan system
 
+![Django workflow](https://github.com/Hayashi-Yudai/scan_system/actions/workflows/django.yml/badge.svg)
+
 ## Requirements
 
 - Windows10 (if using .bat files to setup and run)
