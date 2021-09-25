@@ -12,6 +12,21 @@ class JsonAPITest(TestCase):
     def setUp(self):
         self.client = Client()
 
+        TemporalData.objects.create(
+            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
+        )
+        TemporalData.objects.create(
+            data_type="RAPID", position_data="1,2,3", intensity_data="1,2,3"
+        )
+        TDSData.objects.create(
+            start_position=0,
+            end_position=10,
+            step=1,
+            lockin_time=300,
+            position_data="1,2,3",
+            intensity_data="1,2,3",
+        )
+
     @mock.patch("core.views.api_ops.move_stage")
     def test_move_stage(self, mock_move_stage):
         mock_move_stage.return_value = True
@@ -43,20 +58,6 @@ class JsonAPITest(TestCase):
     def test_save_data(self, mock_save_data_as_csv):
         # Set up
         mock_save_data_as_csv.return_value = None
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
-        TemporalData.objects.create(
-            data_type="RAPID", position_data="1,2,3", intensity_data="1,2,3"
-        )
-        TDSData.objects.create(
-            start_position=0,
-            end_position=10,
-            step=1,
-            lockin_time=300,
-            position_data="1,2,3",
-            intensity_data="1,2,3",
-        )
 
         # Test
         response = self.client.post(
@@ -110,9 +111,6 @@ class JsonAPITest(TestCase):
     def test_calc_fft(self, mock_calc_fft):
         # Set up
         mock_calc_fft.return_value = ([], [])
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
 
         response = self.client.post("/core/calc-fft/", {"type": "TDS", "fft": "false"})
         data = json.loads(response.content)
@@ -139,9 +137,6 @@ class JsonAPITest(TestCase):
     def test_tds_boot(self, mock_tds_scan):
         # Set up
         mock_tds_scan.return_value = True
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
 
         # Test
         response = self.client.post(
@@ -167,12 +162,6 @@ class JsonAPITest(TestCase):
         self.assertEqual(response.content, b"Invalid parameter(s)")
 
     def test_tds_data(self):
-        # Set up
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
-
-        # Test
         response = self.client.post("/core/tds-data/")
         self.assertEqual(response.status_code, 200)
 
