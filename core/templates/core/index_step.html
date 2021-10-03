@@ -1,7 +1,7 @@
 {% load static %}
 {% load sass_tags %}
 <html>
-  <header>
+  <head>
     <meta charset="utf-8" />
     <title>THz-TDS measurement</title>
     <script
@@ -13,11 +13,13 @@
     <script src="{% static 'core/js/plot_spectl.js' %}" defer></script>
     <link rel="stylesheet" href="{% sass_src 'core/css/main.scss' %}"/>
     <link rel="stylesheet" href="{% sass_src 'core/css/step.scss' %}" />
-  </header>
+  </head>
   <body>
-    <main id="main">
+    <header>
       {% include "core/header.html" %}
       {% include "core/links.html" %}
+    </header>
+    <main id="main">
       <div id="container">
         {% include "core/plot_step.html" %}
         {% include "core/controller_step.html" %}
