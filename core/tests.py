@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import resolve
 from unittest import mock
 import json
 
@@ -6,6 +7,7 @@ import json
 # import threading
 
 from core.models import TemporalData, TDSData
+from core import views
 
 
 class JsonAPITest(TestCase):
@@ -239,3 +241,64 @@ class JsonAPITest(TestCase):
 
         response = self.client.post("/core/auto-phase/")
         self.assertEqual(response.status_code, 200)
+
+
+class URLTest(TestCase):
+    def test_root(self):
+        self.assertEqual(resolve("/core/").func.view_class, views.RapidScan)
+
+    def test_step(self):
+        self.assertEqual(resolve("/core/step/").func.view_class, views.StepScan)
+
+    def test_move(self):
+        self.assertEqual(resolve("/core/move/").func, views.move)
+
+    def test_save(self):
+        self.assertEqual(resolve("/core/save/").func, views.save)
+
+    def test_scan(self):
+        self.assertEqual(resolve("/core/scan/").func, views.scan)
+
+    def test_gpib(self):
+        self.assertEqual(resolve("/core/gpib/").func, views.gpib)
+
+    def test_calc_fft(self):
+        self.assertEqual(resolve("/core/calc-fft/").func, views.calc_fft)
+
+    def test_tds_data(self):
+        self.assertEqual(resolve("/core/tds-data/").func, views.tds_data)
+
+    def test_tds_boot(self):
+        self.assertEqual(resolve("/core/tds-boot/").func, views.tds_boot)
+
+    def test_change_sensitivity(self):
+        self.assertEqual(
+            resolve("/core/change-sensitivity/").func, views.change_sensitivity
+        )
+
+    def test_change_time_const(self):
+        self.assertEqual(
+            resolve("/core/change-time-const/").func, views.change_time_const
+        )
+
+    def test_auto_phase(self):
+        self.assertEqual(resolve("/core/auto-phase/").func, views.auto_phase)
+
+
+class TestTDSDataModel(TestCase):
+    def test_is_empty(self):
+        entry = TDSData.objects.all()
+        self.assertEqual(entry.count(), 0)
+
+    def test_create_entry(self):
+        TDSData.objects.create(
+            start_position=0,
+            end_position=10,
+            step=5,
+            lockin_time=300,
+            position_data="1,2,3",
+            intensity_data="1,2,3",
+            file_name="",
+        )
+        entry = TDSData.objects.all()
+        self.assertEqual(entry.count(), 1)
