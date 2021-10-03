@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.urls import resolve
 from unittest import mock
 import json
 
@@ -6,11 +7,27 @@ import json
 # import threading
 
 from core.models import TemporalData, TDSData
+from core import views
 
 
 class JsonAPITest(TestCase):
     def setUp(self):
         self.client = Client()
+
+        TemporalData.objects.create(
+            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
+        )
+        TemporalData.objects.create(
+            data_type="RAPID", position_data="1,2,3", intensity_data="1,2,3"
+        )
+        TDSData.objects.create(
+            start_position=0,
+            end_position=10,
+            step=1,
+            lockin_time=300,
+            position_data="1,2,3",
+            intensity_data="1,2,3",
+        )
 
     @mock.patch("core.views.api_ops.move_stage")
     def test_move_stage(self, mock_move_stage):
@@ -43,20 +60,6 @@ class JsonAPITest(TestCase):
     def test_save_data(self, mock_save_data_as_csv):
         # Set up
         mock_save_data_as_csv.return_value = None
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
-        TemporalData.objects.create(
-            data_type="RAPID", position_data="1,2,3", intensity_data="1,2,3"
-        )
-        TDSData.objects.create(
-            start_position=0,
-            end_position=10,
-            step=1,
-            lockin_time=300,
-            position_data="1,2,3",
-            intensity_data="1,2,3",
-        )
 
         # Test
         response = self.client.post(
@@ -110,9 +113,6 @@ class JsonAPITest(TestCase):
     def test_calc_fft(self, mock_calc_fft):
         # Set up
         mock_calc_fft.return_value = ([], [])
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
 
         response = self.client.post("/core/calc-fft/", {"type": "TDS", "fft": "false"})
         data = json.loads(response.content)
@@ -139,9 +139,6 @@ class JsonAPITest(TestCase):
     def test_tds_boot(self, mock_tds_scan):
         # Set up
         mock_tds_scan.return_value = True
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
 
         # Test
         response = self.client.post(
@@ -167,12 +164,6 @@ class JsonAPITest(TestCase):
         self.assertEqual(response.content, b"Invalid parameter(s)")
 
     def test_tds_data(self):
-        # Set up
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
-
-        # Test
         response = self.client.post("/core/tds-data/")
         self.assertEqual(response.status_code, 200)
 
@@ -250,3 +241,64 @@ class JsonAPITest(TestCase):
 
         response = self.client.post("/core/auto-phase/")
         self.assertEqual(response.status_code, 200)
+
+
+class URLTest(TestCase):
+    def test_root(self):
+        self.assertEqual(resolve("/core/").func.view_class, views.RapidScan)
+
+    def test_step(self):
+        self.assertEqual(resolve("/core/step/").func.view_class, views.StepScan)
+
+    def test_move(self):
+        self.assertEqual(resolve("/core/move/").func, views.move)
+
+    def test_save(self):
+        self.assertEqual(resolve("/core/save/").func, views.save)
+
+    def test_scan(self):
+        self.assertEqual(resolve("/core/scan/").func, views.scan)
+
+    def test_gpib(self):
+        self.assertEqual(resolve("/core/gpib/").func, views.gpib)
+
+    def test_calc_fft(self):
+        self.assertEqual(resolve("/core/calc-fft/").func, views.calc_fft)
+
+    def test_tds_data(self):
+        self.assertEqual(resolve("/core/tds-data/").func, views.tds_data)
+
+    def test_tds_boot(self):
+        self.assertEqual(resolve("/core/tds-boot/").func, views.tds_boot)
+
+    def test_change_sensitivity(self):
+        self.assertEqual(
+            resolve("/core/change-sensitivity/").func, views.change_sensitivity
+        )
+
+    def test_change_time_const(self):
+        self.assertEqual(
+            resolve("/core/change-time-const/").func, views.change_time_const
+        )
+
+    def test_auto_phase(self):
+        self.assertEqual(resolve("/core/auto-phase/").func, views.auto_phase)
+
+
+class TestTDSDataModel(TestCase):
+    def test_is_empty(self):
+        entry = TDSData.objects.all()
+        self.assertEqual(entry.count(), 0)
+
+    def test_create_entry(self):
+        TDSData.objects.create(
+            start_position=0,
+            end_position=10,
+            step=5,
+            lockin_time=300,
+            position_data="1,2,3",
+            intensity_data="1,2,3",
+            file_name="",
+        )
+        entry = TDSData.objects.all()
+        self.assertEqual(entry.count(), 1)

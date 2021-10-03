@@ -4,3 +4,6 @@ pandas ~= 1.2
 numpy ~= 1.20
 PyVISA ~= 1.11
 python-dotenv
+libsass
+django-compressor
+django-sass-processor

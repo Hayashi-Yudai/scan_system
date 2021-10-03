@@ -1,0 +1,100 @@
+.tabs {
+  margin-top: 50px;
+  padding-top: 30px;
+  background-color: #fff;
+  margin: 0 auto;
+  width: 450px;
+
+  p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  > input[name="tab_item"] {
+    display: none;
+  }
+
+  > label.tab_item {
+    width: calc(100% / 3);
+    height: 40px;
+    background-color: #e9e9e9;
+    line-height: 45px;
+    font-size: 16px;
+    text-align: center;
+    color: #979393;
+    display: block;
+    float: left;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  > .tab_content {
+    display: none;
+    padding: 30px 10px 0;
+    clear: both;
+    overflow: hidden;
+  }
+
+  input:checked + .tab_item {
+    background-color: lightblue;
+    color: #fff;
+  }
+
+  #tds:checked ~ #tds_content,
+  #sr830:checked ~ #sr830_content,
+  #temp_field:checked ~ #temp_field_content {
+    display: block;
+  }
+
+  > #tds_content {
+    #stage-position,
+    #start-position,
+    #end-position,
+    #lockin-time {
+      width: 80px;
+    }
+
+    #multiscan {
+      width: 40px;
+    }
+
+    #stage-position-settings {
+      display: inline-flex;
+    }
+
+    #start,
+    #end,
+    #step {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    #start-button {
+      margin-left: 100px;
+    }
+
+    #moving-step {
+      width: 40px;
+    }
+  }
+
+  > #sr830_content {
+    #sr830-sensitivity,
+    #sr830-time-const {
+      display: inline-flex;
+      margin-top: 10px;
+    }
+
+    #sens-highest-order,
+    #sens-order,
+    #time-highest-order,
+    #time-order {
+      margin-right: 25px;
+    }
+  }
+}

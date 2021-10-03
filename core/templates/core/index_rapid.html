@@ -1,6 +1,7 @@
 {% load static %}
+{% load sass_tags %}
 <html>
-  <header>
+  <head>
     <meta charset="utf-8" />
     <title>THz-TDS measurement</title>
     <script
@@ -15,16 +16,15 @@
       src="{% static 'core/js/index.js' %}"
       defer
     ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'core/css/index.css' %}"
-    />
-  </header>
+    <link rel="stylesheet" href="{% sass_src 'core/css/main.scss' %}"/>
+    <link rel="stylesheet" href="{% sass_src 'core/css/rapid.scss' %}"/>
+  </head>
   <body>
-    <main id="main">
+    <header>
       {% include "core/header.html" %}
       {% include "core/links.html" %}
+    </header>
+    <main id="main">
       <div id="container">
         {% include "core/plot_rapid.html" %}
         {% include "core/controller_rapid.html" %}
