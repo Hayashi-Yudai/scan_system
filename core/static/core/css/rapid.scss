@@ -1,0 +1,18 @@
+#control-area {
+  > #fast-stage {
+    #sampling-rate-area,
+    #measurement-time-area {
+      width: 50px;
+    }
+
+    .invalid-value {
+      border-color: red;
+      color: red;
+    }
+
+    form#sampling-rate-form ~ p.hide {
+      display: none;
+    }
+
+  }
+}

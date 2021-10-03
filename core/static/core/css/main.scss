@@ -185,20 +185,6 @@ main {
     > #control-area {
       margin: 0 10px;
 
-      #sampling-rate-area,
-      #measurement-time-area {
-        width: 50px;
-      }
-
-      .invalid-value {
-        border-color: red;
-        color: red;
-      }
-
-      form#sampling-rate-form ~ p.hide {
-        display: none;
-      }
-
       #start-button {
         font-size: 1.2em;
         width: 100px;
