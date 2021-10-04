@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.tests &#8212; core  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.tests</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">resolve</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="c1"># import time</span>
+<span class="c1"># import threading</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">TemporalData</span><span class="p">,</span> <span class="n">TDSData</span>
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">views</span>
+
+
+<div class="viewcode-block" id="JsonAPITest"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest">[docs]</a><span class="k">class</span> <span class="nc">JsonAPITest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="JsonAPITest.setUp"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="n">position_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span> <span class="n">intensity_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span>
+        <span class="p">)</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">,</span> <span class="n">position_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span> <span class="n">intensity_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span>
+        <span class="p">)</span>
+        <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">start_position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">end_position</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">lockin_time</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+            <span class="n">position_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span>
+            <span class="n">intensity_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_move_stage"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_move_stage">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.move_stage&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_move_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_move_stage</span><span class="p">):</span>
+        <span class="n">mock_move_stage</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">success</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">mock_move_stage</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">success</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Bad parameters</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;&#39;position&#39; must be positive or zero&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;bad request&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;positions&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_save_data"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_save_data">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.save_data_as_csv&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_save_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_save_data_as_csv</span><span class="p">):</span>
+        <span class="c1"># Set up</span>
+        <span class="n">mock_save_data_as_csv</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Test</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;./test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;success&quot;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;./test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;RAPID&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;success&quot;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Bad requests</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;paths&quot;</span><span class="p">:</span> <span class="s2">&quot;./test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid path&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/not/existing/path&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid path&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/save/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;./test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;BadType&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_scan"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_scan">[docs]</a>    <span class="k">def</span> <span class="nf">test_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_gpib"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_gpib">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.get_lockin_intensity&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_gpib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_get_lockin_intensity</span><span class="p">):</span>
+        <span class="n">mock_get_lockin_intensity</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/gpib/&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;intensity&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s2">&quot;connection&quot;</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_calc_fft"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_calc_fft">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.calc_fft&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_calc_fft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_calc_fft</span><span class="p">):</span>
+        <span class="c1"># Set up</span>
+        <span class="n">mock_calc_fft</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="p">([],</span> <span class="p">[])</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/calc-fft/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/calc-fft/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="p">[])</span>
+
+        <span class="c1"># Bad requests</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/calc-fft/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;BAD&quot;</span><span class="p">,</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/calc-fft/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span> <span class="s2">&quot;BAD&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_tds_boot"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_tds_boot">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.tds_scan&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_tds_boot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_tds_scan</span><span class="p">):</span>
+        <span class="c1"># Set up</span>
+        <span class="n">mock_tds_scan</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Test</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/tds-boot/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;lockin&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="c1"># Check the data is saved in database correctly</span>
+        <span class="n">created_data</span> <span class="o">=</span> <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-measured_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">start_position</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">end_position</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">lockin_time</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">position_data</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">intensity_data</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">created_data</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Bad request</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/tds-boot/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;lockin&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;Invalid parameter(s)&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_tds_data"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_tds_data">[docs]</a>    <span class="k">def</span> <span class="nf">test_tds_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/tds-data/&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="s2">&quot;finished&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_tds_running_value"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_tds_running_value">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.tds_scan&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_tds_running_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_tds_scan</span><span class="p">):</span>
+        <span class="c1"># TODO: Resolve django.db.utils.OperationalError: database table is locked</span>
+        <span class="c1"># This error occurrs even when running one thread</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        # Set up</span>
+<span class="sd">        mock_tds_scan = lambda: time.sleep(3)</span>
+<span class="sd">        TemporalData.objects.create(</span>
+<span class="sd">            data_type=&quot;TDS&quot;, position_data=&quot;1,2,3&quot;, intensity_data=&quot;1,2,3&quot;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        def task():</span>
+<span class="sd">            return self.client.post(</span>
+<span class="sd">                &quot;/core/tds-boot/&quot;, {&quot;start&quot;: 0, &quot;end&quot;: 10, &quot;step&quot;: 5, &quot;lockin&quot;: 300}</span>
+<span class="sd">            )</span>
+
+<span class="sd">        thread = threading.Thread(target=task)</span>
+<span class="sd">        # Test</span>
+<span class="sd">        response = self.client.post(&quot;/core/tds-data/&quot;)</span>
+
+<span class="sd">        data = json.loads(response.content)</span>
+<span class="sd">        self.assertEqual(data[&quot;status&quot;], &quot;finished&quot;)</span>
+
+<span class="sd">        thread.start()</span>
+<span class="sd">        response = self.client.post(&quot;/core/tds-data/&quot;)</span>
+
+<span class="sd">        data = json.loads(response.content)</span>
+<span class="sd">        self.assertEqual(data[&quot;status&quot;], &quot;running&quot;)</span>
+
+<span class="sd">        thread.join()</span>
+<span class="sd">        response = self.client.post(&quot;/core/tds-data/&quot;)</span>
+
+<span class="sd">        data = json.loads(response.content)</span>
+<span class="sd">        self.assertEqual(data[&quot;status&quot;], &quot;finished&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_change_sensitivity"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_change_sensitivity">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.set_lockin_sensitivity&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_change_sensitivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_set_lockin_sensitivity</span><span class="p">):</span>
+        <span class="n">mock_set_lockin_sensitivity</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/change-sensitivity/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="c1"># Bad requests</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/change-sensitivity/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_time_const"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_time_const">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.set_lockin_time_const&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_time_const</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_set_lockin_time_const</span><span class="p">):</span>
+        <span class="n">mock_set_lockin_time_const</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/core/change-time-const/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="c1"># Bad requests</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/change-sensitivity/&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JsonAPITest.test_auto_phase"><a class="viewcode-back" href="../../core.html#core.tests.JsonAPITest.test_auto_phase">[docs]</a>    <span class="nd">@mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;core.views.api_ops.auto_phase_lockin&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_auto_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_auto_phase_lockin</span><span class="p">):</span>
+        <span class="n">mock_auto_phase_lockin</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/core/auto-phase/&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="URLTest"><a class="viewcode-back" href="../../core.html#core.tests.URLTest">[docs]</a><span class="k">class</span> <span class="nc">URLTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="URLTest.test_root"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_root">[docs]</a>    <span class="k">def</span> <span class="nf">test_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">view_class</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">RapidScan</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_step"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_step">[docs]</a>    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/step/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">view_class</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">StepScan</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_move"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_move">[docs]</a>    <span class="k">def</span> <span class="nf">test_move</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/move/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">move</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_save"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_save">[docs]</a>    <span class="k">def</span> <span class="nf">test_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/save/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">save</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_scan"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_scan">[docs]</a>    <span class="k">def</span> <span class="nf">test_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/scan/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">scan</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_gpib"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_gpib">[docs]</a>    <span class="k">def</span> <span class="nf">test_gpib</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/gpib/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">gpib</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_calc_fft"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_calc_fft">[docs]</a>    <span class="k">def</span> <span class="nf">test_calc_fft</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/calc-fft/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">calc_fft</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_tds_data"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_tds_data">[docs]</a>    <span class="k">def</span> <span class="nf">test_tds_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/tds-data/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">tds_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_tds_boot"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_tds_boot">[docs]</a>    <span class="k">def</span> <span class="nf">test_tds_boot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/tds-boot/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">tds_boot</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_change_sensitivity"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_change_sensitivity">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_sensitivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/change-sensitivity/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">change_sensitivity</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_change_time_const"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_change_time_const">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_time_const</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+            <span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/change-time-const/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">change_time_const</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="URLTest.test_auto_phase"><a class="viewcode-back" href="../../core.html#core.tests.URLTest.test_auto_phase">[docs]</a>    <span class="k">def</span> <span class="nf">test_auto_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resolve</span><span class="p">(</span><span class="s2">&quot;/core/auto-phase/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">auto_phase</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TestTDSDataModel"><a class="viewcode-back" href="../../core.html#core.tests.TestTDSDataModel">[docs]</a><span class="k">class</span> <span class="nc">TestTDSDataModel</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestTDSDataModel.test_is_empty"><a class="viewcode-back" href="../../core.html#core.tests.TestTDSDataModel.test_is_empty">[docs]</a>    <span class="k">def</span> <span class="nf">test_is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestTDSDataModel.test_create_entry"><a class="viewcode-back" href="../../core.html#core.tests.TestTDSDataModel.test_create_entry">[docs]</a>    <span class="k">def</span> <span class="nf">test_create_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">start_position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">end_position</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">lockin_time</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+            <span class="n">position_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span>
+            <span class="n">intensity_data</span><span class="o">=</span><span class="s2">&quot;1,2,3&quot;</span><span class="p">,</span>
+            <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">core</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">core package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

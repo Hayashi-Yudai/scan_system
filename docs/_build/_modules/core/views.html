@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.views &#8212; core  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseBadRequest</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">TDSData</span><span class="p">,</span> <span class="n">TemporalData</span>
+<span class="kn">from</span> <span class="nn">core.utils</span> <span class="kn">import</span> <span class="n">api_ops</span>
+<span class="kn">from</span> <span class="nn">core.utils.waveform</span> <span class="kn">import</span> <span class="n">WaveForm</span>
+
+<span class="c1"># global variable</span>
+<span class="n">scan_running</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tds_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="RapidScan"><a class="viewcode-back" href="../../core.html#core.views.RapidScan">[docs]</a><span class="k">class</span> <span class="nc">RapidScan</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Summary line.</span>
+
+<span class="sd">    Get rapid scan page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RapidScan</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RapidScan.get"><a class="viewcode-back" href="../../core.html#core.views.RapidScan.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;core/index_rapid.html&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="StepScan"><a class="viewcode-back" href="../../core.html#core.views.StepScan">[docs]</a><span class="k">class</span> <span class="nc">StepScan</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">StepScan</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StepScan.get"><a class="viewcode-back" href="../../core.html#core.views.StepScan.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;core/index_step.html&quot;</span><span class="p">)</span></div></div>
+
+
+<span class="c1">#####################################</span>
+<span class="c1"># JSON APIs</span>
+<span class="c1">#####################################</span>
+
+
+<div class="viewcode-block" id="move"><a class="viewcode-back" href="../../core.html#core.views.move">[docs]</a><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;&#39;position&#39; must be positive or zero&quot;</span><span class="p">)</span>
+
+    <span class="n">succeed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">api_ops</span><span class="o">.</span><span class="n">move_stage</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">succeed</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="save"><a class="viewcode-back" href="../../core.html#core.views.save">[docs]</a><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">save_path</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_path</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid path&quot;</span><span class="p">)</span>
+
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">save_path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid path&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">data_type</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;RAPID&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
+    <span class="n">api_ops</span><span class="o">.</span><span class="n">save_data_as_csv</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="p">[</span><span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">TDSData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-measured_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">save_path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span></div>
+
+
+<span class="c1"># TODO: A/Dコンバータでの処理と合わせる</span>
+<div class="viewcode-block" id="scan"><a class="viewcode-back" href="../../core.html#core.views.scan">[docs]</a><span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">))</span>
+    <span class="n">sample_rate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampling_rate&quot;</span><span class="p">))</span>
+    <span class="c1"># if not scan_running</span>
+    <span class="c1">#   output, scan_running = raster_scan(duration, sample_rate, scan_running)</span>
+    <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">wave</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">wave</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">present_data</span><span class="o">.</span><span class="n">position_data</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">present_data</span><span class="o">.</span><span class="n">intensity_data</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">present_data</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;running&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="gpib"><a class="viewcode-back" href="../../core.html#core.views.gpib">[docs]</a><span class="k">def</span> <span class="nf">gpib</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="n">intensity</span><span class="p">,</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">api_ops</span><span class="o">.</span><span class="n">get_lockin_intensity</span><span class="p">()</span>  <span class="c1"># float, bool</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="n">intensity</span><span class="p">,</span> <span class="s2">&quot;connection&quot;</span><span class="p">:</span> <span class="n">connection</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="calc_fft"><a class="viewcode-back" href="../../core.html#core.views.calc_fft">[docs]</a><span class="k">def</span> <span class="nf">calc_fft</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">data_type</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;RAPID&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fft&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fft&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="n">freq</span><span class="p">,</span> <span class="n">fft</span> <span class="o">=</span> <span class="n">api_ops</span><span class="o">.</span><span class="n">calc_fft</span><span class="p">([</span><span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>  <span class="c1"># (list, list)</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">fft</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="tds_boot"><a class="viewcode-back" href="../../core.html#core.views.tds_boot">[docs]</a><span class="k">def</span> <span class="nf">tds_boot</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="k">global</span> <span class="n">tds_running</span>
+
+    <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">present_data</span><span class="o">.</span><span class="n">position_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">present_data</span><span class="o">.</span><span class="n">intensity_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">))</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">))</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">))</span>
+        <span class="n">lockin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lockin&quot;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter(s)&quot;</span><span class="p">)</span>
+
+    <span class="n">tds_running</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">api_ops</span><span class="o">.</span><span class="n">tds_scan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">lockin</span><span class="p">,</span> <span class="n">present_data</span><span class="p">)</span>
+
+    <span class="n">tds_running</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">TDSData</span><span class="p">(</span>
+            <span class="n">measured_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="n">start_position</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">end_position</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="n">lockin_time</span><span class="o">=</span><span class="n">lockin</span><span class="p">,</span>
+            <span class="n">position_data</span><span class="o">=</span><span class="n">present_data</span><span class="o">.</span><span class="n">position_data</span><span class="p">,</span>
+            <span class="n">intensity_data</span><span class="o">=</span><span class="n">present_data</span><span class="o">.</span><span class="n">intensity_data</span><span class="p">,</span>
+            <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({})</span></div>
+
+
+<div class="viewcode-block" id="tds_data"><a class="viewcode-back" href="../../core.html#core.views.tds_data">[docs]</a><span class="k">def</span> <span class="nf">tds_data</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span> <span class="k">if</span> <span class="n">tds_running</span> <span class="k">else</span> <span class="s2">&quot;finished&quot;</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="change_sensitivity"><a class="viewcode-back" href="../../core.html#core.views.change_sensitivity">[docs]</a><span class="k">def</span> <span class="nf">change_sensitivity</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">)</span>
+    <span class="n">api_ops</span><span class="o">.</span><span class="n">set_lockin_sensitivity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="change_time_const"><a class="viewcode-back" href="../../core.html#core.views.change_time_const">[docs]</a><span class="k">def</span> <span class="nf">change_time_const</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
+
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">)</span>
+    <span class="n">api_ops</span><span class="o">.</span><span class="n">set_lockin_time_const</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="auto_phase"><a class="viewcode-back" href="../../core.html#core.views.auto_phase">[docs]</a><span class="k">def</span> <span class="nf">auto_phase</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="n">api_ops</span><span class="o">.</span><span class="n">auto_phase_lockin</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">})</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">core</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../core.html">core package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
