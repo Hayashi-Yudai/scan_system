@@ -82,6 +82,22 @@
 
 
 <div class="viewcode-block" id="move"><a class="viewcode-back" href="../../core.html#core.views.move">[docs]</a><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Move the step motor stage. The endpoint is `core/move/`.</span>
+<span class="sd">    If the parameter is invalid, returns 404 Bad Request.</span>
+
+<span class="sd">    :param django.http.HttpRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+<span class="sd">        - fields:</span>
+<span class="sd">            - position: Target absolute position in micro-meter</span>
+
+<span class="sd">    :returns:</span>
+
+<span class="sd">        The result of the operation as JSON format.</span>
+<span class="sd">        If succeeded, returns {&quot;success&quot;: True}</span>
+<span class="sd">        If bad request, returns 404 Bad Request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -96,6 +112,24 @@
 
 
 <div class="viewcode-block" id="save"><a class="viewcode-back" href="../../core.html#core.views.save">[docs]</a><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the measured data in CSV file. The endpoint is `core/save/`.</span>
+<span class="sd">    If the parameter(s) is invalid, returns 404 Bad Request.</span>
+
+<span class="sd">    :param django.http.HttpRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+<span class="sd">        - fields</span>
+
+<span class="sd">            - path: The path to save data</span>
+<span class="sd">            - type: The type of measurement. Choose &quot;TDS&quot; or &quot;RAPID&quot;</span>
+
+<span class="sd">    :returns:</span>
+
+<span class="sd">        The result of the operation as JSON format.</span>
+<span class="sd">        If succeeded, returns {&quot;success&quot;: True}</span>
+<span class="sd">        If bad request, returns 404 Bad Request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">save_path</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
 
@@ -146,11 +180,44 @@
 
 
 <div class="viewcode-block" id="gpib"><a class="viewcode-back" href="../../core.html#core.views.gpib">[docs]</a><span class="k">def</span> <span class="nf">gpib</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the GPIB connection and returns Lockin amplifier&#39;s intensity.</span>
+<span class="sd">    The endpoint is `core/gpib/`</span>
+
+<span class="sd">    :param django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        The result of the operation as JSON format. JSON response contains,</span>
+
+<span class="sd">        - intensity: The value of Lockin amplifier</span>
+<span class="sd">        - connection: The existence of GPIB connection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">intensity</span><span class="p">,</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">api_ops</span><span class="o">.</span><span class="n">get_lockin_intensity</span><span class="p">()</span>  <span class="c1"># float, bool</span>
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="n">intensity</span><span class="p">,</span> <span class="s2">&quot;connection&quot;</span><span class="p">:</span> <span class="n">connection</span><span class="p">})</span></div>
 
 
 <div class="viewcode-block" id="calc_fft"><a class="viewcode-back" href="../../core.html#core.views.calc_fft">[docs]</a><span class="k">def</span> <span class="nf">calc_fft</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the (inverse) Fourier transform with FFT algorithm.</span>
+<span class="sd">    If choosing Fourier transform, the number of data points is expanded to be 4096.</span>
+<span class="sd">    The endpoint is `core/fft-calc/`</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+<span class="sd">        - fields:</span>
+
+<span class="sd">            - type (str): The type of data. Choose &quot;TDS&quot; or &quot;RAPID&quot;.</span>
+<span class="sd">            - fft: Whether calculating FFT or IFFT. Specify it with &quot;true&quot; or &quot;false&quot;.</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        The JSON data.</span>
+
+<span class="sd">        - x: positional data or frequency.</span>
+<span class="sd">        - y: intensity data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">data_type</span> <span class="o">:=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;TDS&quot;</span><span class="p">,</span> <span class="s2">&quot;RAPID&quot;</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
 
@@ -173,6 +240,16 @@
 
 
 <div class="viewcode-block" id="tds_boot"><a class="viewcode-back" href="../../core.html#core.views.tds_boot">[docs]</a><span class="k">def</span> <span class="nf">tds_boot</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start the sequence of step scanning.</span>
+<span class="sd">    The endpoint is `core/tds-boot/`</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+
+<span class="sd">    :returns: Empty JSON</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">tds_running</span>
 
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
@@ -211,6 +288,20 @@
 
 
 <div class="viewcode-block" id="tds_data"><a class="viewcode-back" href="../../core.html#core.views.tds_data">[docs]</a><span class="k">def</span> <span class="nf">tds_data</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the data of step scanning at the moment.</span>
+<span class="sd">    The endpoint is `core/tds-data/`</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+
+<span class="sd">    :returns: JSON data</span>
+
+<span class="sd">        - x: The positional data of step motor stage.</span>
+<span class="sd">        - y: The intensity data of Lockin amplifier.</span>
+<span class="sd">        - status: Whether the sequence is still running or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
@@ -221,6 +312,20 @@
 
 
 <div class="viewcode-block" id="change_sensitivity"><a class="viewcode-back" href="../../core.html#core.views.change_sensitivity">[docs]</a><span class="k">def</span> <span class="nf">change_sensitivity</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change sensitivity of Lockin amplifier.</span>
+<span class="sd">    The endpoint is `core/change-sensitivity/`</span>
+<span class="sd">    If the parameter is invalid, returns 404 Bad Request.</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+<span class="sd">        - entry:</span>
+<span class="sd">            - value: The target sensitivity.</span>
+
+<span class="sd">    :returns: JSON {&quot;status&quot;: &quot;ok&quot;}.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
@@ -233,6 +338,19 @@
 
 
 <div class="viewcode-block" id="change_time_const"><a class="viewcode-back" href="../../core.html#core.views.change_time_const">[docs]</a><span class="k">def</span> <span class="nf">change_time_const</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change time constant of Lockin amplifier.</span>
+<span class="sd">    The endpoint is `core/change-time-const/`</span>
+<span class="sd">    If the parameter is invalid, returns 404 Bad Request.</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+<span class="sd">        - entry:</span>
+<span class="sd">            - value: The target time constant.</span>
+
+<span class="sd">    :returns: JSON {&quot;status&quot;: &quot;ok&quot;}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">))</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
@@ -245,6 +363,16 @@
 
 
 <div class="viewcode-block" id="auto_phase"><a class="viewcode-back" href="../../core.html#core.views.auto_phase">[docs]</a><span class="k">def</span> <span class="nf">auto_phase</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Auto phase the Lockin amplifier.</span>
+<span class="sd">    The endpoint is `core/auto-phase/`</span>
+
+<span class="sd">    :param request django.http.HTTPRequest request:</span>
+
+<span class="sd">        - &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded; charset=utf-8&quot;,</span>
+
+<span class="sd">    :returns: JSON {&quot;status&quot;: &quot;ok&quot;}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">api_ops</span><span class="o">.</span><span class="n">auto_phase_lockin</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">})</span></div>

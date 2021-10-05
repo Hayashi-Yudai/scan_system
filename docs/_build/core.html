@@ -103,37 +103,182 @@
 <dl class="py function">
 <dt id="core.views.auto_phase">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">auto_phase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#auto_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.auto_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Auto phase the Lockin amplifier.
+The endpoint is <cite>core/auto-phase/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.calc_fft">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">calc_fft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#calc_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.calc_fft" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the (inverse) Fourier transform with FFT algorithm.
+If choosing Fourier transform, the number of data points is expanded to be 4096.
+The endpoint is <cite>core/fft-calc/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul>
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><p>fields:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>type (str): The type of data. Choose “TDS” or “RAPID”.</p></li>
+<li><p>fft: Whether calculating FFT or IFFT. Specify it with “true” or “false”.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The JSON data.</p>
+<ul class="simple">
+<li><p>x: positional data or frequency.</p></li>
+<li><p>y: intensity data.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.change_sensitivity">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">change_sensitivity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#change_sensitivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.change_sensitivity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Change sensitivity of Lockin amplifier.
+The endpoint is <cite>core/change-sensitivity/</cite>
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>entry:</dt><dd><ul>
+<li><p>value: The target sensitivity.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.change_time_const">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">change_time_const</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#change_time_const"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.change_time_const" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Change time constant of Lockin amplifier.
+The endpoint is <cite>core/change-time-const/</cite>
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>entry:</dt><dd><ul>
+<li><p>value: The target time constant.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.gpib">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">gpib</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#gpib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.gpib" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check the GPIB connection and returns Lockin amplifier’s intensity.
+The endpoint is <cite>core/gpib/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HTTPRequest</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The result of the operation as JSON format. JSON response contains,</p>
+<ul class="simple">
+<li><p>intensity: The value of Lockin amplifier</p></li>
+<li><p>connection: The existence of GPIB connection</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.move">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">move</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.move" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Move the step motor stage. The endpoint is <cite>core/move/</cite>.
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>fields:</dt><dd><ul>
+<li><p>position: Target absolute position in micro-meter</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of the operation as JSON format.
+If succeeded, returns {“success”: True}
+If bad request, returns 404 Bad Request</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.save">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.save" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Save the measured data in CSV file. The endpoint is <cite>core/save/</cite>.
+If the parameter(s) is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – <ul>
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><p>fields</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>path: The path to save data</p></li>
+<li><p>type: The type of measurement. Choose “TDS” or “RAPID”</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of the operation as JSON format.
+If succeeded, returns {“success”: True}
+If bad request, returns 404 Bad Request</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.scan">
@@ -143,12 +288,44 @@
 <dl class="py function">
 <dt id="core.views.tds_boot">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">tds_boot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#tds_boot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.tds_boot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Start the sequence of step scanning.
+The endpoint is <cite>core/tds-boot/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Empty JSON</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.tds_data">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">tds_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#tds_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.tds_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the data of step scanning at the moment.
+The endpoint is <cite>core/tds-data/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>JSON data</p>
+<ul class="simple">
+<li><p>x: The positional data of step motor stage.</p></li>
+<li><p>y: The intensity data of Lockin amplifier.</p></li>
+<li><p>status: Whether the sequence is still running or not.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-core">
