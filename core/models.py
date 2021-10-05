@@ -2,6 +2,9 @@ from django.db import models
 
 
 class TDSData(models.Model):
+    class Meta:
+        app_label = "core"
+
     measured_date = models.DateTimeField(auto_now_add=True)
     start_position = models.PositiveIntegerField()
     end_position = models.PositiveIntegerField()
@@ -13,6 +16,9 @@ class TDSData(models.Model):
 
 
 class TemporalData(models.Model):
+    class Meta:
+        app_label = "core"
+
     created_at = models.DateTimeField(auto_now_add=True)
     data_type = models.TextField(blank=False)
     position_data = models.TextField(blank=True)

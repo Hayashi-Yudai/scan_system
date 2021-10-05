@@ -16,6 +16,11 @@ tds_running = False
 
 
 class RapidScan(View):
+    """Summary line.
+
+    Get rapid scan page.
+    """
+
     def __init__(self):
         super(RapidScan, self).__init__()
         TemporalData.objects.filter(data_type="RAPID").delete()
