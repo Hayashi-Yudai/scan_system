@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_tdsdata_file_name'),
+        ("core", "0002_tdsdata_file_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TemporalData',
+            name="TemporalData",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('data_type', models.TextField()),
-                ('position_data', models.TextField(blank=True)),
-                ('intensity_data', models.TextField(blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("data_type", models.TextField()),
+                ("position_data", models.TextField(blank=True)),
+                ("intensity_data", models.TextField(blank=True)),
             ],
         ),
     ]

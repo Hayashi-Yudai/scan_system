@@ -16,8 +16,7 @@ tds_running = False
 
 
 class RapidScan(View):
-    """Summary line.
-
+    """
     Get rapid scan page.
     """
 
@@ -31,6 +30,10 @@ class RapidScan(View):
 
 
 class StepScan(View):
+    """
+    Get step scan page.
+    """
+
     def __init__(self):
         super(StepScan, self).__init__()
         TemporalData.objects.filter(data_type="TDS").delete()
@@ -74,8 +77,7 @@ def save(request) -> HttpResponse:
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type=data_type).order_by("-created_at").first()
+        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
     api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
@@ -94,8 +96,7 @@ def scan(request):
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
     present_data = (
-        TemporalData.objects.filter(
-            data_type="RAPID").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
 
@@ -121,8 +122,7 @@ def calc_fft(request) -> JsonResponse:
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type=data_type).order_by("-created_at").first()
+        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
 
@@ -143,8 +143,7 @@ def tds_boot(request) -> JsonResponse:
     global tds_running
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type="TDS").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
     )
     present_data.position_data = ""
     present_data.intensity_data = ""
@@ -180,8 +179,7 @@ def tds_boot(request) -> JsonResponse:
 
 def tds_data(request) -> JsonResponse:
     present_data = (
-        TemporalData.objects.filter(
-            data_type="TDS").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
     status = "running" if tds_running else "finished"

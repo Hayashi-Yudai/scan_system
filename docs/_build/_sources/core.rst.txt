@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    core.migrations
+   core.utils
 
 Submodules
 ----------
@@ -24,22 +25,6 @@ core.apps module
 ----------------
 
 .. automodule:: core.apps
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-core.models module
-------------------
-
-.. automodule:: core.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-core.tests module
------------------
-
-.. automodule:: core.tests
    :members:
    :undoc-members:
    :show-inheritance:

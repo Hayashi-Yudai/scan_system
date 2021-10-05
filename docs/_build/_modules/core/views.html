@@ -49,8 +49,7 @@
 
 
 <div class="viewcode-block" id="RapidScan"><a class="viewcode-back" href="../../core.html#core.views.RapidScan">[docs]</a><span class="k">class</span> <span class="nc">RapidScan</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Summary line.</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get rapid scan page.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -64,6 +63,10 @@
 
 
 <div class="viewcode-block" id="StepScan"><a class="viewcode-back" href="../../core.html#core.views.StepScan">[docs]</a><span class="k">class</span> <span class="nc">StepScan</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get step scan page.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">StepScan</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
@@ -107,8 +110,7 @@
         <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
 
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
     <span class="n">api_ops</span><span class="o">.</span><span class="n">save_data_as_csv</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="p">[</span><span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
@@ -127,8 +129,7 @@
     <span class="c1"># if not scan_running</span>
     <span class="c1">#   output, scan_running = raster_scan(duration, sample_rate, scan_running)</span>
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;RAPID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
 
@@ -154,8 +155,7 @@
         <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">(</span><span class="s2">&quot;Invalid parameter&quot;</span><span class="p">)</span>
 
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
 
@@ -176,8 +176,7 @@
     <span class="k">global</span> <span class="n">tds_running</span>
 
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">present_data</span><span class="o">.</span><span class="n">position_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">present_data</span><span class="o">.</span><span class="n">intensity_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -213,8 +212,7 @@
 
 <div class="viewcode-block" id="tds_data"><a class="viewcode-back" href="../../core.html#core.views.tds_data">[docs]</a><span class="k">def</span> <span class="nf">tds_data</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonResponse</span><span class="p">:</span>
     <span class="n">present_data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-            <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">TemporalData</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;TDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">present_data</span><span class="p">)</span>
     <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span> <span class="k">if</span> <span class="n">tds_running</span> <span class="k">else</span> <span class="s2">&quot;finished&quot;</span>
@@ -271,6 +269,8 @@
 <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../core.html">core package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../archive.html">archive package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../toppage.html">toppage package</a></li>
 </ul>
 
 <div class="relations">

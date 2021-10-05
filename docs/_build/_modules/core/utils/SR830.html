@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.utils.SR830 &#8212; core  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.utils.SR830</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pyvisa</span> <span class="k">as</span> <span class="nn">visa</span>
+
+
+<div class="viewcode-block" id="SR830"><a class="viewcode-back" href="../../../core.utils.html#core.utils.SR830.SR830">[docs]</a><span class="k">class</span> <span class="nc">SR830</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpib</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instr</span> <span class="o">=</span> <span class="n">visa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span>
+            <span class="s2">&quot;GPIB::</span><span class="si">{}</span><span class="s2">::INSTR&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gpib</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SR830.get_intensity"><a class="viewcode-back" href="../../../core.utils.html#core.utils.SR830.SR830.get_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">get_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;OUTR ? 1&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SR830.auto_phase"><a class="viewcode-back" href="../../../core.utils.html#core.utils.SR830.SR830.auto_phase">[docs]</a>    <span class="k">def</span> <span class="nf">auto_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;APHS&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SR830.set_sensitivity"><a class="viewcode-back" href="../../../core.utils.html#core.utils.SR830.SR830.set_sensitivity">[docs]</a>    <span class="k">def</span> <span class="nf">set_sensitivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 8&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 9&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 10&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 11&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 12&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 13&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 14&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 15&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">500</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 16&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 17&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 18&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 19&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 20&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">20</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 21&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">50</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 22&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 23&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 24&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">500</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 25&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;volt&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SENS 26&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SR830.set_time_const"><a class="viewcode-back" href="../../../core.utils.html#core.utils.SR830.SR830.set_time_const">[docs]</a>    <span class="k">def</span> <span class="nf">set_time_const</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 0&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">30</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 1&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 2&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">300</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;micro-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 3&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 4&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 5&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 6&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">30</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 7&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 8&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">300</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;milli-sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 9&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 10&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 11&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 12&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">30</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 13&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 14&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">300</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">&quot;sec&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OFLT 15&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">core</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core.html">core package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

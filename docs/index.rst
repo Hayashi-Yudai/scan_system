@@ -11,6 +11,8 @@ Welcome to core's documentation!
    :caption: Contents:
 
    core
+   archive
+   toppage
 
 
 Indices and tables
