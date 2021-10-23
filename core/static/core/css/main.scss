@@ -16,6 +16,11 @@ html {
   padding: 0;
 }
 
+header {
+  display: flex;
+  width: 100%;
+}
+
 body {
 	@include pc {
     padding: 10px;
@@ -49,8 +54,13 @@ a {
  Module
 */
 header {
+  position: relative;
+
   .links {
-    margin-bottom: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-40%);
 
     a.link {
       margin-right: 10px;
@@ -58,6 +68,7 @@ header {
       border: 1px solid $gray-color;
       border-radius: 3px;
       text-decoration: none;
+      color: #000;
 
       &:hover {
         background-color: $gray-color-clear;
@@ -193,9 +204,12 @@ main {
 
 
 %input-area {
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 5px 5px;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  color: #495057;
+  font-size: 1rem;
+  line-height: 1.5;
 
   &:focus {
     border: 1.5px solid dodgerblue;
@@ -221,14 +235,17 @@ input[type="text"] {
 }
 
 input[type="submit"] {
-  background-color: rgb(245, 245, 245);
-  border: 1px solid black;
-  border-radius: 8px;
-  padding: 5px 15px;
+  // background-color: rgb(245, 245, 245);
+  background-color: #007bfe;
+  color: #fff;
+  border: 0px;
+  border-radius: 3px;
+  padding: 0.3rem 0.75rem;
+  line-height: 1.5;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, .16);
   
   &:hover {
-    border: 1px solid green;
-    background-color: rgba(0, 255, 0, 0.1);
+    background-color: #465daa;
     cursor: pointer;
   }
 }

@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>core.utils.api_ops &#8212; core  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for core.utils.api_ops</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">core.utils.Mark202</span> <span class="kn">import</span> <span class="n">Mark202</span>
+<span class="kn">from</span> <span class="nn">core.utils.SR830</span> <span class="kn">import</span> <span class="n">SR830</span>
+<span class="kn">from</span> <span class="nn">core.utils.waveform</span> <span class="kn">import</span> <span class="n">WaveForm</span>
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">TemporalData</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<div class="viewcode-block" id="move_stage"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.move_stage">[docs]</a><span class="k">def</span> <span class="nf">move_stage</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">Mark202</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MARK202_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">stage</span><span class="p">:</span>
+            <span class="n">stage</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in moving stage&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="save_data_as_csv"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.save_data_as_csv">[docs]</a><span class="k">def</span> <span class="nf">save_data_as_csv</span><span class="p">(</span><span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+
+    <span class="k">if</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_lockin_intensity"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.get_lockin_intensity">[docs]</a><span class="k">def</span> <span class="nf">get_lockin_intensity</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the lockin intensity and status</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">SR830</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SR830_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">lockin</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">lockin</span><span class="o">.</span><span class="n">get_intensity</span><span class="p">()),</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="auto_phase_lockin"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.auto_phase_lockin">[docs]</a><span class="k">def</span> <span class="nf">auto_phase_lockin</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">SR830</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SR830_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">lockin</span><span class="p">:</span>
+            <span class="n">lockin</span><span class="o">.</span><span class="n">auto_phase</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="set_lockin_sensitivity"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.set_lockin_sensitivity">[docs]</a><span class="k">def</span> <span class="nf">set_lockin_sensitivity</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">SR830</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SR830_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">lockin</span><span class="p">:</span>
+            <span class="n">lockin</span><span class="o">.</span><span class="n">set_sensitivity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="set_lockin_time_const"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.set_lockin_time_const">[docs]</a><span class="k">def</span> <span class="nf">set_lockin_time_const</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">SR830</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SR830_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">lockin</span><span class="p">:</span>
+            <span class="n">lockin</span><span class="o">.</span><span class="n">set_time_const</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="calc_fft"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.calc_fft">[docs]</a><span class="k">def</span> <span class="nf">calc_fft</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="n">delta_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">2.9979e8</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="n">delta_time</span> <span class="o">/</span> <span class="mi">4096</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4096</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">4096</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="tds_scan"><a class="viewcode-back" href="../../../core.utils.html#core.utils.api_ops.tds_scan">[docs]</a><span class="k">def</span> <span class="nf">tds_scan</span><span class="p">(</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">lockin_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">entry</span><span class="p">:</span> <span class="n">TemporalData</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">WaveForm</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">SR830</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SR830_GPIB_ADDRESS&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">amp</span><span class="p">,</span> <span class="n">Mark202</span><span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MARK202_GPIB_ADDRESS&quot;</span><span class="p">])</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">stage</span><span class="p">:</span>
+            <span class="n">stage</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">stage</span><span class="o">.</span><span class="n">wait_while_busy</span><span class="p">()</span>
+
+            <span class="n">position_now</span> <span class="o">=</span> <span class="n">start</span>
+            <span class="k">while</span> <span class="n">position_now</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">lockin_time</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+                <span class="n">intensity</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">get_intensity</span><span class="p">()</span>
+
+                <span class="n">wave</span><span class="o">.</span><span class="n">push</span><span class="p">([</span><span class="n">position_now</span><span class="p">],</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">intensity</span><span class="p">)])</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">position_data</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">intensity_data</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">wave</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">stage</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">position_now</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+                <span class="n">position_now</span> <span class="o">+=</span> <span class="n">step</span>
+                <span class="n">stage</span><span class="o">.</span><span class="n">wait_while_busy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in tds_boot()&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">core</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core.html">core package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -7,21 +7,28 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='TDSData',
+            name="TDSData",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('measured_date', models.DateTimeField(auto_now_add=True)),
-                ('start_position', models.PositiveIntegerField()),
-                ('end_position', models.PositiveIntegerField()),
-                ('step', models.PositiveIntegerField()),
-                ('lockin_time', models.PositiveIntegerField()),
-                ('position_data', models.TextField()),
-                ('intensity_data', models.TextField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("measured_date", models.DateTimeField(auto_now_add=True)),
+                ("start_position", models.PositiveIntegerField()),
+                ("end_position", models.PositiveIntegerField()),
+                ("step", models.PositiveIntegerField()),
+                ("lockin_time", models.PositiveIntegerField()),
+                ("position_data", models.TextField()),
+                ("intensity_data", models.TextField()),
             ],
         ),
     ]

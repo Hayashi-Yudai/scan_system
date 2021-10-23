@@ -16,8 +16,7 @@ tds_running = False
 
 
 class RapidScan(View):
-    """Summary line.
-
+    """
     Get rapid scan page.
     """
 
@@ -31,6 +30,10 @@ class RapidScan(View):
 
 
 class StepScan(View):
+    """
+    Get step scan page.
+    """
+
     def __init__(self):
         super(StepScan, self).__init__()
         TemporalData.objects.filter(data_type="TDS").delete()
@@ -46,6 +49,22 @@ class StepScan(View):
 
 
 def move(request) -> HttpResponse:
+    """
+    Move the step motor stage. The endpoint is `core/move/`.
+    If the parameter is invalid, returns 404 Bad Request.
+
+    :param django.http.HttpRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        - fields:
+            - position: Target absolute position in micro-meter
+
+    :returns:
+
+        The result of the operation as JSON format.
+        If succeeded, returns {"success": True}
+        If bad request, returns 404 Bad Request
+    """
     try:
         position = int(request.POST.get("position"))
     except (TypeError, ValueError):
@@ -60,6 +79,24 @@ def move(request) -> HttpResponse:
 
 
 def save(request) -> HttpResponse:
+    """
+    Save the measured data in CSV file. The endpoint is `core/save/`.
+    If the parameter(s) is invalid, returns 404 Bad Request.
+
+    :param django.http.HttpRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        - fields
+
+            - path: The path to save data
+            - type: The type of measurement. Choose "TDS" or "RAPID"
+
+    :returns:
+
+        The result of the operation as JSON format.
+        If succeeded, returns {"success": True}
+        If bad request, returns 404 Bad Request
+    """
     if (save_path := request.POST.get("path")) is None:
         return HttpResponseBadRequest("Invalid parameter")
 
@@ -74,8 +111,7 @@ def save(request) -> HttpResponse:
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type=data_type).order_by("-created_at").first()
+        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
     api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
@@ -94,8 +130,7 @@ def scan(request):
     # if not scan_running
     #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
     present_data = (
-        TemporalData.objects.filter(
-            data_type="RAPID").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
 
@@ -112,17 +147,49 @@ def scan(request):
 
 
 def gpib(request) -> JsonResponse:
+    """
+    Check the GPIB connection and returns Lockin amplifier's intensity.
+    The endpoint is `core/gpib/`
+
+    :param django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+
+    :returns:
+        The result of the operation as JSON format. JSON response contains,
+
+        - intensity: The value of Lockin amplifier
+        - connection: The existence of GPIB connection
+    """
     intensity, connection = api_ops.get_lockin_intensity()  # float, bool
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
 def calc_fft(request) -> JsonResponse:
+    """
+    Calculate the (inverse) Fourier transform with FFT algorithm.
+    If choosing Fourier transform, the number of data points is expanded to be 4096.
+    The endpoint is `core/fft-calc/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        - fields:
+
+            - type (str): The type of data. Choose "TDS" or "RAPID".
+            - fft: Whether calculating FFT or IFFT. Specify it with "true" or "false".
+
+    :returns:
+        The JSON data.
+
+        - x: positional data or frequency.
+        - y: intensity data.
+    """
     if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type=data_type).order_by("-created_at").first()
+        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
 
@@ -140,11 +207,20 @@ def calc_fft(request) -> JsonResponse:
 
 
 def tds_boot(request) -> JsonResponse:
+    """
+    Start the sequence of step scanning.
+    The endpoint is `core/tds-boot/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+
+    :returns: Empty JSON
+    """
     global tds_running
 
     present_data = (
-        TemporalData.objects.filter(
-            data_type="TDS").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
     )
     present_data.position_data = ""
     present_data.intensity_data = ""
@@ -179,9 +255,22 @@ def tds_boot(request) -> JsonResponse:
 
 
 def tds_data(request) -> JsonResponse:
+    """
+    Get the data of step scanning at the moment.
+    The endpoint is `core/tds-data/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+
+    :returns: JSON data
+
+        - x: The positional data of step motor stage.
+        - y: The intensity data of Lockin amplifier.
+        - status: Whether the sequence is still running or not.
+    """
     present_data = (
-        TemporalData.objects.filter(
-            data_type="TDS").order_by("-created_at").first()
+        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
     status = "running" if tds_running else "finished"
@@ -190,6 +279,20 @@ def tds_data(request) -> JsonResponse:
 
 
 def change_sensitivity(request) -> HttpResponse:
+    """
+    Change sensitivity of Lockin amplifier.
+    The endpoint is `core/change-sensitivity/`
+    If the parameter is invalid, returns 404 Bad Request.
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        - entry:
+            - value: The target sensitivity.
+
+    :returns: JSON {"status": "ok"}.
+
+    """
     try:
         value = int(request.POST.get("value"))
     except (ValueError, TypeError):
@@ -202,6 +305,19 @@ def change_sensitivity(request) -> HttpResponse:
 
 
 def change_time_const(request) -> HttpResponse:
+    """
+    Change time constant of Lockin amplifier.
+    The endpoint is `core/change-time-const/`
+    If the parameter is invalid, returns 404 Bad Request.
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        - entry:
+            - value: The target time constant.
+
+    :returns: JSON {"status": "ok"}.
+    """
     try:
         value = int(request.POST.get("value"))
     except (ValueError, TypeError):
@@ -214,6 +330,16 @@ def change_time_const(request) -> HttpResponse:
 
 
 def auto_phase(request) -> JsonResponse:
+    """
+    Auto phase the Lockin amplifier.
+    The endpoint is `core/auto-phase/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+
+    :returns: JSON {"status": "ok"}.
+    """
     api_ops.auto_phase_lockin()
 
     return JsonResponse({"status": "ok"})

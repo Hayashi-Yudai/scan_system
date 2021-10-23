@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="core.migrations package" href="core.migrations.html" />
+    <link rel="next" title="core.utils package" href="core.utils.html" />
     <link rel="prev" title="Welcome to core’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -39,12 +39,13 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="core.migrations.html">core.migrations package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="core.migrations.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core.migrations.html#module-core.migrations.0001_initial">core.migrations.0001_initial module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core.migrations.html#module-core.migrations.0002_tdsdata_file_name">core.migrations.0002_tdsdata_file_name module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core.migrations.html#module-core.migrations.0003_temporaldata">core.migrations.0003_temporaldata module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="core.migrations.html#module-core.migrations">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.utils.html">core.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#module-core.utils.Mark202">core.utils.Mark202 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#module-core.utils.SR830">core.utils.SR830 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#module-core.utils.api_ops">core.utils.api_ops module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#module-core.utils.waveform">core.utils.waveform module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core.utils.html#module-core.utils">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -70,353 +71,6 @@
 </dd></dl>
 
 </section>
-<section id="module-core.models">
-<span id="core-models-module"></span><h2>core.models module<a class="headerlink" href="#module-core.models" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="core.models.TDSData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.models.</span></code><code class="sig-name descname"><span class="pre">TDSData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measured_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lockin_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/models.html#TDSData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.models.TDSData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
-<dl class="py exception">
-<dt id="core.models.TDSData.DoesNotExist">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">DoesNotExist</span></code><a class="headerlink" href="#core.models.TDSData.DoesNotExist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="core.models.TDSData.MultipleObjectsReturned">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></code><a class="headerlink" href="#core.models.TDSData.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.end_position">
-<code class="sig-name descname"><span class="pre">end_position</span></code><a class="headerlink" href="#core.models.TDSData.end_position" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.file_name">
-<code class="sig-name descname"><span class="pre">file_name</span></code><a class="headerlink" href="#core.models.TDSData.file_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="core.models.TDSData.get_next_by_measured_date">
-<code class="sig-name descname"><span class="pre">get_next_by_measured_date</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">measured_date&gt;</span></em>, <em class="sig-param"><span class="pre">is_next=True</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.models.TDSData.get_next_by_measured_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.models.TDSData.get_previous_by_measured_date">
-<code class="sig-name descname"><span class="pre">get_previous_by_measured_date</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">measured_date&gt;</span></em>, <em class="sig-param"><span class="pre">is_next=False</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.models.TDSData.get_previous_by_measured_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.id">
-<code class="sig-name descname"><span class="pre">id</span></code><a class="headerlink" href="#core.models.TDSData.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.intensity_data">
-<code class="sig-name descname"><span class="pre">intensity_data</span></code><a class="headerlink" href="#core.models.TDSData.intensity_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.lockin_time">
-<code class="sig-name descname"><span class="pre">lockin_time</span></code><a class="headerlink" href="#core.models.TDSData.lockin_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.measured_date">
-<code class="sig-name descname"><span class="pre">measured_date</span></code><a class="headerlink" href="#core.models.TDSData.measured_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.objects">
-<code class="sig-name descname"><span class="pre">objects</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.models.TDSData.objects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.position_data">
-<code class="sig-name descname"><span class="pre">position_data</span></code><a class="headerlink" href="#core.models.TDSData.position_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.start_position">
-<code class="sig-name descname"><span class="pre">start_position</span></code><a class="headerlink" href="#core.models.TDSData.start_position" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TDSData.step">
-<code class="sig-name descname"><span class="pre">step</span></code><a class="headerlink" href="#core.models.TDSData.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="core.models.TemporalData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.models.</span></code><code class="sig-name descname"><span class="pre">TemporalData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created_at</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/models.html#TemporalData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.models.TemporalData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
-<dl class="py exception">
-<dt id="core.models.TemporalData.DoesNotExist">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">DoesNotExist</span></code><a class="headerlink" href="#core.models.TemporalData.DoesNotExist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="core.models.TemporalData.MultipleObjectsReturned">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></code><a class="headerlink" href="#core.models.TemporalData.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.created_at">
-<code class="sig-name descname"><span class="pre">created_at</span></code><a class="headerlink" href="#core.models.TemporalData.created_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.data_type">
-<code class="sig-name descname"><span class="pre">data_type</span></code><a class="headerlink" href="#core.models.TemporalData.data_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="core.models.TemporalData.get_next_by_created_at">
-<code class="sig-name descname"><span class="pre">get_next_by_created_at</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">created_at&gt;</span></em>, <em class="sig-param"><span class="pre">is_next=True</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.models.TemporalData.get_next_by_created_at" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.models.TemporalData.get_previous_by_created_at">
-<code class="sig-name descname"><span class="pre">get_previous_by_created_at</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">created_at&gt;</span></em>, <em class="sig-param"><span class="pre">is_next=False</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#core.models.TemporalData.get_previous_by_created_at" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.id">
-<code class="sig-name descname"><span class="pre">id</span></code><a class="headerlink" href="#core.models.TemporalData.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.intensity_data">
-<code class="sig-name descname"><span class="pre">intensity_data</span></code><a class="headerlink" href="#core.models.TemporalData.intensity_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.objects">
-<code class="sig-name descname"><span class="pre">objects</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#core.models.TemporalData.objects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="core.models.TemporalData.position_data">
-<code class="sig-name descname"><span class="pre">position_data</span></code><a class="headerlink" href="#core.models.TemporalData.position_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-core.tests">
-<span id="core-tests-module"></span><h2>core.tests module<a class="headerlink" href="#module-core.tests" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="core.tests.JsonAPITest">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.tests.</span></code><code class="sig-name descname"><span class="pre">JsonAPITest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.test.testcases.TestCase</span></code></p>
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.setUp">
-<code class="sig-name descname"><span class="pre">setUp</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.setUp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.setUp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hook method for setting up the test fixture before exercising it.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_auto_phase">
-<code class="sig-name descname"><span class="pre">test_auto_phase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_auto_phase_lockin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_auto_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_auto_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_calc_fft">
-<code class="sig-name descname"><span class="pre">test_calc_fft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_calc_fft</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_calc_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_calc_fft" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_change_sensitivity">
-<code class="sig-name descname"><span class="pre">test_change_sensitivity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_set_lockin_sensitivity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_change_sensitivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_change_sensitivity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_gpib">
-<code class="sig-name descname"><span class="pre">test_gpib</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_get_lockin_intensity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_gpib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_gpib" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_move_stage">
-<code class="sig-name descname"><span class="pre">test_move_stage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_move_stage</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_move_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_move_stage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_save_data">
-<code class="sig-name descname"><span class="pre">test_save_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_save_data_as_csv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_save_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_scan">
-<code class="sig-name descname"><span class="pre">test_scan</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_scan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_scan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_tds_boot">
-<code class="sig-name descname"><span class="pre">test_tds_boot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_tds_scan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_tds_boot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_tds_boot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_tds_data">
-<code class="sig-name descname"><span class="pre">test_tds_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_tds_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_tds_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_tds_running_value">
-<code class="sig-name descname"><span class="pre">test_tds_running_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_tds_scan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_tds_running_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_tds_running_value" title="Permalink to this definition">¶</a></dt>
-<dd><p># Set up
-mock_tds_scan = lambda: time.sleep(3)
-TemporalData.objects.create(</p>
-<blockquote>
-<div><p>data_type=”TDS”, position_data=”1,2,3”, intensity_data=”1,2,3”</p>
-</div></blockquote>
-<p>)</p>
-<dl>
-<dt>def task():</dt><dd><dl class="simple">
-<dt>return self.client.post(</dt><dd><p>“/core/tds-boot/”, {“start”: 0, “end”: 10, “step”: 5, “lockin”: 300}</p>
-</dd>
-</dl>
-<p>)</p>
-</dd>
-</dl>
-<p>thread = threading.Thread(target=task)
-# Test
-response = self.client.post(“/core/tds-data/”)</p>
-<p>data = json.loads(response.content)
-self.assertEqual(data[“status”], “finished”)</p>
-<p>thread.start()
-response = self.client.post(“/core/tds-data/”)</p>
-<p>data = json.loads(response.content)
-self.assertEqual(data[“status”], “running”)</p>
-<p>thread.join()
-response = self.client.post(“/core/tds-data/”)</p>
-<p>data = json.loads(response.content)
-self.assertEqual(data[“status”], “finished”)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.JsonAPITest.test_time_const">
-<code class="sig-name descname"><span class="pre">test_time_const</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_set_lockin_time_const</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#JsonAPITest.test_time_const"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.JsonAPITest.test_time_const" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="core.tests.TestTDSDataModel">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.tests.</span></code><code class="sig-name descname"><span class="pre">TestTDSDataModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#TestTDSDataModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.TestTDSDataModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.test.testcases.TestCase</span></code></p>
-<dl class="py method">
-<dt id="core.tests.TestTDSDataModel.test_create_entry">
-<code class="sig-name descname"><span class="pre">test_create_entry</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#TestTDSDataModel.test_create_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.TestTDSDataModel.test_create_entry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.TestTDSDataModel.test_is_empty">
-<code class="sig-name descname"><span class="pre">test_is_empty</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#TestTDSDataModel.test_is_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.TestTDSDataModel.test_is_empty" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="core.tests.URLTest">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.tests.</span></code><code class="sig-name descname"><span class="pre">URLTest</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.test.testcases.TestCase</span></code></p>
-<dl class="py method">
-<dt id="core.tests.URLTest.test_auto_phase">
-<code class="sig-name descname"><span class="pre">test_auto_phase</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_auto_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_auto_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_calc_fft">
-<code class="sig-name descname"><span class="pre">test_calc_fft</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_calc_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_calc_fft" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_change_sensitivity">
-<code class="sig-name descname"><span class="pre">test_change_sensitivity</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_change_sensitivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_change_sensitivity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_change_time_const">
-<code class="sig-name descname"><span class="pre">test_change_time_const</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_change_time_const"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_change_time_const" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_gpib">
-<code class="sig-name descname"><span class="pre">test_gpib</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_gpib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_gpib" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_move">
-<code class="sig-name descname"><span class="pre">test_move</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_move" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_root">
-<code class="sig-name descname"><span class="pre">test_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_root" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_save">
-<code class="sig-name descname"><span class="pre">test_save</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_save" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_scan">
-<code class="sig-name descname"><span class="pre">test_scan</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_scan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_scan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_step">
-<code class="sig-name descname"><span class="pre">test_step</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_tds_boot">
-<code class="sig-name descname"><span class="pre">test_tds_boot</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_tds_boot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_tds_boot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="core.tests.URLTest.test_tds_data">
-<code class="sig-name descname"><span class="pre">test_tds_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/tests.html#URLTest.test_tds_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.tests.URLTest.test_tds_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
 <section id="module-core.urls">
 <span id="core-urls-module"></span><h2>core.urls module<a class="headerlink" href="#module-core.urls" title="Permalink to this headline">¶</a></h2>
 </section>
@@ -426,7 +80,6 @@ self.assertEqual(data[“status”], “finished”)</p>
 <dt id="core.views.RapidScan">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">RapidScan</span></code><a class="reference internal" href="_modules/core/views.html#RapidScan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.RapidScan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.View</span></code></p>
-<p>Summary line.</p>
 <p>Get rapid scan page.</p>
 <dl class="py method">
 <dt id="core.views.RapidScan.get">
@@ -439,6 +92,7 @@ self.assertEqual(data[“status”], “finished”)</p>
 <dt id="core.views.StepScan">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">StepScan</span></code><a class="reference internal" href="_modules/core/views.html#StepScan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.StepScan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.views.generic.base.View</span></code></p>
+<p>Get step scan page.</p>
 <dl class="py method">
 <dt id="core.views.StepScan.get">
 <code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/views.html#StepScan.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.StepScan.get" title="Permalink to this definition">¶</a></dt>
@@ -449,37 +103,182 @@ self.assertEqual(data[“status”], “finished”)</p>
 <dl class="py function">
 <dt id="core.views.auto_phase">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">auto_phase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#auto_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.auto_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Auto phase the Lockin amplifier.
+The endpoint is <cite>core/auto-phase/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.calc_fft">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">calc_fft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#calc_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.calc_fft" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the (inverse) Fourier transform with FFT algorithm.
+If choosing Fourier transform, the number of data points is expanded to be 4096.
+The endpoint is <cite>core/fft-calc/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul>
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><p>fields:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>type (str): The type of data. Choose “TDS” or “RAPID”.</p></li>
+<li><p>fft: Whether calculating FFT or IFFT. Specify it with “true” or “false”.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The JSON data.</p>
+<ul class="simple">
+<li><p>x: positional data or frequency.</p></li>
+<li><p>y: intensity data.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.change_sensitivity">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">change_sensitivity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#change_sensitivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.change_sensitivity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Change sensitivity of Lockin amplifier.
+The endpoint is <cite>core/change-sensitivity/</cite>
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>entry:</dt><dd><ul>
+<li><p>value: The target sensitivity.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.change_time_const">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">change_time_const</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#change_time_const"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.change_time_const" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Change time constant of Lockin amplifier.
+The endpoint is <cite>core/change-time-const/</cite>
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>entry:</dt><dd><ul>
+<li><p>value: The target time constant.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON {“status”: “ok”}.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.gpib">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">gpib</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#gpib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.gpib" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check the GPIB connection and returns Lockin amplifier’s intensity.
+The endpoint is <cite>core/gpib/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HTTPRequest</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The result of the operation as JSON format. JSON response contains,</p>
+<ul class="simple">
+<li><p>intensity: The value of Lockin amplifier</p></li>
+<li><p>connection: The existence of GPIB connection</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.move">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">move</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.move" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Move the step motor stage. The endpoint is <cite>core/move/</cite>.
+If the parameter is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><dl class="simple">
+<dt>fields:</dt><dd><ul>
+<li><p>position: Target absolute position in micro-meter</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of the operation as JSON format.
+If succeeded, returns {“success”: True}
+If bad request, returns 404 Bad Request</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.save">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.HttpResponse</span><a class="reference internal" href="_modules/core/views.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.save" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Save the measured data in CSV file. The endpoint is <cite>core/save/</cite>.
+If the parameter(s) is invalid, returns 404 Bad Request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – <ul>
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+<li><p>fields</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>path: The path to save data</p></li>
+<li><p>type: The type of measurement. Choose “TDS” or “RAPID”</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of the operation as JSON format.
+If succeeded, returns {“success”: True}
+If bad request, returns 404 Bad Request</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.scan">
@@ -489,12 +288,44 @@ self.assertEqual(data[“status”], “finished”)</p>
 <dl class="py function">
 <dt id="core.views.tds_boot">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">tds_boot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#tds_boot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.tds_boot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Start the sequence of step scanning.
+The endpoint is <cite>core/tds-boot/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Empty JSON</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="core.views.tds_data">
 <code class="sig-prename descclassname"><span class="pre">core.views.</span></code><code class="sig-name descname"><span class="pre">tds_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">django.http.response.JsonResponse</span><a class="reference internal" href="_modules/core/views.html#tds_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#core.views.tds_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the data of step scanning at the moment.
+The endpoint is <cite>core/tds-data/</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>django.http.HTTPRequest request</strong> (<em>request</em>) – <ul class="simple">
+<li><p>“Content-Type”: “application/x-www-form-urlencoded; charset=utf-8”,</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>JSON data</p>
+<ul class="simple">
+<li><p>x: The positional data of step motor stage.</p></li>
+<li><p>y: The intensity data of Lockin amplifier.</p></li>
+<li><p>status: Whether the sequence is still running or not.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-core">
@@ -523,19 +354,19 @@ self.assertEqual(data[“status”], “finished”)</p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">core package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="core.migrations.html">core.migrations package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core.utils.html">core.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#core-admin-module">core.admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-core.apps">core.apps module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-core.models">core.models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-core.tests">core.tests module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-core.urls">core.urls module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-core.views">core.views module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-core">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="archive.html">archive package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toppage.html">toppage package</a></li>
 </ul>
 
 <div class="relations">
@@ -543,7 +374,7 @@ self.assertEqual(data[“status”], “finished”)</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Welcome to core’s documentation!</a></li>
-      <li>Next: <a href="core.migrations.html" title="next chapter">core.migrations package</a></li>
+      <li>Next: <a href="core.utils.html" title="next chapter">core.utils package</a></li>
   </ul></li>
 </ul>
 </div>
