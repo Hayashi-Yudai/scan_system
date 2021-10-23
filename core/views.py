@@ -5,6 +5,7 @@ import numpy as np
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
+import json
 
 from core.models import TDSData, TemporalData
 from core.utils import api_ops
@@ -343,3 +344,20 @@ def auto_phase(request) -> JsonResponse:
     api_ops.auto_phase_lockin()
 
     return JsonResponse({"status": "ok"})
+
+
+def rapid_scan_data(request) -> JsonResponse:
+    global scan_running
+
+    body = json.loads(request.body)
+    present_data = (
+        TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
+    )
+    present_data.position_data = ",".join(map(str, body["x"]))
+    present_data.intensity_data = ",".join(map(str, body["y"]))
+    present_data.save()
+
+    if body["finished"]:
+        scan_running = False
+
+    return JsonResponse({})
