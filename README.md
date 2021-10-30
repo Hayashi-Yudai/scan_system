@@ -1,7 +1,7 @@
 # Scan system
 
 ![Django workflow](https://github.com/Hayashi-Yudai/scan_system/actions/workflows/django.yml/badge.svg)
-[![MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)]
+![MIT](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)
 
 ## Requirements
 
