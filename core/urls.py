@@ -16,4 +16,5 @@ urlpatterns = [
     path("change-sensitivity/", views.change_sensitivity, name="change_sensitivity"),
     path("change-time-const/", views.change_time_const, name="change_time_const"),
     path("auto-phase/", views.auto_phase, name="auto_phase"),
+    path("rapid-scan-data/", views.rapid_scan_data, name="rapid_scan_data"),
 ]
