@@ -257,7 +257,9 @@ class URLTest(TestCase):
         self.assertEqual(resolve("/core/save/").func, views.save)
 
     def test_scan(self):
-        self.assertEqual(resolve("/core/scan/").func, views.scan)
+        self.assertEqual(
+            resolve("/core/start_rapid_scan/").func, views.start_rapid_scan
+        )
 
     def test_gpib(self):
         self.assertEqual(resolve("/core/gpib/").func, views.gpib)
@@ -283,6 +285,14 @@ class URLTest(TestCase):
 
     def test_auto_phase(self):
         self.assertEqual(resolve("/core/auto-phase/").func, views.auto_phase)
+
+    def test_rapid_scan_data(self):
+        self.assertEqual(resolve("/core/rapid-scan-data/").func, views.rapid_scan_data)
+
+    def test_get_rapid_data(self):
+        self.assertEqual(
+            resolve("/core/get-rapid-data/").func, views.send_rapid_data_to_front
+        )
 
 
 class TestTDSDataModel(TestCase):
