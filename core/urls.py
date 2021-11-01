@@ -8,7 +8,7 @@ urlpatterns = [
     path("step/", views.StepScan.as_view(), name="step"),
     path("move/", views.move, name="move"),
     path("save/", views.save, name="save"),
-    path("scan/", views.scan, name="scan"),
+    path("start_rapid_scan/", views.start_rapid_scan, name="start"),
     path("gpib/", views.gpib, name="gpib"),
     path("calc-fft/", views.calc_fft, name="calc_fft"),
     path("tds-data/", views.tds_data, name="tds_data"),
@@ -17,4 +17,5 @@ urlpatterns = [
     path("change-time-const/", views.change_time_const, name="change_time_const"),
     path("auto-phase/", views.auto_phase, name="auto_phase"),
     path("rapid-scan-data/", views.rapid_scan_data, name="rapid_scan_data"),
+    path("get-rapid-data/", views.send_rapid_data_to_front, name="get_rapid_data"),
 ]

@@ -1,5 +1,6 @@
 import datetime
 import os
+from ctypes import cdll
 
 import numpy as np
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -125,26 +126,21 @@ def save(request) -> HttpResponse:
 
 
 # TODO: A/Dコンバータでの処理と合わせる
-def scan(request):
-    duration = float(request.POST.get("duration"))
-    sample_rate = float(request.POST.get("sampling_rate"))
-    # if not scan_running
-    #   output, scan_running = raster_scan(duration, sample_rate, scan_running)
-    present_data = (
-        TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
-    )
-    wave = WaveForm.new(present_data)
+def start_rapid_scan(request):
+    global scan_running
 
-    x = np.linspace(0, 8 * np.pi, 200)
-    y = 1e-6 * np.sin(x)
-    wave.x = x.tolist()
-    wave.y = y.tolist()
-    present_data.position_data = ",".join(map(str, wave.x))
-    present_data.intensity_data = ",".join(map(str, wave.y))
-    present_data.save()
-    return JsonResponse(
-        {"x": np.round(x, 2).tolist(), "y": y.tolist(), "running": False}
-    )
+    scan_running = True
+    func = cdll.LoadLibrary("./core/adconverter.dll")
+
+    duration = float(request.POST.get("duration"))
+    # sample_rate = float(request.POST.get("sampling_rate"))
+
+    func.open(1)
+    # TODO: calc time from sampling rate
+    func.set_clock(1, 500, 1)
+    func.run(1, int(duration))
+
+    return JsonResponse({})
 
 
 def gpib(request) -> JsonResponse:
@@ -347,6 +343,19 @@ def auto_phase(request) -> JsonResponse:
 
 
 def rapid_scan_data(request) -> JsonResponse:
+    """
+    Receive scanned data from A/D converter
+    The endpoint is `core/rapid-scan-data/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type": "application/json; charset=utf-8",
+        - x: position data
+        - y: intensity data
+        - finished: bool which represent whether the scan is finished
+
+    :returns: Empty JSON.
+    """
     global scan_running
 
     body = json.loads(request.body)
@@ -358,6 +367,34 @@ def rapid_scan_data(request) -> JsonResponse:
     present_data.save()
 
     if body["finished"]:
+        func = cdll.LoadLibrary("./core/adconverter.dll")
+        func.close(1)
         scan_running = False
 
     return JsonResponse({})
+
+
+def send_rapid_data_to_front(request) -> JsonResponse:
+    """
+    Send scanned data to the frontend to plot data
+    The endpoint is `core/get-rapid-data/`
+
+    :param request django.http.HTTPRequest request:
+
+        - "Content-Type":  "application/x-www-form-urlencoded; charset=utf-8"
+
+    :returns: JSON {"running": bool, "x": list[float], "y": list[float]}.
+    """
+    global scan_running
+
+    data = (
+        TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
+    )
+
+    try:
+        position = list(map(float, data.position_data.split(",")))
+        intensity = list(map(float, data.position_data.split(",")))
+
+        return JsonResponse({"running": scan_running, "x": position, "y": intensity})
+    except ValueError:
+        return JsonResponse({"running": scan_running, "x": [], "y": []})
