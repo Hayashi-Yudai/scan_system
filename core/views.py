@@ -133,11 +133,11 @@ def start_rapid_scan(request):
     func = cdll.LoadLibrary("./core/adconverter.dll")
 
     duration = float(request.POST.get("duration"))
-    # sample_rate = float(request.POST.get("sampling_rate"))
+    sample_rate = float(request.POST.get("sampling_rate")) * 1e3
+    clk_time = int(1 / sample_rate / 2e-8)
 
     func.open(1)
-    # TODO: calc time from sampling rate
-    func.set_clock(1, 500, 1)
+    func.set_clock(1, clk_time, 0)
     func.run(1, int(duration))
 
     return JsonResponse({})
