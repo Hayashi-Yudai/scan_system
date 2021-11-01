@@ -1,3 +1,3 @@
-#control-area>.slow-stage input#stage-position{width:80px}#control-area>.fast-stage #sampling-rate-area{width:50px}#control-area>.fast-stage #measurement-time-area{width:50px}#control-area .invalid-value{border-color:red;color:red}#control-area form#sampling-rate-form~p.hide{display:none}
+#control-area>.slow-stage input#stage-position{width:80px}#control-area>.fast-stage #sampling-rate-area{width:50px}#control-area>.fast-stage #measurement-time-area{width:50px}#control-area>.fast-stage .form-module{display:inline-flex}#control-area>.fast-stage .form-area{margin:auto 10px}#control-area>.fast-stage #start-button-area{margin:10px 0}#control-area>.fast-stage .save-module{margin-top:30px}#control-area .invalid-value{border-color:red;color:red}#control-area .running{background-color:#dc3545}#control-area form#sampling-rate-form~p.hide{display:none}
 
 /*# sourceMappingURL=rapid.css.map */

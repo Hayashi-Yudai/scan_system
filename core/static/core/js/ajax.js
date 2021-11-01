@@ -15,6 +15,10 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
       },
   });
 
+  const startButton = document.getElementById("start-button");
+  startButton.classList.add("running");
+  startButton.value = "Running...";
+
   // Fetch data and plot
   while (running) {
     await fetch("http://localhost:8000/core/get-rapid-data/", {
@@ -42,4 +46,7 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
 
     await _sleep(1000);
   }
+
+  startButton.classList.remove("running");
+  startButton.value = "Start";
 });

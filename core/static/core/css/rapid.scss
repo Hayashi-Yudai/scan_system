@@ -13,6 +13,22 @@
     #measurement-time-area {
       width: 50px;
     }
+
+    .form-module {
+      display: inline-flex;
+    }
+
+    .form-area {
+      margin: auto 10px;
+    }
+
+    #start-button-area {
+      margin: 10px 0;
+    }
+
+    .save-module {
+      margin-top: 30px;
+    }
   }
 
   .invalid-value {
@@ -20,8 +36,11 @@
     color: red;
   }
 
+  .running {
+    background-color: #dc3545;
+  }
+
   form#sampling-rate-form ~ p.hide {
     display: none;
   }
-
 }
