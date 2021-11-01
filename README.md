@@ -21,7 +21,19 @@
 ```
 SR830_GPIB_ADDRESS=10
 MARK202_GPIB_ADDRESS=12
+DATA_POST_URL=http://localhost:8000/core/rapid-scan-data/
 ```
+
+A/Dコンバータを制御するためのライブラリを `/core`以下に配置する。
+```bash
+core
+├── TUSB16AD.dll
+├── TUSB16AD.lib
+└── adconverter.dll
+```
+
+`TUSB16AD.dll`と`TUSB16AD.lib`はタートル工業のHPからダウンロード可能。
+`adconverter.lib`は[https://github.com/Hayashi-Yudai/adconverter](このページ)からダウンロードする。
 
 Windows の場合は、`setup_system.exe` ファイルをダブルクリックして実行する。このとき、`conda`コマンドが使える必要があるので事前に Anaconda か Miniconda をインストールしておく。
 
