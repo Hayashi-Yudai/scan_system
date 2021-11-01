@@ -1,15 +1,24 @@
 document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  let url = document.getElementById("rapid-scan").action;
-  let duration = document.getElementById("measurement-time-area").value;
-  let sampling_rate = document.getElementById("sampling-rate-area").value;
+  const url = document.getElementById("rapid-scan").action;
+  const duration = document.getElementById("measurement-time-area").value;
+  const samplingRate = document.getElementById("sampling-rate-area").value;
 
   let running = true;
-  while (running) {
-    await fetch(url, {
+  // Start scanning
+  fetch(url, {
       method: "POST",
-      body: `duration=${duration}&sampling_rate=${sampling_rate}`,
+      body: `duration=${duration}&sampling_rate=${samplingRate}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+      },
+  });
+
+  // Fetch data and plot
+  while (running) {
+    await fetch("http://localhost:8000/core/get-rapid-data/", {
+      method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
@@ -18,8 +27,8 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
         return response.json();
       })
       .then((responseJson) => {
-        let x = responseJson.x;
-        let y = responseJson.y;
+        const x = responseJson.x;
+        const y = responseJson.y;
 
         data[0].x = x;
         data[0].y = y;
