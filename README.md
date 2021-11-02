@@ -40,3 +40,9 @@ Windows の場合は、`setup_system.exe` ファイルをダブルクリック�
 ## Run program
 
 Windows の場合には `run.bat`をダブルクリックして実行する。
+
+## Links
+- [Install Anaconda](https://www.anaconda.com/products/individual)
+- [adconverter](https://github.com/Hayashi-Yudai/adconverter)
+- [condaコマンドを使えるようにする](https://qiita.com/momosuke/items/fd6f8f9d01d2f57be90e)
+- [タートル工業 - A/Dコンバータ](https://www.turtle-ind.co.jp/products/ad-converters/)
