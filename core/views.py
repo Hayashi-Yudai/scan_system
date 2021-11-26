@@ -2,7 +2,6 @@ import datetime
 import os
 from ctypes import cdll
 
-import numpy as np
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -125,7 +124,6 @@ def save(request) -> HttpResponse:
     return JsonResponse({"success": True})
 
 
-# TODO: A/Dコンバータでの処理と合わせる
 def start_rapid_scan(request):
     global scan_running
 
@@ -136,9 +134,9 @@ def start_rapid_scan(request):
     sample_rate = float(request.POST.get("sampling_rate")) * 1e3
     clk_time = int(1 / sample_rate / 2e-8)
 
-    func.open(1)
-    func.set_clock(1, clk_time, 0)
-    func.run(1, int(duration))
+    func.open(0)
+    func.set_clock(0, clk_time, 0)
+    func.run(0, int(duration))
 
     return JsonResponse({})
 
@@ -368,7 +366,7 @@ def rapid_scan_data(request) -> JsonResponse:
 
     if body["finished"]:
         func = cdll.LoadLibrary("./core/adconverter.dll")
-        func.close(1)
+        func.close(0)
         scan_running = False
 
     return JsonResponse({})
@@ -393,7 +391,7 @@ def send_rapid_data_to_front(request) -> JsonResponse:
 
     try:
         position = list(map(float, data.position_data.split(",")))
-        intensity = list(map(float, data.position_data.split(",")))
+        intensity = list(map(float, data.intensity_data.split(",")))
 
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
     except ValueError:
