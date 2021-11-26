@@ -138,7 +138,7 @@ def start_rapid_scan(request):
     func.set_clock(0, clk_time, 0)
     func.run(0, int(duration))
 
-    return JsonResponse({})
+    return JsonResponse({"status": "ok"})
 
 
 def gpib(request) -> JsonResponse:
@@ -395,4 +395,5 @@ def send_rapid_data_to_front(request) -> JsonResponse:
 
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
     except ValueError:
+        print("ValueError")
         return JsonResponse({"running": scan_running, "x": [], "y": []})

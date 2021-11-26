@@ -13,7 +13,13 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
-  });
+  }).then((response)=> {
+    return response.json();
+  }).then((responseJson)=>{
+    if (responseJson.status == "ok") {
+      console.log("ok");
+    }
+  }).catch((_) => { console.log("Error to start scanning") });
 
   const startButton = document.getElementById("start-button");
   startButton.classList.add("running");
@@ -39,8 +45,9 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
         Plotly.update("canvas", data, layout);
         running = responseJson.running;
       })
-      .catch((_) => {
+      .catch((err) => {
         console.log("error in scanning");
+        console.log(err);
         running = false;
       });
 
