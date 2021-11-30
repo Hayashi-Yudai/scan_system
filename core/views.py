@@ -124,23 +124,6 @@ def save(request) -> HttpResponse:
     return JsonResponse({"success": True})
 
 
-def start_rapid_scan(request):
-    global scan_running
-
-    scan_running = True
-    func = cdll.LoadLibrary("./core/adconverter.dll")
-
-    duration = float(request.POST.get("duration"))
-    sample_rate = float(request.POST.get("sampling_rate")) * 1e3
-    clk_time = int(1 / sample_rate / 2e-8)
-
-    func.open(0)
-    func.set_clock(0, clk_time, 0)
-    func.run(0, int(duration))
-
-    return JsonResponse({"status": "ok"})
-
-
 def gpib(request) -> JsonResponse:
     """
     Check the GPIB connection and returns Lockin amplifier's intensity.
@@ -340,6 +323,23 @@ def auto_phase(request) -> JsonResponse:
     return JsonResponse({"status": "ok"})
 
 
+def start_rapid_scan(request):
+    global scan_running
+
+    scan_running = True
+    func = cdll.LoadLibrary("./core/adconverter.dll")
+
+    duration = float(request.POST.get("duration"))
+    sample_rate = float(request.POST.get("sampling_rate")) * 1e3
+    clk_time = int(1 / sample_rate / 2e-8)
+
+    func.open(0)
+    func.set_clock(0, clk_time, 0)
+    func.run(0, int(duration))
+
+    return JsonResponse({"status": "ok"})
+
+
 def rapid_scan_data(request) -> JsonResponse:
     """
     Receive scanned data from A/D converter
@@ -395,5 +395,5 @@ def send_rapid_data_to_front(request) -> JsonResponse:
 
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
     except ValueError:
-        print("ValueError")
+        print("send_rapid_data_to_front: ValueError")
         return JsonResponse({"running": scan_running, "x": [], "y": []})
