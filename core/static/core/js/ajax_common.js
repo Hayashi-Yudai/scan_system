@@ -40,15 +40,14 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
     },
   })
     .then((response) => {
-      return response.json();
-    })
-    .then((responseJson) => {
-      if (!responseJson.success) {
+      if (response.ok) {
+        alert("Saved successfully");
+      } else {
         alert("Invalid directory");
       }
     })
     .catch((_) => {
-      console.log("error in save data");
+      alert("Invalid directory");
     });
 });
 
