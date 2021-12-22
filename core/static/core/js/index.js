@@ -14,3 +14,4 @@ function validateSamplingRate(event) {
     document.getElementById("set-sampling-rate").disabled = false;
   }
 }
+

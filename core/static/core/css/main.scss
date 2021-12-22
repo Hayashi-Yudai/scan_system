@@ -4,78 +4,10 @@
 $gray-color: rgb(130, 130, 130);
 $gray-color-clear: rgba(130, 130, 130, 0.3);
 
-@mixin pc {
-	@media (max-width: 900px) {
-		@content;
-	}
-}
-
-html {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  display: flex;
-  width: 100%;
-}
-
-body {
-	@include pc {
-    padding: 10px;
-    box-sizing: border-box;
-	}
-
-  max-width: 90%;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0 10px;
-}
-
-main {
-  margin: 10px 20px;
-}
-
-p {
-  color: $gray-color;
-}
-
-a {
-	&:visited,
-  &:hover,
-	&:active {
-		color: inherit;
-	}
-}
 
 /*
  Module
 */
-header {
-  position: relative;
-
-  .links {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateY(-50%) translateX(-40%);
-
-    a.link {
-      margin-right: 10px;
-      padding: 5px;
-      border: 1px solid $gray-color;
-      border-radius: 3px;
-      text-decoration: none;
-      color: #000;
-
-      &:hover {
-        background-color: $gray-color-clear;
-      }
-    }
-  }
-}
 
 main {
   > #container {

@@ -1,0 +1,58 @@
+$gray-color: rgb(130, 130, 130);
+
+
+@mixin pc {
+	@media (max-width: 900px) {
+		@content;
+	}
+}
+
+
+html {
+  width: 95%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  width: 100%;
+
+  #navbar {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  #header-title {
+    font-size: 28px;
+  }
+}
+
+body {
+	@include pc {
+    padding: 10px;
+    box-sizing: border-box;
+	}
+
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 10px;
+}
+
+main {
+  margin: 10px 20px;
+}
+
+p {
+  color: $gray-color;
+}
+
+a {
+	&:visited,
+  &:hover,
+	&:active {
+		color: inherit;
+	}
+}

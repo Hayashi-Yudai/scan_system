@@ -16,13 +16,14 @@
       src="{% static 'core/js/index.js' %}"
       defer
     ></script>
+    <link rel="stylesheet" href="{% static 'spectre.min.css' %}" />
+    <link rel="stylesheet" href="{% sass_src 'layout.scss' %}"/>
     <link rel="stylesheet" href="{% sass_src 'core/css/main.scss' %}"/>
     <link rel="stylesheet" href="{% sass_src 'core/css/rapid.scss' %}"/>
   </head>
   <body>
     <header>
       {% include "core/header.html" %}
-      {% include "core/links.html" %}
     </header>
     <main id="main">
       <div id="container">
