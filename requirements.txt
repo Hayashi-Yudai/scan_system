@@ -7,3 +7,6 @@ python-dotenv
 libsass
 django-compressor
 django-sass-processor
+whitenoise ~= 5.3
+flaskwebgui ~= 0.3
+waitress ~= 2.0
