@@ -108,7 +108,7 @@ def save(request) -> HttpResponse:
         If bad request, returns 404 Bad Request
     """
     if (save_path := request.POST.get("path")) is None:
-        logger.debug("Core.save: info is None")
+        logger.debug("Core.save: path is None")
         return HttpResponseBadRequest("Invalid parameter")
 
     if save_path.count("/") < 1:
@@ -153,6 +153,8 @@ def gpib(request) -> JsonResponse:
         - connection: The existence of GPIB connection
     """
     intensity, connection = api_ops.get_lockin_intensity()  # float, bool
+    logger.debug(f"Core.gpib: intensity = {intensity}")
+    logger.debug(f"Core.gpib: connection = {connection}")
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
@@ -223,6 +225,11 @@ def tds_boot(request) -> JsonResponse:
         end = int(request.POST.get("end"))
         step = int(request.POST.get("step"))
         lockin = float(request.POST.get("lockin"))
+
+        logger.debug(f"Core.tds_boot: start = {start}")
+        logger.debug(f"Core.tds_boot: end = {end}")
+        logger.debug(f"Core.tds_boot: step = {step}")
+        logger.debug(f"Core.tds_boot: lockin = {lockin}")
     except (ValueError, TypeError) as e:
         logger.error(f"Core.tds_boot: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
@@ -268,6 +275,7 @@ def tds_data(request) -> JsonResponse:
     )
     wave = WaveForm.new(present_data)
     status = "running" if tds_running else "finished"
+    logger.debug(f"Core.tds_data: status = {status}")
 
     return JsonResponse({"x": wave.x, "y": wave.y, "status": status})
 
@@ -289,11 +297,13 @@ def change_sensitivity(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
+        logger.debug(f"Core.change_sensitivity: value = {value}")
     except (ValueError, TypeError) as e:
         logger.error(f"Core.change_sensitivity: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
+    logger.debug(f"Core.change_sensitivity: unit = {unit}")
     api_ops.set_lockin_sensitivity(value, unit)
 
     return JsonResponse({"status": "ok"})
@@ -315,11 +325,13 @@ def change_time_const(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
+        logger.debug(f"Core.change_time_const: value = {value}")
     except (ValueError, TypeError) as e:
         logger.error(f"Core.change_time_const: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
+    logger.debug(f"Core.change_time_const: unit = {unit}")
     api_ops.set_lockin_time_const(value, unit)
 
     return JsonResponse({"status": "ok"})
@@ -350,6 +362,10 @@ def start_rapid_scan(request):
     duration = float(request.POST.get("duration"))
     sample_rate = float(request.POST.get("sampling_rate")) * 1e3
     clk_time = int(1 / sample_rate / 2e-8)
+
+    logger.debug(f"Core.start_rapid_scan: duration = {duration}")
+    logger.debug(f"Core.start_rapid_scan: sample_rate = {sample_rate}")
+    logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
 
     func.open(0)
     func.set_clock(0, clk_time, 0)
@@ -410,6 +426,9 @@ def send_rapid_data_to_front(request) -> JsonResponse:
     try:
         position = list(map(float, data.position_data.split(",")))
         intensity = list(map(float, data.intensity_data.split(",")))
+
+        logger.debug(f"Core:send_rapid_data_to_front: position = {position}")
+        logger.debug(f"Core:send_rapid_data_to_front: intensity = {intensity}")
 
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
     except ValueError as e:

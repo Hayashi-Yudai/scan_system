@@ -4,11 +4,14 @@ from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist
 import numpy as np
 import json
+import logging
 
 from core.models import TDSData
 
 
-# Create your views here.
+logger = logging.getLogger("root")
+
+
 class Index(ListView):
     template_name = "archive/index.html"
     model = TDSData
@@ -19,9 +22,11 @@ class Index(ListView):
 def get_archive_data(request):
     try:
         entry = TDSData.objects.get(pk=int(request.POST.get("pk")))
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist as e:
+        logger.error(f"archive.get_archive_data: {e}")
         raise Http404("Resource not found")
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
+        logger.error(f"archive.get_archive_data: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
 
     x = list(map(float, entry.position_data.split(",")))
@@ -46,7 +51,10 @@ def calc_fft(request):
     try:
         ids = body["ids"]
         fft = body["fft"]
-    except KeyError:
+        logger.debug(f"archive.calc_fft: ids = {ids}")
+        logger.debug(f"archive.calc_fft: fft = {fft}")
+    except KeyError as e:
+        logger.error(f"archive.calc_fft: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     if not type(ids) == list and not type(ids) == tuple:
@@ -55,7 +63,8 @@ def calc_fft(request):
     for pk in ids:
         try:
             data = TDSData.objects.filter(pk=pk)[0]
-        except IndexError:
+        except IndexError as e:
+            logger.error(f"archive.calc_fft: {e}")
             raise Http404("Resource not found")
 
         x = list(map(float, data.position_data.split(",")))

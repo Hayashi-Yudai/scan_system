@@ -6,15 +6,21 @@ import os
 import pandas as pd
 import numpy as np
 import time
+import logging
+
+logger = logging.getLogger("root")
 
 
 def move_stage(position: int) -> bool:
     try:
-        with Mark202(int(os.environ["MARK202_GPIB_ADDRESS"])) as stage:
+        gpib = int(os.environ["MARK202_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.move_stage: GPIB = {gpib}")
+        logger.debug(f"api_ops.move_stage: position = {position}")
+        with Mark202(gpib) as stage:
             stage.move(position)
         return True
-    except Exception:
-        print("Error in moving stage")
+    except Exception as e:
+        logger.error(f"api_ops.move_stage: {e}")
         return False
 
 
@@ -32,33 +38,45 @@ def get_lockin_intensity() -> tuple[float, bool]:
     Returns the lockin intensity and status
     """
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+        gpib = int(os.environ["SR830_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.get_lockin_intensity: GPIB = {gpib}")
+
+        with SR830(gpib) as lockin:
             return float(lockin.get_intensity()), True
-    except Exception:
+    except Exception as e:
+        logger.error(f"api_ops.move_stage: {e}")
         return 0, False
 
 
 def auto_phase_lockin() -> bool:
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+        gpib = int(os.environ["SR830_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.auto_phase_lockin: GPIB = {gpib}")
+        with SR830(gpib) as lockin:
             lockin.auto_phase()
         return True
-    except Exception:
+    except Exception as e:
+        logger.error(f"api_ops.move_stage: {e}")
         return False
 
 
 def set_lockin_sensitivity(value: int, unit: str) -> bool:
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+        gpib = int(os.environ["SR830_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.set_lockin_sensitivity: GPIB = {gpib}")
+        with SR830(gpib) as lockin:
             lockin.set_sensitivity(value, unit)
         return True
-    except Exception:
+    except Exception as e:
+        logger.error(f"api_ops.move_stage: {e}")
         return False
 
 
 def set_lockin_time_const(value: int, unit: str) -> bool:
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as lockin:
+        gpib = int(os.environ["SR830_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.set_lockin_time_const: GPIB = {gpib}")
+        with SR830(gpib) as lockin:
             lockin.set_time_const(value, unit)
         return True
     except Exception:
@@ -77,9 +95,11 @@ def tds_scan(
 ) -> bool:
     wave = WaveForm.new(entry)
     try:
-        with SR830(int(os.environ["SR830_GPIB_ADDRESS"])) as amp, Mark202(
-            int(os.environ["MARK202_GPIB_ADDRESS"])
-        ) as stage:
+        gpib_sr = int(os.environ["SR830_GPIB_ADDRESS"])
+        gpib_mk = int(os.environ["MARK202_GPIB_ADDRESS"])
+        logger.debug(f"api_ops.tds_scan: GPIB(SR) = {gpib_sr}")
+        logger.debug(f"api_ops.tds_scan: GPIB(MK) = {gpib_mk}")
+        with SR830(gpib_sr) as amp, Mark202(gpib_mk) as stage:
             stage.move(start)
             stage.wait_while_busy()
 
@@ -98,7 +118,6 @@ def tds_scan(
 
         return True
     except Exception as e:
-        print("Error in tds_boot()")
-        print(e)
+        logger.error(f"api_ops.tds_scan: {e}")
 
         return False
