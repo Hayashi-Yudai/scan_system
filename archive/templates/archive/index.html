@@ -32,8 +32,8 @@
     {% include "core/header.html" %}
   </header>
   <div class="container" style="max-width: 90%">
-    <div class="row">
-      <div class="col">
+    <div class="columns">
+      <div class="col-5">
         <table class="table table-hover">
           <thead>
           <tr>
@@ -88,20 +88,14 @@
           </ul>
         </nav>
       </div>
-      <div class="col plot-area">
-        <div id="canvas" style="width: 500px; height: 400px"></div>
-        <div class="toggle-switch">
-            {% block fft-type %}{% endblock %}
-            <label class="switch__label">
-                <input
-                  type="checkbox"
-                  class="switch__input"
-                  name="fft-checkbox"
-                />
-                <span class="switch__content"></span>
-                <span class="switch__circle"></span>
-            </label>
-            <div class="fft-label">FFT</div>
+      <div class="col-7 plot-area">
+        <div id="canvas"></div>
+        <div class="form-group" id="fft-toggle">
+          <input type="hidden" id="fft-type" value="TDS" />
+          <label class="form-switch">
+            <input type="checkbox" name="fft-checkbox">
+            <i class="form-icon"></i>FFT
+          </label>
         </div>
       </div>
     </div>
