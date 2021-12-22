@@ -1,4 +1,6 @@
 #control-area {
+  width: 450px;
+
   > .slow-stage {
     input#stage-position {
       width: 80px;
@@ -6,20 +8,8 @@
   }
 
   > .fast-stage {
-    #sampling-rate-area {
-      width: 50px;
-    }
-
-    #measurement-time-area {
-      width: 50px;
-    }
-
     .form-module {
       display: inline-flex;
-    }
-
-    .form-area {
-      margin: auto 10px;
     }
 
     #start-button-area {

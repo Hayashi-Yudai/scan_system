@@ -1,42 +1,93 @@
 <div id="control-area">
   <div class="slow-stage">
-    <h3>Step stage controller</h3>
-    <form id="stage-move" action="{% url 'core:move' %}" method="POST">
-      <input
-        type="number"
-        name="slow-stage-target-position"
-        id="stage-position"
-      />
-      <input type="hidden" id="save-type" value="RAPID" />
-      <input type="submit" value="Move" id="slow-stage-move" />
+    <h4>Step stage controller</h4>
+    <form 
+      class="form-group"
+      id="stage-move" 
+      action="{% url 'core:move' %}" 
+      method="POST"
+    >
+      <div class="input-group">
+        <input
+          class="form-input input-lg"
+          type="number"
+          name="slow-stage-target-position"
+          id="stage-position"
+        />
+        <input type="hidden" id="save-type" value="RAPID" />
+        <button 
+          class="btn btn-secondary btn-lg input-group-btn" 
+          id="slow-stage-move"
+        >
+          Move
+        </button>
+      </div>
     </form>
   </div>
   <div class="fast-stage">
-    <h3>Fast stage controller</h3>
+    <h4>Fast stage controller</h4>
     <div class="form-module">
-      <p>Sampling rate (kHz):</p>
-      <form class="form-area" id="sampling-rate-form" action="" method="POST">
-        <input type="number" id="sampling-rate-area" name="sampling-rate" />
+      <form class="form-group" id="sampling-rate-form" action="" method="POST">
+        <div class="input-group">
+          <input 
+            class="form-input input-lg" 
+            type="number" 
+            id="sampling-rate-area" 
+            name="sampling-rate" 
+            placeholder="Sampling rate" 
+          />
+          <span class="input-group-addon addon-lg">kHz</span>
+        </div>
       </form>
       <p class="hide invalid-value" id="sampling-rate-alert">
         Sampling rate should be between 0 and 100 kHz
       </p>
     </div>
     <div class="form-module">
-      <p>Measurement time (s):</p>
-      <form class="form-area">
-        <input type="number" id="measurement-time-area" name="measurement-time" />
+      <form class="form-group">
+        <div class="input-group">
+          <input 
+            class="form-input input-lg" 
+            type="number" 
+            id="measurement-time-area" 
+            name="measurement-time" 
+            placeholder="Measurement time"
+          />
+          <span class="input-group-addon addon-lg">s</span>
+        </div>
       </form>
     </div>
-    <div id="start-button-area">
-      <form class="form-area" id="rapid-scan" action="{% url 'core:start' %}" method="POST">
-        <input type="submit" value="Start" id="start-button" />
+    <div>
+      <form 
+        class="form-group" 
+        id="rapid-scan" 
+        action="{% url 'core:start' %}" 
+        method="POST"
+      >
+        <button class="btn btn-primary btn-lg" id="start-button">Start</button>
       </form>
     </div>
     <div class="save-module">
-      <form id="save-data" action="{% url 'core:save' %}" method="POST">
-        <input type="text" id="save-area" value="C:/Users/suzuki/Desktop/"/>
-        <input type="submit" value="Save" id="save-button" />
+      <form 
+        class="form-group" 
+        id="save-data" 
+        action="{% url 'core:save' %}" 
+        method="POST"
+      >
+        <div class="input-group">
+          <input 
+            class="form-input input-lg" 
+            type="text" 
+            id="save-area" 
+            value="C:/Users/suzuki/Desktop/"
+          />
+          <button 
+            class="btn btn-primary btn-lg input-btn-group" 
+            id="save-button"
+          >
+            Save
+          </button>
+        </div>
       </form>
     </div>
   </div>

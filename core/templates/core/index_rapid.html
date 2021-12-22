@@ -26,9 +26,15 @@
       {% include "core/header.html" %}
     </header>
     <main id="main">
-      <div id="container">
-        {% include "core/plot_rapid.html" %}
-        {% include "core/controller_rapid.html" %}
+      <div class="container">
+        <div class="columns">
+          <div class="col-7">
+            {% include "core/plot_rapid.html" %}
+          </div>
+          <div class="col-4" style="padding: 0 5px 0 20px;">
+            {% include "core/controller_rapid.html" %}
+          </div>
+        </div>
       </div>
     </main>
   </body>
