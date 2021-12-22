@@ -1,6 +1,7 @@
 import datetime
 import os
 from ctypes import cdll
+import logging
 
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
@@ -15,6 +16,8 @@ from core.utils.waveform import WaveForm
 scan_running = False
 tds_running = False
 
+logger = logging.getLogger("root")
+
 
 class RapidScan(View):
     """
@@ -27,6 +30,7 @@ class RapidScan(View):
         TemporalData.objects.create(data_type="RAPID")
 
     def get(self, request):
+        logger.debug("Core.RapidScan: GET")
         return render(request, "core/index_rapid.html")
 
 
@@ -41,6 +45,7 @@ class StepScan(View):
         TemporalData.objects.create(data_type="TDS")
 
     def get(self, request):
+        logger.debug("Core.StepScan: GET")
         return render(request, "core/index_step.html")
 
 
@@ -68,13 +73,17 @@ def move(request) -> HttpResponse:
     """
     try:
         position = int(request.POST.get("position"))
-    except (TypeError, ValueError):
+        logging.debug(f"Core.move: position={position}")
+    except (TypeError, ValueError) as e:
+        logger.error(f"Core.move: raised TypeError or ValueError -> {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     if position < 0:
+        logger.warning(f"Core.move: rejected position={position}")
         return HttpResponseBadRequest("'position' must be positive or zero")
 
     succeed: bool = api_ops.move_stage(position)
+    logger.debug(f"Core.move: succeed={succeed}")
 
     return JsonResponse({"success": succeed})
 
@@ -99,16 +108,20 @@ def save(request) -> HttpResponse:
         If bad request, returns 404 Bad Request
     """
     if (save_path := request.POST.get("path")) is None:
+        logger.debug("Core.save: info is None")
         return HttpResponseBadRequest("Invalid parameter")
 
     if save_path.count("/") < 1:
+        logger.debug(f"Core.save: invalid path -> {save_path}")
         return HttpResponseBadRequest("Invalid path")
 
     directory = save_path.rsplit("/", 1)[0]
     if not os.path.exists(directory):
+        logger.debug(f"Core.save: {directory} does not exist")
         return HttpResponseBadRequest("Invalid path")
 
     if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        logger.debug(f"Core.save: Invalid type  {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
@@ -164,6 +177,7 @@ def calc_fft(request) -> JsonResponse:
         - y: intensity data.
     """
     if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        logger.debug(f"Core.calc_fft: Invalid type {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
@@ -171,7 +185,8 @@ def calc_fft(request) -> JsonResponse:
     )
     wave = WaveForm.new(present_data)
 
-    if request.POST.get("fft") not in ["true", "false"]:
+    if (fft := request.POST.get("fft")) not in ["true", "false"]:
+        logger.debug(f"Core.calc_fft: Invalid fft type {fft}")
         return HttpResponseBadRequest("Invalid parameter")
 
     if request.POST.get("fft") == "true":
@@ -208,7 +223,8 @@ def tds_boot(request) -> JsonResponse:
         end = int(request.POST.get("end"))
         step = int(request.POST.get("step"))
         lockin = float(request.POST.get("lockin"))
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.tds_boot: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
 
     tds_running = True
@@ -273,7 +289,8 @@ def change_sensitivity(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.change_sensitivity: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
@@ -298,7 +315,8 @@ def change_time_const(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.change_time_const: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
@@ -394,6 +412,7 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         intensity = list(map(float, data.intensity_data.split(",")))
 
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
-    except ValueError:
+    except ValueError as e:
+        logger.error(f"Core.send_rapid_data_to_front: {e}")
         print("send_rapid_data_to_front: ValueError")
         return JsonResponse({"running": scan_running, "x": [], "y": []})
