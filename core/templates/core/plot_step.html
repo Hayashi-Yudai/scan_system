@@ -1,10 +1,3 @@
-<div class="col-12" id="plot-area">
-  <div id="canvas"></div>
-  <div class="form-group" id="fft-toggle">
-    <input type="hidden" id="fft-type" value="TDS" />
-    <label class="form-switch">
-      <input type="checkbox" name="fft-checkbox">
-      <i class="form-icon"></i>FFT
-    </label>
-  </div>
-</div>
+{% extends 'plot.html' %}
+
+{% block fft-type %}TDS{% endblock %}

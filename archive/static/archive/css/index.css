@@ -25,8 +25,3 @@ a:active {
 .link:hover {
   background-color: rgba(130, 130, 130, 0.3);
 }
-
-#fft-toggle {
-  margin: 0 auto;
-  width: fit-content;
-}

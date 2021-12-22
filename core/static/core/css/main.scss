@@ -1,48 +1,3 @@
-/*
- Base layout
-*/
-$gray-color: rgb(130, 130, 130);
-$gray-color-clear: rgba(130, 130, 130, 0.3);
-
-
-/*
- Module
-*/
-
-main {
-  #fft-toggle {
-    margin: 0 auto;
-    width: fit-content;
-  }
-
-  > #container {
-    display: flex;
-    flex-direction: row;
-
-    > #plot-area {
-      margin: 0 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    > #control-area {
-      margin: 0 10px;
-
-      #start-button {
-        font-size: 1.2em;
-        width: 100px;
-        height: 40px;
-      }
-
-      #save-area {
-        width: 300px;
-      }
-    }
-  }
-}
-
-
 %input-area {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
@@ -75,7 +30,6 @@ input[type="text"] {
 }
 
 input[type="submit"] {
-  // background-color: rgb(245, 245, 245);
   background-color: #007bfe;
   color: #fff;
   border: 0px;
@@ -89,4 +43,3 @@ input[type="submit"] {
     cursor: pointer;
   }
 }
-
