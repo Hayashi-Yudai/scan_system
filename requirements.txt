@@ -5,7 +5,6 @@ numpy ~= 1.20
 PyVISA ~= 1.11
 python-dotenv
 libsass
-django-compressor
 django-sass-processor
 whitenoise ~= 5.3
 flaskwebgui ~= 0.3
