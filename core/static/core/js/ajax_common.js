@@ -16,12 +16,11 @@ document.getElementById("stage-move").addEventListener("submit", (e) => {
     },
   })
     .then((response) => {
-      return response.json();
+      if (!response.ok) {
+        alert("Error");
+      }
     })
-    .then((response) => {
-      console.log(response.success);
-    })
-    .catch((error) => {
+    .catch((_) => {
       console.log("Error in moving step stage");
     });
 });
@@ -71,7 +70,7 @@ document
         x = responseJson.x;
         y = responseJson.y;
       })
-      .catch((error) => {
+      .catch((_) => {
         console.log("error in fft");
       });
 
@@ -80,6 +79,9 @@ document
 
     if (e.target.checked) {
       let log_layout = {
+        height: 450,
+        width: Math.min(width * 0.9, 600),
+        margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
         yaxis: {
           type: "log",
           autorange: true,

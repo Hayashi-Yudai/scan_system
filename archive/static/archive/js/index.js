@@ -1,3 +1,4 @@
+
 class GraphInfo {
   constructor(pk, colorKey) {
     /*
@@ -139,7 +140,7 @@ document
         xs_resp = responseJson.xs;
         ys_resp = responseJson.ys;
       })
-      .catch((err) => { console.log("Error in FFT");})
+      .catch((_) => { console.log("Error in FFT");})
 
     data.length = 0;
     colors = graphs.getColors(opaque=true);
@@ -155,6 +156,9 @@ document
 
     if (e.target.checked) {
       let log_layout = {
+        height: 450,
+        width: Math.min(width * 0.9, 550),
+        margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
         yaxis: {
           type: "log",
           autorange: true,

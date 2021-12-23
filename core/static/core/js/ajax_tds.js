@@ -150,7 +150,7 @@ document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
     }).then((response)=>{
-      if (response.status != 200) {
+      if (!response.ok) {
         alert("GPIB connection error");
       }
     }).catch((_) => {
@@ -197,7 +197,7 @@ document.getElementById("sr830-time-const").addEventListener("change", (e) => {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
     }).then((response) => {
-      if (response.status != 200) {
+      if (!response.ok) {
         alert("GPIB connection error");
       }
     }).catch((_) => {
@@ -216,5 +216,7 @@ document.getElementById("auto-phase").addEventListener("submit", (e) => {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     },
-  }).catch((error) => {});
+  }).catch((_) => {
+    alert("Failed to auto phase");
+  });
 });
