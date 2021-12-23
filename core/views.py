@@ -83,9 +83,11 @@ def move(request) -> HttpResponse:
         return HttpResponseBadRequest("'position' must be positive or zero")
 
     succeed: bool = api_ops.move_stage(position)
-    logger.debug(f"Core.move: succeed={succeed}")
-
-    return JsonResponse({"success": succeed})
+    if succeed:
+        return JsonResponse({"success": succeed})
+    else:
+        logger.error("Core.move: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def save(request) -> HttpResponse:
@@ -308,7 +310,8 @@ def change_sensitivity(request) -> HttpResponse:
     if succeed:
         return JsonResponse({"status": "ok"})
     else:
-        return HttpResponseBadRequest("Connection Failure")
+        logger.error("Core.change_sensitivity: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def change_time_const(request) -> HttpResponse:
@@ -338,7 +341,8 @@ def change_time_const(request) -> HttpResponse:
     if succeed:
         return JsonResponse({"status": "ok"})
     else:
-        return HttpResponseBadRequest("Connection Failure")
+        logger.error("Core.change_time_const: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def auto_phase(request) -> JsonResponse:
