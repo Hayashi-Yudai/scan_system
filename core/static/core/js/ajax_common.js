@@ -16,12 +16,11 @@ document.getElementById("stage-move").addEventListener("submit", (e) => {
     },
   })
     .then((response) => {
-      return response.json();
+      if (!response.ok) {
+        alert("Error");
+      }
     })
-    .then((response) => {
-      console.log(response.success);
-    })
-    .catch((error) => {
+    .catch((_) => {
       console.log("Error in moving step stage");
     });
 });
@@ -40,15 +39,14 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
     },
   })
     .then((response) => {
-      return response.json();
-    })
-    .then((responseJson) => {
-      if (!responseJson.success) {
+      if (response.ok) {
+        alert("Saved successfully");
+      } else {
         alert("Invalid directory");
       }
     })
     .catch((_) => {
-      console.log("error in save data");
+      alert("Invalid directory");
     });
 });
 
@@ -72,7 +70,7 @@ document
         x = responseJson.x;
         y = responseJson.y;
       })
-      .catch((error) => {
+      .catch((_) => {
         console.log("error in fft");
       });
 
@@ -81,6 +79,9 @@ document
 
     if (e.target.checked) {
       let log_layout = {
+        height: 450,
+        width: Math.min(width * 0.9, 600),
+        margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
         yaxis: {
           type: "log",
           autorange: true,

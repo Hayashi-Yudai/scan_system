@@ -1,5 +1,8 @@
 import pyvisa as visa
 import time
+import logging
+
+logger = logging.getLogger("root")
 
 
 class Mark202:
@@ -14,6 +17,7 @@ class Mark202:
 
     def wait_while_busy(self):
         while True:
+            logger.debug("Mark102.wait_while_busy: loop")
             status = self.instr.query("!:")
             if "R" in status:
                 break

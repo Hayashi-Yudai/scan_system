@@ -1,6 +1,7 @@
 import datetime
 import os
 from ctypes import cdll
+import logging
 
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
@@ -15,6 +16,8 @@ from core.utils.waveform import WaveForm
 scan_running = False
 tds_running = False
 
+logger = logging.getLogger("root")
+
 
 class RapidScan(View):
     """
@@ -27,6 +30,7 @@ class RapidScan(View):
         TemporalData.objects.create(data_type="RAPID")
 
     def get(self, request):
+        logger.debug("Core.RapidScan: GET")
         return render(request, "core/index_rapid.html")
 
 
@@ -41,6 +45,7 @@ class StepScan(View):
         TemporalData.objects.create(data_type="TDS")
 
     def get(self, request):
+        logger.debug("Core.StepScan: GET")
         return render(request, "core/index_step.html")
 
 
@@ -68,15 +73,21 @@ def move(request) -> HttpResponse:
     """
     try:
         position = int(request.POST.get("position"))
-    except (TypeError, ValueError):
+        logging.debug(f"Core.move: position={position}")
+    except (TypeError, ValueError) as e:
+        logger.error(f"Core.move: raised TypeError or ValueError -> {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     if position < 0:
+        logger.warning(f"Core.move: rejected position={position}")
         return HttpResponseBadRequest("'position' must be positive or zero")
 
     succeed: bool = api_ops.move_stage(position)
-
-    return JsonResponse({"success": succeed})
+    if succeed:
+        return JsonResponse({"success": succeed})
+    else:
+        logger.error("Core.move: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def save(request) -> HttpResponse:
@@ -99,16 +110,20 @@ def save(request) -> HttpResponse:
         If bad request, returns 404 Bad Request
     """
     if (save_path := request.POST.get("path")) is None:
+        logger.debug("Core.save: path is None")
         return HttpResponseBadRequest("Invalid parameter")
 
     if save_path.count("/") < 1:
+        logger.debug(f"Core.save: invalid path -> {save_path}")
         return HttpResponseBadRequest("Invalid path")
 
     directory = save_path.rsplit("/", 1)[0]
     if not os.path.exists(directory):
+        logger.debug(f"Core.save: {directory} does not exist")
         return HttpResponseBadRequest("Invalid path")
 
     if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        logger.debug(f"Core.save: Invalid type  {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
@@ -122,23 +137,6 @@ def save(request) -> HttpResponse:
     data.save()
 
     return JsonResponse({"success": True})
-
-
-def start_rapid_scan(request):
-    global scan_running
-
-    scan_running = True
-    func = cdll.LoadLibrary("./core/adconverter.dll")
-
-    duration = float(request.POST.get("duration"))
-    sample_rate = float(request.POST.get("sampling_rate")) * 1e3
-    clk_time = int(1 / sample_rate / 2e-8)
-
-    func.open(0)
-    func.set_clock(0, clk_time, 0)
-    func.run(0, int(duration))
-
-    return JsonResponse({"status": "ok"})
 
 
 def gpib(request) -> JsonResponse:
@@ -157,6 +155,8 @@ def gpib(request) -> JsonResponse:
         - connection: The existence of GPIB connection
     """
     intensity, connection = api_ops.get_lockin_intensity()  # float, bool
+    logger.debug(f"Core.gpib: intensity = {intensity}")
+    logger.debug(f"Core.gpib: connection = {connection}")
     return JsonResponse({"intensity": intensity, "connection": connection})
 
 
@@ -181,6 +181,7 @@ def calc_fft(request) -> JsonResponse:
         - y: intensity data.
     """
     if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+        logger.debug(f"Core.calc_fft: Invalid type {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
@@ -188,7 +189,8 @@ def calc_fft(request) -> JsonResponse:
     )
     wave = WaveForm.new(present_data)
 
-    if request.POST.get("fft") not in ["true", "false"]:
+    if (fft := request.POST.get("fft")) not in ["true", "false"]:
+        logger.debug(f"Core.calc_fft: Invalid fft type {fft}")
         return HttpResponseBadRequest("Invalid parameter")
 
     if request.POST.get("fft") == "true":
@@ -225,7 +227,13 @@ def tds_boot(request) -> JsonResponse:
         end = int(request.POST.get("end"))
         step = int(request.POST.get("step"))
         lockin = float(request.POST.get("lockin"))
-    except (ValueError, TypeError):
+
+        logger.debug(f"Core.tds_boot: start = {start}")
+        logger.debug(f"Core.tds_boot: end = {end}")
+        logger.debug(f"Core.tds_boot: step = {step}")
+        logger.debug(f"Core.tds_boot: lockin = {lockin}")
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.tds_boot: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
 
     tds_running = True
@@ -269,6 +277,7 @@ def tds_data(request) -> JsonResponse:
     )
     wave = WaveForm.new(present_data)
     status = "running" if tds_running else "finished"
+    logger.debug(f"Core.tds_data: status = {status}")
 
     return JsonResponse({"x": wave.x, "y": wave.y, "status": status})
 
@@ -290,13 +299,19 @@ def change_sensitivity(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
-    except (ValueError, TypeError):
+        logger.debug(f"Core.change_sensitivity: value = {value}")
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.change_sensitivity: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
-    api_ops.set_lockin_sensitivity(value, unit)
-
-    return JsonResponse({"status": "ok"})
+    logger.debug(f"Core.change_sensitivity: unit = {unit}")
+    succeed = api_ops.set_lockin_sensitivity(value, unit)
+    if succeed:
+        return JsonResponse({"status": "ok"})
+    else:
+        logger.error("Core.change_sensitivity: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def change_time_const(request) -> HttpResponse:
@@ -315,13 +330,19 @@ def change_time_const(request) -> HttpResponse:
     """
     try:
         value = int(request.POST.get("value"))
-    except (ValueError, TypeError):
+        logger.debug(f"Core.change_time_const: value = {value}")
+    except (ValueError, TypeError) as e:
+        logger.error(f"Core.change_time_const: {e}")
         return HttpResponseBadRequest("Invalid parameter")
 
     unit = request.POST.get("unit")
-    api_ops.set_lockin_time_const(value, unit)
-
-    return JsonResponse({"status": "ok"})
+    logger.debug(f"Core.change_time_const: unit = {unit}")
+    succeed = api_ops.set_lockin_time_const(value, unit)
+    if succeed:
+        return JsonResponse({"status": "ok"})
+    else:
+        logger.error("Core.change_time_const: GPIB connection error")
+        return HttpResponseBadRequest("GPIB connection error")
 
 
 def auto_phase(request) -> JsonResponse:
@@ -336,6 +357,27 @@ def auto_phase(request) -> JsonResponse:
     :returns: JSON {"status": "ok"}.
     """
     api_ops.auto_phase_lockin()
+
+    return JsonResponse({"status": "ok"})
+
+
+def start_rapid_scan(request):
+    global scan_running
+
+    scan_running = True
+    func = cdll.LoadLibrary("./core/adconverter.dll")
+
+    duration = float(request.POST.get("duration"))
+    sample_rate = float(request.POST.get("sampling_rate")) * 1e3
+    clk_time = int(1 / sample_rate / 2e-8)
+
+    logger.debug(f"Core.start_rapid_scan: duration = {duration}")
+    logger.debug(f"Core.start_rapid_scan: sample_rate = {sample_rate}")
+    logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
+
+    func.open(0)
+    func.set_clock(0, clk_time, 0)
+    func.run(0, int(duration))
 
     return JsonResponse({"status": "ok"})
 
@@ -393,7 +435,11 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         position = list(map(float, data.position_data.split(",")))
         intensity = list(map(float, data.intensity_data.split(",")))
 
+        logger.debug(f"Core:send_rapid_data_to_front: position = {position}")
+        logger.debug(f"Core:send_rapid_data_to_front: intensity = {intensity}")
+
         return JsonResponse({"running": scan_running, "x": position, "y": intensity})
-    except ValueError:
-        print("ValueError")
+    except ValueError as e:
+        logger.error(f"Core.send_rapid_data_to_front: {e}")
+        print("send_rapid_data_to_front: ValueError")
         return JsonResponse({"running": scan_running, "x": [], "y": []})

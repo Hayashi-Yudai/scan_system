@@ -38,21 +38,23 @@ class JsonAPITest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(success, True)
 
+    @mock.patch("core.views.api_ops.move_stage")
+    def test_move_stage_gpib_failure(self, mock_move_stage):
         mock_move_stage.return_value = False
         response = self.client.post("/core/move/", {"position": 100})
-        success = json.loads(response.content)["success"]
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(success, False)
+        self.assertEqual(response.status_code, 400)
 
-        # Bad parameters
+    def test_move_stage_negative_position_fails(self):
         response = self.client.post("/core/move/", {"position": -100})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"'position' must be positive or zero")
 
+    def test_move_stage_non_num_position_fails(self):
         response = self.client.post("/core/move/", {"position": "bad request"})
         self.assertEqual(response.status_code, 400)
 
+    def test_move_stage_bad_keyname_fails(self):
         response = self.client.post("/core/move/", {"positions": 100})
         self.assertEqual(response.status_code, 400)
 
@@ -74,23 +76,26 @@ class JsonAPITest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)["success"], True)
 
-        # Bad requests
+    def test_save_data_bad_keyname_fail(self):
         response = self.client.post(
             "/core/save/", {"paths": "./test.csv", "type": "TDS"}
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Invalid parameter")
 
+    def test_save_data_bad_filename_fail(self):
         response = self.client.post("/core/save/", {"path": ".", "type": "TDS"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Invalid path")
 
+    def test_save_data_non_exist_dir_fail(self):
         response = self.client.post(
             "/core/save/", {"path": "/not/existing/path", "type": "TDS"}
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Invalid path")
 
+    def test_save_data_bad_type_fail(self):
         response = self.client.post(
             "/core/save/", {"path": "./test.csv", "type": "BadType"}
         )
@@ -126,7 +131,7 @@ class JsonAPITest(TestCase):
         self.assertEqual(data["x"], [])
         self.assertEqual(data["y"], [])
 
-        # Bad requests
+    def test_calc_fft_bad_param_fail(self):
         response = self.client.post("/core/calc-fft/", {"type": "BAD", "fft": "true"})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, b"Invalid parameter")
@@ -156,7 +161,7 @@ class JsonAPITest(TestCase):
         self.assertEqual(created_data.intensity_data, "")
         self.assertEqual(created_data.file_name, "")
 
-        # Bad request
+    def test_tds_boot_lack_parameter_fail(self):
         response = self.client.post(
             "/core/tds-boot/", {"end": 10, "step": 5, "lockin": 300}
         )
@@ -211,28 +216,36 @@ class JsonAPITest(TestCase):
 
     @mock.patch("core.views.api_ops.set_lockin_sensitivity")
     def test_change_sensitivity(self, mock_set_lockin_sensitivity):
-        mock_set_lockin_sensitivity.return_value = None
+        mock_set_lockin_sensitivity.return_value = True
 
         response = self.client.post(
             "/core/change-sensitivity/", {"value": 100, "unit": "milli-volt"}
         )
         self.assertEqual(response.status_code, 200)
 
-        # Bad requests
-        response = self.client.post("/core/change-sensitivity/", {"unit": "milli-volt"})
+    @mock.patch("core.views.api_ops.set_lockin_sensitivity")
+    def test_change_sensitivity_gpib_failure(self, mock_set_lockin_sensitivity):
+        mock_set_lockin_sensitivity.return_value = False
+        response = self.client.post(
+            "/core/change-sensitivity/", {"unit": 100, "milli-volt": "milli-volt"}
+        )
         self.assertEqual(response.status_code, 400)
 
     @mock.patch("core.views.api_ops.set_lockin_time_const")
     def test_time_const(self, mock_set_lockin_time_const):
-        mock_set_lockin_time_const.return_value = None
+        mock_set_lockin_time_const.return_value = True
 
         response = self.client.post(
             "/core/change-time-const/", {"value": 100, "unit": "milli-sec"}
         )
         self.assertEqual(response.status_code, 200)
 
-        # Bad requests
-        response = self.client.post("/core/change-sensitivity/", {"unit": "milli-sec"})
+    @mock.patch("core.views.api_ops.set_lockin_time_const")
+    def test_time_const_gpib_failure(self, mock_set_lockin_time_const):
+        mock_set_lockin_time_const.return_value = False
+        response = self.client.post(
+            "/core/change-sensitivity/", {"val": 100, "unit": "milli-sec"}
+        )
         self.assertEqual(response.status_code, 400)
 
     @mock.patch("core.views.api_ops.auto_phase_lockin")
