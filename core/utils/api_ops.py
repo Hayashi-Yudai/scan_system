@@ -68,7 +68,7 @@ def set_lockin_sensitivity(value: int, unit: str) -> bool:
             lockin.set_sensitivity(value, unit)
         return True
     except Exception as e:
-        logger.error(f"api_ops.move_stage: {e}")
+        logger.error(f"api_ops.set_lockin_sensitivity: {e}")
         return False
 
 
@@ -79,7 +79,8 @@ def set_lockin_time_const(value: int, unit: str) -> bool:
         with SR830(gpib) as lockin:
             lockin.set_time_const(value, unit)
         return True
-    except Exception:
+    except Exception as e:
+        logger.error(f"api_ops.set_lockin_time_const: {e}")
         return False
 
 

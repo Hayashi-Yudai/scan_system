@@ -304,9 +304,11 @@ def change_sensitivity(request) -> HttpResponse:
 
     unit = request.POST.get("unit")
     logger.debug(f"Core.change_sensitivity: unit = {unit}")
-    api_ops.set_lockin_sensitivity(value, unit)
-
-    return JsonResponse({"status": "ok"})
+    succeed = api_ops.set_lockin_sensitivity(value, unit)
+    if succeed:
+        return JsonResponse({"status": "ok"})
+    else:
+        return HttpResponseBadRequest("Connection Failure")
 
 
 def change_time_const(request) -> HttpResponse:
@@ -332,9 +334,11 @@ def change_time_const(request) -> HttpResponse:
 
     unit = request.POST.get("unit")
     logger.debug(f"Core.change_time_const: unit = {unit}")
-    api_ops.set_lockin_time_const(value, unit)
-
-    return JsonResponse({"status": "ok"})
+    succeed = api_ops.set_lockin_time_const(value, unit)
+    if succeed:
+        return JsonResponse({"status": "ok"})
+    else:
+        return HttpResponseBadRequest("Connection Failure")
 
 
 def auto_phase(request) -> JsonResponse:
