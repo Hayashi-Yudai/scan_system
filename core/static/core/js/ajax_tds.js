@@ -1,4 +1,4 @@
-let tds_boot_url = "http://localhost:8000/core/tds-boot/";
+const tds_boot_url = "http://localhost:8000/core/tds-boot/";
 
 document
   .getElementById("tds-settings")
@@ -8,16 +8,16 @@ document
   });
 
 async function tds_measurement() {
-  let url = document.getElementById("tds-settings").action;
-  let boot = tds_boot_url;
+  const url = document.getElementById("tds-settings").action;
+  const boot = tds_boot_url;
 
-  let start = Number(document.getElementById("start-position").value);
-  let end = Number(document.getElementById("end-position").value);
-  let step = Number(document.getElementById("moving-step").value);
-  let lockin = Number(document.getElementById("lockin-time").value);
-  let multiscan = Number(document.getElementById("multiscan").value);
-  let path = document.getElementById("save-area").value;
-  let scanStatus = document.getElementById("scan-status");
+  const start = Number(document.getElementById("start-position").value);
+  const end = Number(document.getElementById("end-position").value);
+  const step = Number(document.getElementById("moving-step").value);
+  const lockin = Number(document.getElementById("lockin-time").value);
+  const multiscan = Number(document.getElementById("multiscan").value);
+  const path = document.getElementById("save-area").value;
+  const scanStatus = document.getElementById("scan-status");
 
   if (start >= end || start < 0 || end <= 0 || step <= 0 || lockin <= 0 || multiscan <= 0) {
     alert("Invalid Parameters");
@@ -115,10 +115,10 @@ async function tds_measurement() {
 document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
   e.preventDefault();
 
-  let url = document.getElementById("sr830-sensitivity").action;
-  let num = document.getElementsByName("sensitivity-num");
-  let order = document.getElementsByName("sensitivity-order");
-  let unit = document.getElementsByName("sensitivity-unit");
+  const url = document.getElementById("sr830-sensitivity").action;
+  const num = document.getElementsByName("sensitivity-num");
+  const order = document.getElementsByName("sensitivity-order");
+  const unit = document.getElementsByName("sensitivity-unit");
 
   for (let i = 0; i < num.length; i++) {
     if (num.item(i).checked) {
@@ -141,7 +141,7 @@ document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
     typeof checkedOrder !== "undefined" &&
     typeof checkedUnit !== "undefined"
   ) {
-    let value = Number(checkedNum) * Number(checkedOrder);
+    const value = Number(checkedNum) * Number(checkedOrder);
 
     fetch(url, {
       method: "POST",
@@ -149,7 +149,11 @@ document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
-    }).catch((error) => {
+    }).then((response)=>{
+      if (!response.ok) {
+        alert("GPIB connection error");
+      }
+    }).catch((_) => {
       alert("Failed to change sensitivity");
     });
   }
@@ -158,10 +162,10 @@ document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
 document.getElementById("sr830-time-const").addEventListener("change", (e) => {
   e.preventDefault();
 
-  let url = document.getElementById("sr830-time-const").action;
-  let num = document.getElementsByName("time-num");
-  let order = document.getElementsByName("time-order");
-  let unit = document.getElementsByName("time-unit");
+  const url = document.getElementById("sr830-time-const").action;
+  const num = document.getElementsByName("time-num");
+  const order = document.getElementsByName("time-order");
+  const unit = document.getElementsByName("time-unit");
 
   for (let i = 0; i < num.length; i++) {
     if (num.item(i).checked) {
@@ -192,7 +196,11 @@ document.getElementById("sr830-time-const").addEventListener("change", (e) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
-    }).catch((error) => {
+    }).then((response) => {
+      if (!response.ok) {
+        alert("GPIB connection error");
+      }
+    }).catch((_) => {
       alert("Failed to change sensitivity");
     });
   }
@@ -208,5 +216,7 @@ document.getElementById("auto-phase").addEventListener("submit", (e) => {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     },
-  }).catch((error) => {});
+  }).catch((_) => {
+    alert("Failed to auto phase");
+  });
 });
