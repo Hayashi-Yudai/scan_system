@@ -376,8 +376,8 @@ def start_rapid_scan(request):
     logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
 
     func.open(0)
-    func.set_clock(0, clk_time, 0)
-    func.run(0, int(duration))
+    # func.set_clock(0, clk_time, 0)
+    func.run(0, clk_time, int(duration))
 
     return JsonResponse({"status": "ok"})
 
