@@ -33,7 +33,7 @@ core
 ```
 
 `TUSB16AD.dll`と`TUSB16AD.lib`はタートル工業のHPからダウンロード可能。
-`adconverter.lib`は[このページ](https://github.com/Hayashi-Yudai/adconverter/releases/tag/v0.1.0)からダウンロードする。
+`adconverter.lib`は[このページ](https://github.com/Hayashi-Yudai/adconverter/releases)からダウンロードする。
 
 Windows の場合は、`setup_system.exe` ファイルをダブルクリックして実行する。このとき、`conda`コマンドが使える必要があるので事前に Anaconda か Miniconda をインストールしておく。
 
