@@ -1,5 +1,4 @@
 from django.test import TestCase, Client
-from django.urls import reverse
 
 
 class RedirectTestCase(TestCase):
@@ -12,7 +11,7 @@ class RedirectTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            reverse("core:step"),
+            "/core/",
             status_code=302,
             target_status_code=200,
             fetch_redirect_response=True,
