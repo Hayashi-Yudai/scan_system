@@ -5,12 +5,12 @@
 
 ## Requirements
 
-- Windows10 (if using .bat files to setup and run)
-- Google Chrome (if using `run.bat` to run program)
-- Python 3.9
+- Windows10 (if using A/D converter)
+- Python 3.10
   - conda (Anaconda or Miniconda)
 - SR830 (Lock-in amplifier; Stanford Research Systems)
 - Mark202 (stage controller; Sigma-Koki)
+- TUSB-0216ADMZ (A/D converter; Turtle industory Co. Ltd.)
 
 ## Set up
 
