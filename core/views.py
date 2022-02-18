@@ -402,6 +402,7 @@ def rapid_scan_data(request) -> JsonResponse:
     present_data = (
         TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
     )
+    # TODO: unit is volt, not micro-meter
     present_data.position_data = ",".join(map(str, body["x"]))
     present_data.intensity_data = ",".join(map(str, body["y"]))
     present_data.save()
@@ -410,6 +411,14 @@ def rapid_scan_data(request) -> JsonResponse:
         func = cdll.LoadLibrary("./core/adconverter.dll")
         func.close(0)
         scan_running = False
+
+        data = TDSData(
+            measured_date=datetime.datetime.now(),
+            position_data=present_data.position_data,
+            intensity_data=present_data.intensity_data,
+            file_name="",
+        )
+        data.save()
 
     return JsonResponse({})
 
