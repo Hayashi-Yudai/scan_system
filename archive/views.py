@@ -7,6 +7,7 @@ import json
 import logging
 
 from core.models import TDSData
+from core.utils import waveform
 
 
 logger = logging.getLogger("root")
@@ -29,8 +30,13 @@ def get_archive_data(request):
         logger.error(f"archive.get_archive_data: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
 
-    x = list(map(float, entry.position_data.split(",")))
-    y = list(map(float, entry.intensity_data.split(",")))
+    wave = waveform.WaveForm.new(entry)
+    if entry.start_position is None:
+        wave.transform()
+    # x = list(map(float, entry.position_data.split(",")))
+    # y = list(map(float, entry.intensity_data.split(",")))
+    x = wave.x
+    y = wave.y
 
     if request.POST.get("fft") == "true":
         delta_time = (x[1] - x[0]) * 1e-6 * 2 / 2.9979e8
@@ -67,11 +73,17 @@ def calc_fft(request):
             logger.error(f"archive.calc_fft: {e}")
             raise Http404("Resource not found")
 
-        x = list(map(float, data.position_data.split(",")))
-        y = list(map(float, data.intensity_data.split(",")))
+        wave = waveform.WaveForm.new(data)
+        if data.start_position is None:
+            wave.transform()
+        x = wave.x
+        y = wave.y
 
         if fft is True:
-            delta_time = data.step * 1e-6 * 2 / 2.9979e8
+            if data.step is not None:
+                delta_time = data.step * 1e-6 * 2 / 2.9979e8
+            else:
+                delta_time = 6e-6 * 2 / 2.9979e8
             freq = [i / delta_time / 4096 for i in range(4096)]
 
             xs.append(freq)

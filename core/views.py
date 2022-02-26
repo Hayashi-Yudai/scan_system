@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from django.views import View
 import json
+import numpy as np
 
 from core.models import TDSData, TemporalData
 from core.utils import api_ops
@@ -130,6 +131,8 @@ def save(request) -> HttpResponse:
         TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
+    if request.POST.get("type") == "RAPID":
+        wave.transform()
     api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
 
     data = TDSData.objects.order_by("-measured_date").first()
@@ -188,6 +191,8 @@ def calc_fft(request) -> JsonResponse:
         TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
     )
     wave = WaveForm.new(present_data)
+    if request.POST.get("type") == "RAPID":
+        wave.transform()
 
     if (fft := request.POST.get("fft")) not in ["true", "false"]:
         logger.debug(f"Core.calc_fft: Invalid fft type {fft}")
@@ -444,6 +449,13 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         position = list(map(float, data.position_data.split(",")))
         intensity = list(map(float, data.intensity_data.split(",")))
 
+        position = np.array(position) * 3500 / 10  # V -> micro-meter
+        interval = abs(position[0] - position[-1]) / len(position)
+        intensity = moving_average(intensity, int(6.0 // interval))
+
+        position = position[:: int(6.0 // interval)].tolist()
+        intensity = intensity[:: int(6.0 // interval)].tolist()
+
         logger.debug(f"Core:send_rapid_data_to_front: position = {position}")
         logger.debug(f"Core:send_rapid_data_to_front: intensity = {intensity}")
 
@@ -452,3 +464,7 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         logger.error(f"Core.send_rapid_data_to_front: {e}")
         print("send_rapid_data_to_front: ValueError")
         return JsonResponse({"running": scan_running, "x": [], "y": []})
+
+
+def moving_average(x: np.ndarray, w: int) -> np.ndarray:
+    return np.convolve(x, np.ones(w), "same") / w

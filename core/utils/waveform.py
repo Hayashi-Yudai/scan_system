@@ -1,5 +1,7 @@
 from core.models import TemporalData
 
+import numpy as np
+
 
 class WaveForm:
     def __init__(self, x: list[float] = [], y: list[float] = []):
@@ -28,3 +30,14 @@ class WaveForm:
             y = list(map(float, entry.intensity_data.split(",")))
 
         return WaveForm(x=x, y=y)
+
+    def transform(self):
+        position = np.array(self.x) * 3500 / 10
+        interval = abs(position[0] - position[-1]) / len(position)
+        intensity = self.moving_average(self.y, int(6.0 // interval))
+
+        self.x = position[:: int(6.0 // interval)].tolist()
+        self.y = intensity[:: int(6.0 // interval)].tolist()
+
+    def moving_average(self, x: np.ndarray, w: int) -> np.ndarray:
+        return np.convolve(x, np.ones(w), "same") / w
