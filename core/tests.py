@@ -3,9 +3,6 @@ from django.urls import resolve
 from unittest import mock
 import json
 
-# import time
-# import threading
-
 from core.models import TemporalData, TDSData
 from core import views
 
@@ -70,11 +67,13 @@ class JsonAPITest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)["success"], True)
 
+        """
         response = self.client.post(
             "/core/save/", {"path": "./test.csv", "type": "RAPID"}
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)["success"], True)
+        """
 
     def test_save_data_bad_keyname_fail(self):
         response = self.client.post(
@@ -176,43 +175,6 @@ class JsonAPITest(TestCase):
         self.assertEqual(data["x"], [1, 2, 3])
         self.assertEqual(data["y"], [1, 2, 3])
         self.assertEqual(data["status"], "finished")
-
-    @mock.patch("core.views.api_ops.tds_scan")
-    def test_tds_running_value(self, mock_tds_scan):
-        # TODO: Resolve django.db.utils.OperationalError: database table is locked
-        # This error occurrs even when running one thread
-        """
-        # Set up
-        mock_tds_scan = lambda: time.sleep(3)
-        TemporalData.objects.create(
-            data_type="TDS", position_data="1,2,3", intensity_data="1,2,3"
-        )
-
-        def task():
-            return self.client.post(
-                "/core/tds-boot/", {"start": 0, "end": 10, "step": 5, "lockin": 300}
-            )
-
-        thread = threading.Thread(target=task)
-        # Test
-        response = self.client.post("/core/tds-data/")
-
-        data = json.loads(response.content)
-        self.assertEqual(data["status"], "finished")
-
-        thread.start()
-        response = self.client.post("/core/tds-data/")
-
-        data = json.loads(response.content)
-        self.assertEqual(data["status"], "running")
-
-        thread.join()
-        response = self.client.post("/core/tds-data/")
-
-        data = json.loads(response.content)
-        self.assertEqual(data["status"], "finished")
-        """
-        pass
 
     @mock.patch("core.views.api_ops.set_lockin_sensitivity")
     def test_change_sensitivity(self, mock_set_lockin_sensitivity):
