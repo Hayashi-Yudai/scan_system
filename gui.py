@@ -1,4 +1,4 @@
-from flaskwebgui import FlaskUI
+from webgui import FlaskUI
 from scan_system.wsgi import application
 
 if __name__ == "__main__":

@@ -7,5 +7,4 @@ python-dotenv ~= 0.19
 libsass ~= 0.21
 django-sass-processor ~= 1.1
 whitenoise ~= 5.3
-flaskwebgui ~= 0.3
 waitress ~= 2.0
