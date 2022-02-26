@@ -46,3 +46,8 @@ Windows の場合には `run.bat`をダブルクリックして実行する。
 - [adconverter](https://github.com/Hayashi-Yudai/adconverter)
 - [condaコマンドを使えるようにする](https://qiita.com/momosuke/items/fd6f8f9d01d2f57be90e)
 - [タートル工業 - A/Dコンバータ](https://www.turtle-ind.co.jp/products/ad-converters/)
+
+
+## Credit
+
+本プログラムでは、 [flaskwebgui](https://github.com/ClimenteA/flaskwebgui) のコードを一部改変して用いている。
