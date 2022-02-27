@@ -16,6 +16,8 @@ from core.utils.waveform import WaveForm
 # global variable
 scan_running = False
 tds_running = False
+sample_rate = 0.0
+duration = 0.0
 
 logger = logging.getLogger("root")
 
@@ -256,6 +258,7 @@ def tds_boot(request) -> JsonResponse:
             position_data=present_data.position_data,
             intensity_data=present_data.intensity_data,
             file_name="",
+            measure_type="STEP",
         )
         data.save()
 
@@ -367,7 +370,7 @@ def auto_phase(request) -> JsonResponse:
 
 
 def start_rapid_scan(request):
-    global scan_running
+    global scan_running, sample_rate, duration
 
     scan_running = True
     func = cdll.LoadLibrary("./core/adconverter.dll")
@@ -381,7 +384,6 @@ def start_rapid_scan(request):
     logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
 
     func.open(0)
-    # func.set_clock(0, clk_time, 0)
     func.run(0, clk_time, int(duration))
 
     return JsonResponse({"status": "ok"})
@@ -401,7 +403,7 @@ def rapid_scan_data(request) -> JsonResponse:
 
     :returns: Empty JSON.
     """
-    global scan_running
+    global scan_running, sample_rate, duration
 
     body = json.loads(request.body)
     present_data = (
@@ -422,6 +424,9 @@ def rapid_scan_data(request) -> JsonResponse:
             position_data=present_data.position_data,
             intensity_data=present_data.intensity_data,
             file_name="",
+            measure_type="RAPID",
+            sampling_rate=sample_rate * 1e-3,
+            measuring_time=duration,
         )
         data.save()
 

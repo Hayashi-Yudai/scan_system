@@ -38,7 +38,14 @@
       {% for data in object_list %}
         <tr id="{{ data.pk }}" name="data-element">
           <td>{{ data.measured_date|date:"'y/n/j H:i" }}</td>
-          <td>{{ data.file_name }}</td>
+          <td 
+            class="tooltip" 
+            data-tooltip={% if data.measure_type == "RAPID" %}
+               "sampling: {{ data.sampling_rate }} kHz, duration: {{ data.measuring_time }} sec"
+              {% else %}
+                "Type: {{ data.measure_type }}"
+            {% endif %}
+          >{{ data.file_name }}</td>
           <td>
             <button 
               class="btn btn-sm btn-error tooltip" 
