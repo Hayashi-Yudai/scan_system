@@ -27,6 +27,9 @@
   </div>
   <div class="fast-stage">
     <h4>Fast stage controller</h4>
+    <!-- 
+    測定条件の指定
+    -->
     <div class="form-module">
       <form class="form-group" id="sampling-rate-form" action="" method="POST">
         <div class="input-group">
@@ -58,6 +61,61 @@
         </div>
       </form>
     </div>
+    <!-- 
+    測定磁場の指定
+    -->
+    <div class="form-module">
+      <form class="form-group">
+        <h5>Magnetic fields (Optional)</h5>
+        <div class="input-group">
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="1:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="2:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="3:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="4:"
+          />
+        </div>
+        <div class="input-group">
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="5:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="6:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="7:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="8:"
+          />
+        </div>
+      </form>
+    </div>
+    <!-- 
+      Start button
+    -->
     <div>
       <form 
         class="form-group" 
@@ -68,6 +126,9 @@
         <button class="btn btn-primary btn-lg" id="start-button">Start</button>
       </form>
     </div>
+    <!-- 
+      Save
+    -->
     <div class="save-module">
       <form 
         class="form-group" 

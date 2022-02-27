@@ -370,6 +370,16 @@ def auto_phase(request) -> JsonResponse:
     return JsonResponse({"status": "ok"})
 
 
+def change_magnetic_field(request) -> JsonResponse:
+    target_field = float(request.POST.get("target"))
+    result = api_ops.change_field(target_field)
+
+    if result:
+        return JsonResponse({})
+    else:
+        return HttpResponseBadRequest()
+
+
 def start_rapid_scan(request):
     global scan_running
 
@@ -411,7 +421,7 @@ def rapid_scan_data(request) -> JsonResponse:
     present_data = (
         TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
     )
-    # TODO: unit is volt, not micro-meter
+
     present_data.position_data = ",".join(map(str, body["x"]))
     present_data.intensity_data = ",".join(map(str, body["y"]))
     present_data.save()

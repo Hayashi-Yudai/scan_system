@@ -18,4 +18,9 @@ urlpatterns = [
     path("auto-phase/", views.auto_phase, name="auto_phase"),
     path("rapid-scan-data/", views.rapid_scan_data, name="rapid_scan_data"),
     path("get-rapid-data/", views.send_rapid_data_to_front, name="get_rapid_data"),
+    path(
+        "change-magnetic-field/",
+        views.change_magnetic_field,
+        name="change_magnetic_field",
+    ),
 ]
