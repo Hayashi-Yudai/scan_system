@@ -32,7 +32,9 @@ class RapidScan(View):
 
     def get(self, request):
         logger.debug("Core.RapidScan: GET")
-        return render(request, "core/index_rapid.html")
+
+        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        return render(request, "core/index_rapid.html", context)
 
 
 class StepScan(View):
@@ -47,7 +49,9 @@ class StepScan(View):
 
     def get(self, request):
         logger.debug("Core.StepScan: GET")
-        return render(request, "core/index_step.html")
+
+        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        return render(request, "core/index_step.html", context)
 
 
 #####################################
@@ -449,7 +453,9 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         position = list(map(float, data.position_data.split(",")))
         intensity = list(map(float, data.intensity_data.split(",")))
 
-        position = np.array(position) * 3500 / 10  # V -> micro-meter
+        position = (
+            np.array(position) * float(os.environ["mm_volt_coef"]) * 1e2
+        )  # V -> micro-meter
         interval = abs(position[0] - position[-1]) / len(position)
         intensity = moving_average(intensity, int(6.0 // interval))
 
