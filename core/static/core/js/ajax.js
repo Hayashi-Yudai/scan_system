@@ -12,7 +12,6 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
     if (elem.value == "" && !first) {
       break;
     }
-    console.log(elem.value);
     first = false;
     if (elem.value != "") {
       await changeMagneticFieldRequest(elem.value);
@@ -26,7 +25,7 @@ document.getElementById("rapid-scan").addEventListener("submit", async (e) => {
 
     // Fetch data and plot
     while (running) {
-      await updateCanvas(running);
+      running = await updateCanvas();
       await _sleep(1000);
     }
 
@@ -43,15 +42,13 @@ async function sendStartSignal(url, duration, samplingRate) {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
       },
   }).then((response)=> {
-    return response.json();
-  }).then((responseJson)=>{
-    if (responseJson.status == "ok") {
-      console.log("ok");
+    if (!response.ok) {
+      console.log("Error in starting measurement");
     }
   }).catch((_) => { console.log("Error to start scanning") });
 }
 
-async function updateCanvas(running) {
+async function updateCanvas() {
   fetch("http://localhost:8000/core/get-rapid-data/", {
     method: "POST",
     headers: {

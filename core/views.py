@@ -397,10 +397,14 @@ def start_rapid_scan(request):
     logger.debug(f"Core.start_rapid_scan: sample_rate = {sample_rate}")
     logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
 
-    func.open(0)
+    error = func.open(0)
+    if error != 0:
+        scan_running = False
+        return HttpResponseBadRequest()
+
     func.run(0, clk_time, int(duration))
 
-    return JsonResponse({"status": "ok"})
+    return JsonResponse({})
 
 
 def rapid_scan_data(request) -> JsonResponse:
