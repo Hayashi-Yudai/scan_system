@@ -31,13 +31,30 @@
       <tr>
         <td>Date</td>
         <td>File name</td>
+        <td></td>
       </tr>
       </thead>
       <tbody>
       {% for data in object_list %}
         <tr id="{{ data.pk }}" name="data-element">
-          <td>{{ data.measured_date }}</td>
+          <td>{{ data.measured_date|date:"'y/n/j H:i" }}</td>
           <td>{{ data.file_name }}</td>
+          <td>
+            <button 
+              class="btn btn-sm btn-error tooltip" 
+              data-tooltip="Delete"
+              onclick="deleteData({{ data.pk }})"
+            >
+              <i class="icon icon-delete"></i>
+            </button>
+            <button 
+              class="btn btn-sm btn-primary tooltip" 
+              data-tooltip="Download"
+              onclick="download({{ data.pk }})"
+            >
+              <i class="icon icon-download"></i>
+            </button>
+          </td>
         </tr>
       {% endfor %}
       </tbody>

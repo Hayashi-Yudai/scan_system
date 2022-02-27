@@ -89,7 +89,7 @@ for (ele of table_elements) {
 
       let fftIsChecked = document.querySelector("input[name = fft-checkbox]").checked;
 
-      let url = "http://localhost:8000/archive/get_archive_data/";
+      const url = "http://localhost:8000/archive/get_archive_data/";
       await fetch(url, {
         method: "POST",
         body: `pk=${target.id}&fft=${fftIsChecked}`,
@@ -101,8 +101,8 @@ for (ele of table_elements) {
           return response.json();
         })
         .then((responseJson) => {
-          let x = responseJson.x;
-          let y = responseJson.y;
+          const x = responseJson.x;
+          const y = responseJson.y;
 
           Plotly.addTraces(canvas, {
             x: x,
@@ -124,7 +124,7 @@ for (ele of table_elements) {
 document
   .querySelector("input[name=fft-checkbox]")
   .addEventListener("change", async (e) => {
-    let url = fft_url;
+    const url = fft_url;
 
     first = false;
 
@@ -155,7 +155,7 @@ document
     }
 
     if (e.target.checked) {
-      let log_layout = {
+      const logLayout = {
         height: 450,
         width: Math.min(width * 0.9, 550),
         margin: { l: 50, r: 0, b: 3, t: 20, pad: 5 },
@@ -165,8 +165,38 @@ document
           showlegend: false,
         },
       };
-      Plotly.newPlot("canvas", data, log_layout);
+      Plotly.newPlot("canvas", data, logLayout);
     } else {
       Plotly.newPlot("canvas", data, layout);
     }
   });
+
+function download(pk) { 
+  const url = "http://localhost:8000/archive/download_data/";
+
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify({pk: pk}),
+    headers: {"Content-Type": "application/json"}
+  })
+    .then((response) => { 
+      if (!response.ok) {
+        alert("Error downloading data");
+      } else {
+        alert("Data saved successfully to your Downloads folder");
+      }
+     })
+    .catch((_) => { alert("Error in download"); })
+}
+
+function deleteData (pk) {
+  const url = "http://localhost:8000/archive/delete_data/";
+
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify({ pk: pk }),
+    headers: { "Content-Type": "application/json" }
+  });
+
+  location.reload();
+}

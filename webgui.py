@@ -1,14 +1,11 @@
-__version__ = "0.3.4"
-
 import os
-import sys
-import time
 from datetime import datetime
 import logging
 import tempfile
 import subprocess as sps
-from inspect import isfunction
 from threading import Lock, Thread
+
+from scan_system.wsgi import application
 
 
 logging.basicConfig(
@@ -65,7 +62,6 @@ class FlaskUI:
     def __init__(
         self,
         app,
-        start_server="flask",
         width=800,
         height=600,
         maximized=False,
@@ -78,7 +74,6 @@ class FlaskUI:
     ) -> None:
 
         self.app = app
-        self.start_server = str(start_server).lower()
         self.width = str(width)
         self.height = str(height)
         self.fullscreen = fullscreen
@@ -89,13 +84,9 @@ class FlaskUI:
         self.idle_interval = idle_interval
         self.close_server_on_exit = close_server_on_exit
 
-        self.set_url()
-
-        self.webserver_dispacher = {
-            "django": self.start_django,
-        }
-
-        self.supported_frameworks = list(self.webserver_dispacher.keys())
+        self.host = "127.0.0.1"
+        self.port = 8000
+        self.localhost = f"http://{self.host}:{self.port}"
 
         if self.close_server_on_exit:
             self.lock = Lock()
@@ -114,7 +105,7 @@ class FlaskUI:
         if self.close_server_on_exit:
             self.update_timestamp()
 
-        t_start_webserver = Thread(target=self.start_webserver)
+        t_start_webserver = Thread(target=self.start_django)
         t_open_chromium = Thread(target=self.open_chromium)
         t_stop_webserver = Thread(target=self.stop_webserver)
 
@@ -124,33 +115,13 @@ class FlaskUI:
         for t in threads:
             t.join()
 
-    def set_url(self):
-        self.host = "127.0.0.1"
-        self.port = 8000
-        self.localhost = f"http://{self.host}:{self.port}"
-
-    def start_webserver(self):
-
-        if isfunction(self.start_server):
-            self.start_server()
-
-        if self.start_server not in self.supported_frameworks:
-            raise Exception(
-                f"'start_server'({self.start_server}) not in {','.join(self.supported_frameworks)} and also not a function which starts the webframework"
-            )
-
-        self.webserver_dispacher[self.start_server]()
-
     def start_django(self):
         try:
             import waitress
 
             waitress.serve(self.app, host=self.host, port=self.port)
         except ImportError:
-            try:  # linux and mac
-                os.system(f"python3 manage.py runserver {self.port}")
-            except Exception:  # windows
-                os.system(f"python manage.py runserver {self.port}")
+            os.system(f"python manage.py runserver {self.port}")
 
     def open_chromium(self):
         """
@@ -176,7 +147,6 @@ class FlaskUI:
                     self.browser_path,
                     f"--user-data-dir={temp_profile_dir}",
                     "--new-window",
-                    "--no-sandbox",
                     "--no-first-run",
                     # "--window-position=0,0"
                 ]
@@ -197,30 +167,13 @@ class FlaskUI:
             return
 
         # TODO add middleware for Django
-        if self.start_server == "django":
-            logging.info("Middleware not implemented (yet) for Django.")
-            return
-
-        while True:
-
-            self.lock.acquire()
-            global current_timestamp
-            delta_seconds = (datetime.now() - current_timestamp).total_seconds()
-            self.lock.release()
-
-            if delta_seconds > self.idle_interval:
-                logging.info("App closed")
-                break
-
-            time.sleep(self.idle_interval)
-
-        if isfunction(self.on_exit):
-            logging.info(f"Executing {self.on_exit.__name__} function...")
-            self.on_exit()
-
-        logging.info("Closing connections...")
-        os.kill(os.getpid(), 9)
+        logging.info("Middleware not implemented (yet) for Django.")
+        return
 
     def keep_server_running(self):
         self.update_timestamp()
         return "Ok"
+
+
+if __name__ == "__main__":
+    FlaskUI(application, maximized=True).run()
