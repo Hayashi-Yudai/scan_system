@@ -1,7 +1,7 @@
-# from django.shortcuts import render
 from django.views.generic import ListView
 from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist
+import pandas as pd
 import numpy as np
 import json
 import logging
@@ -17,7 +17,7 @@ class Index(ListView):
     template_name = "archive/index.html"
     model = TDSData
     ordering = ["-measured_date"]
-    paginate_by = 10
+    paginate_by = 8
 
 
 def get_archive_data(request):
@@ -33,8 +33,6 @@ def get_archive_data(request):
     wave = waveform.WaveForm.new(entry)
     if entry.start_position is None:
         wave.transform()
-    # x = list(map(float, entry.position_data.split(",")))
-    # y = list(map(float, entry.intensity_data.split(",")))
     x = wave.x
     y = wave.y
 
@@ -95,3 +93,25 @@ def calc_fft(request):
             return HttpResponseBadRequest("Invalid parameter")
 
     return JsonResponse({"xs": xs, "ys": ys})
+
+
+def download_data(request):
+    body = json.loads(request.body)
+    data = TDSData.objects.get(pk=int(body["pk"]))
+    wave = waveform.WaveForm.new(data)
+    if data.start_position is None:
+        wave.transform()
+
+    filename = data.file_name if data.file_name else "Untitled"
+    csv_data = pd.DataFrame({"position": wave.x, "intensity": wave.y})
+    csv_data.to_csv(f"~/Downloads/{filename}.csv")
+
+    return JsonResponse({})
+
+
+def delete_data(request):
+    body = json.loads(request.body)
+    data = TDSData.objects.get(pk=int(body["pk"]))
+    data.delete()
+
+    return JsonResponse({})
