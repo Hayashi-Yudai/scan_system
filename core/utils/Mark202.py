@@ -1,20 +1,12 @@
-import pyvisa as visa
 import time
 import logging
+
+from core.utils.instrument import GPIBInstrument
 
 logger = logging.getLogger("root")
 
 
-class Mark202:
-    def __init__(self, gpib=12):
-        self.instr = visa.ResourceManager().open_resource(f"GPIB0::{gpib}::INSTR")
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.instr.close()
-
+class Mark202(GPIBInstrument):
     def wait_while_busy(self):
         while True:
             logger.debug("Mark102.wait_while_busy: loop")
