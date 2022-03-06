@@ -129,13 +129,16 @@ def save(request) -> HttpResponse:
         logger.debug(f"Core.save: {directory} does not exist")
         return HttpResponseBadRequest("Invalid path")
 
-    if (data_type := request.POST.get("type")) not in ["TDS", "RAPID"]:
+    if (data_type := request.POST.get("type")) not in ["STEP", "RAPID"]:
         logger.debug(f"Core.save: Invalid type  {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
     present_data = (
-        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
+        TDSData.objects.filter(measure_type=data_type)
+        .order_by("-measured_date")
+        .first()
     )
+
     wave = WaveForm.new(present_data)
     if request.POST.get("type") == "RAPID":
         wave.transform()
@@ -193,8 +196,14 @@ def calc_fft(request) -> JsonResponse:
         logger.debug(f"Core.calc_fft: Invalid type {data_type}")
         return HttpResponseBadRequest("Invalid parameter")
 
+    if request.POST.get("fft") not in ["true", "false"]:
+        logger.debug(f"Core.calc_fft: Invalid parameter fft={data_type}")
+        return HttpResponseBadRequest("Invalid parameter")
+
     present_data = (
-        TemporalData.objects.filter(data_type=data_type).order_by("-created_at").first()
+        TDSData.objects.filter(measure_type=data_type)
+        .order_by("-measured_date")
+        .first()
     )
     wave = WaveForm.new(present_data)
     if request.POST.get("type") == "RAPID":
@@ -227,12 +236,6 @@ def tds_boot(request) -> JsonResponse:
     """
     global tds_running
 
-    present_data = (
-        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
-    )
-    present_data.position_data = ""
-    present_data.intensity_data = ""
-
     try:
         start = int(request.POST.get("start"))
         end = int(request.POST.get("end"))
@@ -247,26 +250,25 @@ def tds_boot(request) -> JsonResponse:
         logger.error(f"Core.tds_boot: {e}")
         return HttpResponseBadRequest("Invalid parameter(s)")
 
+    TDSData.objects.create(
+        measured_date=datetime.datetime.now(),
+        start_position=start,
+        end_position=end,
+        step=step,
+        lockin_time=lockin,
+        position_data="",
+        intensity_data="",
+        file_name="",
+        measure_type="STEP",
+    )
     tds_running = True
-    success = api_ops.tds_scan(start, end, step, lockin, present_data)
-
+    success = api_ops.tds_scan(start, end, step, lockin)
     tds_running = False
 
     if success:
-        data = TDSData(
-            measured_date=datetime.datetime.now(),
-            start_position=start,
-            end_position=end,
-            step=step,
-            lockin_time=lockin,
-            position_data=present_data.position_data,
-            intensity_data=present_data.intensity_data,
-            file_name="",
-            measure_type="STEP",
-        )
-        data.save()
-
-    return JsonResponse({})
+        return JsonResponse({})
+    else:
+        return HttpResponseBadRequest("Step scan failed")
 
 
 def tds_data(request) -> JsonResponse:
@@ -285,7 +287,7 @@ def tds_data(request) -> JsonResponse:
         - status: Whether the sequence is still running or not.
     """
     present_data = (
-        TemporalData.objects.filter(data_type="TDS").order_by("-created_at").first()
+        TDSData.objects.filter(measure_type="STEP").order_by("-measured_date").first()
     )
     wave = WaveForm.new(present_data)
     status = "running" if tds_running else "finished"
