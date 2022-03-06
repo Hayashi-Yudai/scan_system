@@ -1,5 +1,6 @@
 from core.utils.Mark202 import Mark202
 from core.utils.SR830 import SR830
+from core.utils.IPS120_10 import IPS120
 from core.utils.waveform import WaveForm
 from core.models import TemporalData
 import os
@@ -122,3 +123,44 @@ def tds_scan(
         logger.error(f"api_ops.tds_scan: {e}")
 
         return False
+
+
+def change_field(target_field: float) -> bool:
+    try:
+        gpib_ips = int(os.environ["IPS120_10_GPIB_ADDRESS"])
+
+        with IPS120(gpib_ips) as instr:
+            instr.set_control(1)  # Remote mode
+            ##############################
+            # Restore from persistent mode
+            ##############################
+            instr.set_activity(1)  # Set point
+            time.sleep(20)
+            instr.set_activity(0)  # Hold
+
+            #############
+            # Sweap field
+            #############
+            instr.set_target_field(target_field)
+            instr.switch_heater(1)  # Switch heater on
+
+            time.sleep(20)
+
+            instr.set_activity(1)  # Set point
+            while True:
+                current_field = instr.read_parameter(7)
+                if abs(current_field - target_field) < 0.0001:
+                    break
+
+                time.sleep(3)
+
+            instr.set_activity(0)  # Hold
+            instr.switch_heater(2)  # Switch heater off
+            instr.set_activity(2)  # Go to zero (persistent mode)
+
+            instr.set_control(0)  # Local mode
+
+    except Exception:
+        return False
+
+    return True

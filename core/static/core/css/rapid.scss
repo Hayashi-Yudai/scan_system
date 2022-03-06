@@ -30,7 +30,11 @@
     background-color: #dc3545;
   }
 
-  form#sampling-rate-form ~ p.hide {
+  form#sampling-rate-form > p.hide{
     display: none;
+  }
+
+  input.current-field {
+    background-color: #fcf2f2;
   }
 }

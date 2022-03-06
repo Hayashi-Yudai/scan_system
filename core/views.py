@@ -34,7 +34,9 @@ class RapidScan(View):
 
     def get(self, request):
         logger.debug("Core.RapidScan: GET")
-        return render(request, "core/index_rapid.html")
+
+        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        return render(request, "core/index_rapid.html", context)
 
 
 class StepScan(View):
@@ -49,7 +51,9 @@ class StepScan(View):
 
     def get(self, request):
         logger.debug("Core.StepScan: GET")
-        return render(request, "core/index_step.html")
+
+        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        return render(request, "core/index_step.html", context)
 
 
 #####################################
@@ -369,6 +373,16 @@ def auto_phase(request) -> JsonResponse:
     return JsonResponse({"status": "ok"})
 
 
+def change_magnetic_field(request) -> JsonResponse:
+    target_field = float(request.POST.get("target"))
+    result = api_ops.change_field(target_field)
+
+    if result:
+        return JsonResponse({})
+    else:
+        return HttpResponseBadRequest()
+
+
 def start_rapid_scan(request):
     global scan_running, sample_rate, duration
 
@@ -383,10 +397,14 @@ def start_rapid_scan(request):
     logger.debug(f"Core.start_rapid_scan: sample_rate = {sample_rate}")
     logger.debug(f"Core.start_rapid_scan: clk_time = {clk_time}")
 
-    func.open(0)
+    error = func.open(0)
+    if error != 0:
+        scan_running = False
+        return HttpResponseBadRequest()
+
     func.run(0, clk_time, int(duration))
 
-    return JsonResponse({"status": "ok"})
+    return JsonResponse({})
 
 
 def rapid_scan_data(request) -> JsonResponse:
@@ -409,7 +427,7 @@ def rapid_scan_data(request) -> JsonResponse:
     present_data = (
         TemporalData.objects.filter(data_type="RAPID").order_by("-created_at").first()
     )
-    # TODO: unit is volt, not micro-meter
+
     present_data.position_data = ",".join(map(str, body["x"]))
     present_data.intensity_data = ",".join(map(str, body["y"]))
     present_data.save()
@@ -454,7 +472,9 @@ def send_rapid_data_to_front(request) -> JsonResponse:
         position = list(map(float, data.position_data.split(",")))
         intensity = list(map(float, data.intensity_data.split(",")))
 
-        position = np.array(position) * 3500 / 10  # V -> micro-meter
+        position = (
+            np.array(position) * float(os.environ["mm_volt_coef"]) * 1e2
+        )  # V -> micro-meter
         interval = abs(position[0] - position[-1]) / len(position)
         intensity = moving_average(intensity, int(6.0 // interval))
 

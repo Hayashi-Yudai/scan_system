@@ -27,6 +27,9 @@
   </div>
   <div class="fast-stage">
     <h4>Fast stage controller</h4>
+    <!-- 
+    測定条件の指定
+    -->
     <div class="form-module">
       <form class="form-group" id="sampling-rate-form" action="" method="POST">
         <div class="input-group">
@@ -39,10 +42,10 @@
           />
           <span class="input-group-addon addon-lg">kHz</span>
         </div>
+        <p class="hide" id="sampling-rate-alert">
+          Sampling rate should be between 0 and 100 kHz
+        </p>
       </form>
-      <p class="hide invalid-value" id="sampling-rate-alert">
-        Sampling rate should be between 0 and 100 kHz
-      </p>
     </div>
     <div class="form-module">
       <form class="form-group">
@@ -58,6 +61,61 @@
         </div>
       </form>
     </div>
+    <!-- 
+    測定磁場の指定
+    -->
+    <div class="form-module">
+      <form class="form-group">
+        <h5>Magnetic fields (Optional)</h5>
+        <div class="input-group">
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="1:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="2:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="3:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="4:"
+          />
+        </div>
+        <div class="input-group">
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="5:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="6:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="7:"
+          />
+          <input 
+            class="form-input input-lg magnetic-field" 
+            type="number" 
+            placeholder="8:"
+          />
+        </div>
+      </form>
+    </div>
+    <!-- 
+      Start button
+    -->
     <div>
       <form 
         class="form-group" 
@@ -68,6 +126,9 @@
         <button class="btn btn-primary btn-lg" id="start-button">Start</button>
       </form>
     </div>
+    <!-- 
+      Save
+    -->
     <div class="save-module">
       <form 
         class="form-group" 
@@ -80,7 +141,7 @@
             class="form-input input-lg" 
             type="text" 
             id="save-area" 
-            value="C:/Users/suzuki/Desktop/"
+            value="{{ default_save_dir }}"
           />
           <button 
             class="btn btn-primary btn-lg input-btn-group" 

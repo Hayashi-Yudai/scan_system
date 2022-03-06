@@ -1,6 +1,7 @@
 from core.models import TemporalData
 
 import numpy as np
+import os
 
 
 class WaveForm:
@@ -32,7 +33,7 @@ class WaveForm:
         return WaveForm(x=x, y=y)
 
     def transform(self):
-        position = np.array(self.x) * 3500 / 10
+        position = np.array(self.x) * float(os.environ["mm_volt_coef"]) * 1e2
         interval = abs(position[0] - position[-1]) / len(position)
         intensity = self.moving_average(self.y, int(6.0 // interval))
 

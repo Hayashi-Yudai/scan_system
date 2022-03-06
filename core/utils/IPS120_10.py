@@ -1,22 +1,14 @@
-import pyvisa as visa
 import logging
+
+from core.utils.instrument import GPIBInstrument
 
 logger = logging.getLogger("root")
 
 
-class IPS120:
+class IPS120(GPIBInstrument):
     """
     Magnetic field controller IPS120-10
     """
-
-    def __init__(self, gpib=25):
-        self.instr = visa.ResourceManager().open_resource(f"GPIB0::{gpib}::INSTR")
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.instr.close()
 
     def set_control(self, num: int):
         """
