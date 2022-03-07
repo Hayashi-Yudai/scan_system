@@ -137,12 +137,7 @@
         method="POST"
       >
         <div class="input-group">
-          <input 
-            class="form-input input-lg" 
-            type="text" 
-            id="save-area" 
-            value="{{ default_save_dir }}"
-          />
+          {{ save_form.filename }}
           <button 
             class="btn btn-primary btn-lg input-btn-group" 
             id="save-button"

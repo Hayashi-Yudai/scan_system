@@ -63,14 +63,9 @@
       </button>
       <div id="scan-status"></div>
     </form>
-    <form id="save-data" action="{% url 'core:save' %}">
+    <form id="save-data" action="{% url 'core:save' %}" method="POST">
       <div class="input-group">
-        <input 
-          class="form-input input-lg" 
-          type="text" 
-          id="save-area" 
-          value="{{ default_save_dir }}"
-        />
+        {{ save_form.filename }}
         <input type="hidden" id="save-type" value="STEP" />
         <button class="btn btn-primary btn-lg input-group-btn" id="save-button">
           Save

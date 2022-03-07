@@ -1,8 +1,10 @@
 from django.test import TestCase, Client
 from unittest import mock
 import json
+import os
 
 from core.models import TDSData
+from core.forms import SaveDataForm
 
 
 class GPIBAPITest(TestCase):
@@ -39,6 +41,58 @@ class GPIBAPITest(TestCase):
         self.assertEqual(response.status_code, 400)
 
 
+class SaveDataFormTest(TestCase):
+    def setUp(self):
+        self.home_drive = os.getenv("HOMEDRIVE")
+        self.home_path = os.getenv("HOMEPATH")
+
+    def test_correct_form(self):
+
+        data = {
+            "filename": self.home_drive + self.home_path + "/Desktop/a.csv",
+            "measure_type": "STEP",
+        }
+        form = SaveDataForm(data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_bad_keyname(self):
+        data = {
+            "badkey": self.home_drive + self.home_path + "/Desktop/a.csv",
+            "measure_type": "STEP",
+        }
+        form = SaveDataForm(data)
+
+        self.assertFalse(form.is_valid())
+
+    def test_bad_measure_type(self):
+        data = {
+            "filename": self.home_drive + self.home_path + "/Desktop/a.csv",
+            "measure_type": "BADKEY",
+        }
+        form = SaveDataForm(data)
+
+        self.assertFalse(form.is_valid())
+
+    def test_bad_filename(self):
+        data = {
+            "filename": self.home_drive + self.home_path + "/Desktop/",
+            "measure_type": "STEP",
+        }
+        form = SaveDataForm(data)
+
+        self.assertFalse(form.is_valid())
+
+    def test_non_existing_dir(self):
+        data = {
+            "filename": "/not/existing/dir/test.csv",
+            "measure_type": "STEP",
+        }
+        form = SaveDataForm(data)
+
+        self.assertFalse(form.is_valid())
+
+
 class DataSavingTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -53,36 +107,10 @@ class DataSavingTest(TestCase):
 
         # Test
         response = self.client.post(
-            "/core/save/", {"path": "./test.csv", "type": "STEP"}
+            "/core/save/", {"filename": "./test.csv", "measure_type": "STEP"}
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)["success"], True)
-
-    def test_save_data_bad_keyname_fail(self):
-        response = self.client.post(
-            "/core/save/", {"paths": "./test.csv", "type": "TDS"}
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b"Invalid parameter")
-
-    def test_save_data_bad_filename_fail(self):
-        response = self.client.post("/core/save/", {"path": ".", "type": "TDS"})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b"Invalid path")
-
-    def test_save_data_non_exist_dir_fail(self):
-        response = self.client.post(
-            "/core/save/", {"path": "/not/existing/path", "type": "TDS"}
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b"Invalid path")
-
-    def test_save_data_bad_type_fail(self):
-        response = self.client.post(
-            "/core/save/", {"path": "./test.csv", "type": "BadType"}
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b"Invalid parameter")
 
 
 class CalculationTest(TestCase):

@@ -9,6 +9,7 @@ from django.views import View
 import json
 import numpy as np
 
+from core.forms import SaveDataForm
 from core.models import TDSData, TemporalData
 from core.utils import api_ops
 from core.utils.waveform import WaveForm
@@ -34,8 +35,10 @@ class RapidScan(View):
 
     def get(self, request):
         logger.debug("Core.RapidScan: GET")
+        default_save_dir = os.environ.get("DEFAULT_SAVE_DIR")
+        save_form = SaveDataForm({"filename": default_save_dir})
 
-        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        context = {"default_save_dir": default_save_dir, "save_form": save_form}
         return render(request, "core/index_rapid.html", context)
 
 
@@ -51,8 +54,13 @@ class StepScan(View):
 
     def get(self, request):
         logger.debug("Core.StepScan: GET")
+        default_save_dir = os.environ.get("DEFAULT_SAVE_DIR")
+        save_form = SaveDataForm({"filename": default_save_dir})
 
-        context = {"default_save_dir": os.environ.get("DEFAULT_SAVE_DIR")}
+        context = {
+            "default_save_dir": default_save_dir,
+            "save_form": save_form,
+        }
         return render(request, "core/index_step.html", context)
 
 
@@ -116,39 +124,32 @@ def save(request) -> HttpResponse:
         If succeeded, returns {"success": True}
         If bad request, returns 404 Bad Request
     """
-    if (save_path := request.POST.get("path")) is None:
-        logger.debug("Core.save: path is None")
-        return HttpResponseBadRequest("Invalid parameter")
+    if request.method == "POST":
+        form = SaveDataForm(request.POST)
+        if form.is_valid():
+            data_type = form.cleaned_data["measure_type"]
+            save_path = form.cleaned_data["filename"]
 
-    if save_path.count("/") < 1:
-        logger.debug(f"Core.save: invalid path -> {save_path}")
-        return HttpResponseBadRequest("Invalid path")
+            present_data = (
+                TDSData.objects.filter(measure_type=data_type)
+                .order_by("-measured_date")
+                .first()
+            )
 
-    directory = save_path.rsplit("/", 1)[0]
-    if not os.path.exists(directory):
-        logger.debug(f"Core.save: {directory} does not exist")
-        return HttpResponseBadRequest("Invalid path")
+            wave = WaveForm.new(present_data)
+            if request.POST.get("type") == "RAPID":
+                wave.transform()
+            api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
 
-    if (data_type := request.POST.get("type")) not in ["STEP", "RAPID"]:
-        logger.debug(f"Core.save: Invalid type  {data_type}")
-        return HttpResponseBadRequest("Invalid parameter")
+            data = TDSData.objects.order_by("-measured_date").first()
+            data.file_name = save_path.rsplit("/", 1)[1]
+            data.save()
 
-    present_data = (
-        TDSData.objects.filter(measure_type=data_type)
-        .order_by("-measured_date")
-        .first()
-    )
-
-    wave = WaveForm.new(present_data)
-    if request.POST.get("type") == "RAPID":
-        wave.transform()
-    api_ops.save_data_as_csv(save_path, [wave.x, wave.y])
-
-    data = TDSData.objects.order_by("-measured_date").first()
-    data.file_name = save_path.rsplit("/", 1)[1]
-    data.save()
-
-    return JsonResponse({"success": True})
+            return JsonResponse({"success": True})
+        else:
+            return HttpResponseBadRequest()
+    else:
+        return HttpResponseBadRequest()
 
 
 def gpib(request) -> JsonResponse:
