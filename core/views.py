@@ -9,7 +9,7 @@ from django.views import View
 import json
 import numpy as np
 
-from core.forms import SaveDataForm
+from core.forms import SaveDataForm, MoveStepStageForm
 from core.models import TDSData, TemporalData
 from core.utils import api_ops
 from core.utils.waveform import WaveForm
@@ -37,8 +37,13 @@ class RapidScan(View):
         logger.debug("Core.RapidScan: GET")
         default_save_dir = os.environ.get("DEFAULT_SAVE_DIR")
         save_form = SaveDataForm({"filename": default_save_dir})
+        move_stage_form = MoveStepStageForm()
 
-        context = {"default_save_dir": default_save_dir, "save_form": save_form}
+        context = {
+            "default_save_dir": default_save_dir,
+            "save_form": save_form,
+            "move_stage_form": move_stage_form,
+        }
         return render(request, "core/index_rapid.html", context)
 
 
@@ -56,10 +61,12 @@ class StepScan(View):
         logger.debug("Core.StepScan: GET")
         default_save_dir = os.environ.get("DEFAULT_SAVE_DIR")
         save_form = SaveDataForm({"filename": default_save_dir})
+        move_stage_form = MoveStepStageForm()
 
         context = {
             "default_save_dir": default_save_dir,
             "save_form": save_form,
+            "move_stage_form": move_stage_form,
         }
         return render(request, "core/index_step.html", context)
 
@@ -86,23 +93,20 @@ def move(request) -> HttpResponse:
         If succeeded, returns {"success": True}
         If bad request, returns 404 Bad Request
     """
-    try:
-        position = int(request.POST.get("position"))
-        logging.debug(f"Core.move: position={position}")
-    except (TypeError, ValueError) as e:
-        logger.error(f"Core.move: raised TypeError or ValueError -> {e}")
-        return HttpResponseBadRequest("Invalid parameter")
+    if request.method == "POST":
+        form = MoveStepStageForm(request.POST)
+        if form.is_valid():
+            position: int = form.cleaned_data["position"]
+            succeed: bool = api_ops.move_stage(position)
+            if succeed:
+                return JsonResponse({"success": succeed})
+            else:
+                logger.error("Core.move: GPIB connection error")
+                return HttpResponseBadRequest("GPIB connection error")
+        else:
+            return HttpResponseBadRequest("Invalid parameter")
 
-    if position < 0:
-        logger.warning(f"Core.move: rejected position={position}")
-        return HttpResponseBadRequest("'position' must be positive or zero")
-
-    succeed: bool = api_ops.move_stage(position)
-    if succeed:
-        return JsonResponse({"success": succeed})
-    else:
-        logger.error("Core.move: GPIB connection error")
-        return HttpResponseBadRequest("GPIB connection error")
+    return HttpResponseBadRequest("Invalid request")
 
 
 def save(request) -> HttpResponse:

@@ -55,3 +55,26 @@ class SaveDataForm(forms.Form):
             raise forms.ValidationError("Invalid measure type")
 
         return measure_type
+
+
+class MoveStepStageForm(forms.Form):
+    position = forms.IntegerField(initial=0)
+
+    def __init__(self, *args, **kwargs):
+        super(MoveStepStageForm, self).__init__(*args, **kwargs)
+
+        self.fields["position"].widget.attrs.update(
+            {
+                "class": "form-input input-lg",
+                "id": "stage-position",
+            }
+        )
+
+    def clean_position(self):
+        position = self.cleaned_data["position"]
+
+        if position < 0:
+            logger.warning(f"Core.MoveStepStageForm: invalid position={position}")
+            raise forms.ValidationError("Invalid position")
+
+        return position

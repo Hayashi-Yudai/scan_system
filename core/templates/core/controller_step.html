@@ -16,7 +16,7 @@
     <form class="form-group" id="stage-move" action="{% url 'core:move' %}">
       <label class="form-label" for="stage-position">Move step-motor stage:</label>
       <div class="input-group" id="move-stage-area">
-        <input class="form-input input-lg" type="number" id="stage-position" />
+        {{ move_stage_form.position }}
         <span class="input-group-addon addon-lg">&mu;m</span>
         <button class="btn btn-secondary btn-lg input-group-btn">
           Move

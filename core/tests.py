@@ -4,25 +4,12 @@ import json
 import os
 
 from core.models import TDSData
-from core.forms import SaveDataForm
+from core.forms import SaveDataForm, MoveStepStageForm
 
 
 class GPIBAPITest(TestCase):
     def setUp(self):
         self.client = Client()
-
-    def test_move_stage_negative_position_fails(self):
-        response = self.client.post("/core/move/", {"position": -100})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b"'position' must be positive or zero")
-
-    def test_move_stage_non_num_position_fails(self):
-        response = self.client.post("/core/move/", {"position": "bad request"})
-        self.assertEqual(response.status_code, 400)
-
-    def test_move_stage_bad_keyname_fails(self):
-        response = self.client.post("/core/move/", {"positions": 100})
-        self.assertEqual(response.status_code, 400)
 
     @mock.patch("core.views.api_ops.set_lockin_sensitivity")
     def test_change_sensitivity_gpib_failure(self, mock_set_lockin_sensitivity):
@@ -90,6 +77,31 @@ class SaveDataFormTest(TestCase):
         }
         form = SaveDataForm(data)
 
+        self.assertFalse(form.is_valid())
+
+
+class MoveStepStageFormTest(TestCase):
+    def test_form_valid(self):
+        form = MoveStepStageForm({"position": 100})
+        self.assertTrue(form.is_valid())
+
+    def test_non_interger_input_fails(self):
+        form = MoveStepStageForm({"position": 0.1})
+        self.assertFalse(form.is_valid())
+
+        form = MoveStepStageForm({"position": "abc"})
+        self.assertFalse(form.is_valid())
+
+    def test_negative_position_fail(self):
+        form = MoveStepStageForm({"position": -100})
+        self.assertFalse(form.is_valid())
+
+    def test_zero_position_is_valid(self):
+        form = MoveStepStageForm({"position": 0})
+        self.assertTrue(form.is_valid())
+
+    def test_valid_keyname_fails(self):
+        form = MoveStepStageForm({"positions": 0})
         self.assertFalse(form.is_valid())
 
 
