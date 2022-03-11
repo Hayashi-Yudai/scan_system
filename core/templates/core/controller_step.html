@@ -25,30 +25,15 @@
     </form>
     <form class="form-group" id="tds-settings" action="{% url 'core:tds_data' %}">
       <div class="input-group" id="stage-position-settings">
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="start-position" 
-          placeholder="Start"
-        />
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="end-position" 
-          placeholder="End"
-        />
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="moving-step" 
-          placeholder="Step"
-        />
+        {{ scan_setting_form.start }}
+        {{ scan_setting_form.end }}
+        {{ scan_setting_form.step }}
         <span class="input-group-addon addon-lg">&mu;m</span>
       </div>
 
       <label class="form-label" for="lockin-time">Lock-in time:</label>
       <div class="input-group">
-        <input class="form-input input-lg" type="number" id="lockin-time" />
+        {{ scan_setting_form.lockin }}
         <span class="input-group-addon addon-lg">ms</span>
       </div>
 

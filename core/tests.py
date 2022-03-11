@@ -4,7 +4,7 @@ import json
 import os
 
 from core.models import TDSData
-from core.forms import SaveDataForm, MoveStepStageForm
+from core.forms import SaveDataForm, MoveStepStageForm, StepScanSettingForm
 
 
 class GPIBAPITest(TestCase):
@@ -102,6 +102,30 @@ class MoveStepStageFormTest(TestCase):
 
     def test_valid_keyname_fails(self):
         form = MoveStepStageForm({"positions": 0})
+        self.assertFalse(form.is_valid())
+
+
+class StepScanSettingFormTest(TestCase):
+    def test_form_valid(self):
+        form = StepScanSettingForm({"start": 0, "end": 10, "step": 5, "lockin": 300})
+        self.assertTrue(form.is_valid())
+
+    def test_negative_value_invalid(self):
+        form = StepScanSettingForm({"start": -1, "end": 10, "step": 5, "lockin": 300})
+        valid = form.is_valid()
+        self.assertFalse(valid)
+
+        form = StepScanSettingForm({"start": 0, "end": -10, "step": 5, "lockin": 300})
+        self.assertFalse(form.is_valid())
+
+        form = StepScanSettingForm({"start": 0, "end": 10, "step": -5, "lockin": 300})
+        self.assertFalse(form.is_valid())
+
+        form = StepScanSettingForm({"start": 0, "end": 10, "step": -5, "lockin": -300})
+        self.assertFalse(form.is_valid())
+
+    def test_start_must_smaller_than_end(self):
+        form = StepScanSettingForm({"start": 10, "end": 0, "step": 5, "lockin": 300})
         self.assertFalse(form.is_valid())
 
 

@@ -78,3 +78,78 @@ class MoveStepStageForm(forms.Form):
             raise forms.ValidationError("Invalid position")
 
         return position
+
+
+class StepScanSettingForm(forms.Form):
+    start = forms.IntegerField()
+    end = forms.IntegerField()
+    step = forms.IntegerField()
+    lockin = forms.IntegerField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(StepScanSettingForm, self).__init__(*args, **kwargs)
+
+        self.fields["start"].widget.attrs.update(
+            {
+                "class": "form-input input-lg",
+                "id": "start-position",
+                "placeholder": "Start",
+            }
+        )
+        self.fields["end"].widget.attrs.update(
+            {"class": "form-input input-lg", "id": "end-position", "placeholder": "End"}
+        )
+        self.fields["step"].widget.attrs.update(
+            {"class": "form-input input-lg", "id": "moving-step", "placeholder": "Step"}
+        )
+        self.fields["lockin"].widget.attrs.update(
+            {"class": "form-input input-lg", "id": "lockin-time"}
+        )
+
+    def clean_start(self):
+        start = self.cleaned_data["start"]
+
+        if start < 0:
+            raise forms.ValidationError(
+                "Start position must be greater than or equal to 0"
+            )
+
+        return start
+
+    def clean_end(self):
+        end = self.cleaned_data["end"]
+
+        if end < 0:
+            raise forms.ValidationError(
+                "End position must be greater than or equal to 0"
+            )
+
+        return end
+
+    def clean_step(self):
+        step = self.cleaned_data["step"]
+
+        if step <= 0:
+            raise forms.ValidationError("End position must be greater than 0")
+
+        return step
+
+    def clean_lockin_time(self):
+        lockin = self.cleaned_data["lockin"]
+
+        if lockin <= 0:
+            raise forms.ValidationError("Lockin time must be greater than 0")
+
+        return lockin
+
+    def clean(self):
+        try:
+            start = self.data["start"]
+            end = self.data["end"]
+        except KeyError:
+            raise forms.ValidationError("required key(s) is lack")
+
+        if end <= start:
+            raise forms.ValidationError("End position must be greater than start")
+
+        return self.cleaned_data

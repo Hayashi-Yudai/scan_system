@@ -9,7 +9,7 @@ from django.views import View
 import json
 import numpy as np
 
-from core.forms import SaveDataForm, MoveStepStageForm
+from core.forms import SaveDataForm, MoveStepStageForm, StepScanSettingForm
 from core.models import TDSData, TemporalData
 from core.utils import api_ops
 from core.utils.waveform import WaveForm
@@ -62,11 +62,13 @@ class StepScan(View):
         default_save_dir = os.environ.get("DEFAULT_SAVE_DIR")
         save_form = SaveDataForm({"filename": default_save_dir})
         move_stage_form = MoveStepStageForm()
+        scan_setting_form = StepScanSettingForm()
 
         context = {
             "default_save_dir": default_save_dir,
             "save_form": save_form,
             "move_stage_form": move_stage_form,
+            "scan_setting_form": scan_setting_form,
         }
         return render(request, "core/index_step.html", context)
 
@@ -241,40 +243,43 @@ def tds_boot(request) -> JsonResponse:
     """
     global tds_running
 
-    try:
-        start = int(request.POST.get("start"))
-        end = int(request.POST.get("end"))
-        step = int(request.POST.get("step"))
-        lockin = float(request.POST.get("lockin"))
+    if request.method == "POST":
+        form = StepScanSettingForm(request.POST)
 
-        logger.debug(f"Core.tds_boot: start = {start}")
-        logger.debug(f"Core.tds_boot: end = {end}")
-        logger.debug(f"Core.tds_boot: step = {step}")
-        logger.debug(f"Core.tds_boot: lockin = {lockin}")
-    except (ValueError, TypeError) as e:
-        logger.error(f"Core.tds_boot: {e}")
-        return HttpResponseBadRequest("Invalid parameter(s)")
+        if form.is_valid():
+            start = form.cleaned_data["start"]
+            end = form.cleaned_data["end"]
+            step = form.cleaned_data["step"]
+            lockin = form.cleaned_data["lockin"]
 
-    TDSData.objects.create(
-        measured_date=datetime.datetime.now(),
-        start_position=start,
-        end_position=end,
-        step=step,
-        lockin_time=lockin,
-        position_data="",
-        intensity_data="",
-        file_name="",
-        measure_type="STEP",
-    )
-    tds_running = True
-    success = api_ops.tds_scan(start, end, step, lockin)
-    tds_running = False
+            logger.debug(f"Core.tds_boot: start = {start}")
+            logger.debug(f"Core.tds_boot: end = {end}")
+            logger.debug(f"Core.tds_boot: step = {step}")
+            logger.debug(f"Core.tds_boot: lockin = {lockin}")
 
-    if success:
-        return JsonResponse({})
+            TDSData.objects.create(
+                measured_date=datetime.datetime.now(),
+                start_position=start,
+                end_position=end,
+                step=step,
+                lockin_time=lockin,
+                position_data="",
+                intensity_data="",
+                file_name="",
+                measure_type="STEP",
+            )
+            tds_running = True
+            success = api_ops.tds_scan(start, end, step, lockin)
+            tds_running = False
+
+            if success:
+                return JsonResponse({})
+            else:
+                return HttpResponseBadRequest("Step scan failed")
+        else:
+            return HttpResponseBadRequest("Invalid parameter(s)")
     else:
-        return HttpResponseBadRequest("Step scan failed")
-
+        return HttpResponseBadRequest("Invalid request")
 
 def tds_data(request) -> JsonResponse:
     """
