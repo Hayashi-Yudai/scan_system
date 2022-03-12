@@ -151,7 +151,7 @@ document.getElementById("sr830-sensitivity").addEventListener("change", (e) => {
       },
     }).then((response)=>{
       if (!response.ok) {
-        alert("GPIB connection error");
+        response.text().then(text => alert(text));
       }
     }).catch((_) => {
       alert("Failed to change sensitivity");
@@ -198,7 +198,7 @@ document.getElementById("sr830-time-const").addEventListener("change", (e) => {
       },
     }).then((response) => {
       if (!response.ok) {
-        alert("GPIB connection error");
+        response.text().then(text => alert(text));
       }
     }).catch((_) => {
       alert("Failed to change sensitivity");

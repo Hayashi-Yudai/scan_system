@@ -159,7 +159,7 @@ def save(request: HttpRequest) -> HttpResponse:
 
         return JsonResponse({"success": True})
     else:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Invalid directory/filename")
 
 
 def gpib(request: HttpRequest) -> JsonResponse:
@@ -399,7 +399,7 @@ def change_magnetic_field(request: HttpRequest) -> JsonResponse:
     if result:
         return JsonResponse({})
     else:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Failed to change magnetic field")
 
 
 @require_POST
@@ -422,7 +422,7 @@ def start_rapid_scan(request: HttpRequest):
         error = func.open(0)
         if error != 0:
             scan_running = False
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest("Error: A/D converter")
 
         func.run(0, clk_time, int(duration))
 
