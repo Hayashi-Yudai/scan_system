@@ -134,7 +134,7 @@ def change_field(target_field: float) -> bool:
             # Restore from persistent mode
             ##############################
             instr.set_activity(1)  # Set point
-            time.sleep(20)
+            time.sleep(30)
             instr.set_activity(0)  # Hold
 
             #############
