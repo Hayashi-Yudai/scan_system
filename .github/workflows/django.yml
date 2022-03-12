@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       max-parallel: 4
       matrix:
@@ -29,6 +29,9 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         SR830_GPIB_ADDRESS: 10
         MARK202_GPIB_ADDRESS: 12
-        ITC503_GPIB_ADDRESS: 23
+        ITC503_GPIB_ADDRESS: 24
+        IPS120_10_GPIB_ADDRESS: 25
+        mm_volt_coef: 3.5
+        DEFAULT_SAVE_DIR: ~/Desktop/
       run: |
         python manage.py test
