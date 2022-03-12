@@ -4,7 +4,12 @@ import json
 import os
 
 from core.models import TDSData
-from core.forms import SaveDataForm, MoveStepStageForm, StepScanSettingForm
+from core.forms import (
+    SaveDataForm,
+    MoveStepStageForm,
+    StepScanSettingForm,
+    RapidScanSettingForm,
+)
 
 
 class GPIBAPITest(TestCase):
@@ -210,3 +215,28 @@ class StepScanTest(TestCase):
         self.assertEqual(data["x"], [1, 2, 3])
         self.assertEqual(data["y"], [1, 2, 3])
         self.assertEqual(data["status"], "finished")
+
+
+class RapidScanSettingFormTest(TestCase):
+    def test_valid_form(self):
+        data = {"duration": 10, "sampling_rate": 100}
+        form = RapidScanSettingForm(data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_duration(self):
+        data = {"duration": 0, "sampling_rate": 100}
+        form = RapidScanSettingForm(data)
+
+        self.assertFalse(form.is_valid())
+
+    def test_invalid_sampling(self):
+        data = {"duration": 10, "sampling_rate": -100}
+        form = RapidScanSettingForm(data)
+
+        self.assertFalse(form.is_valid())
+
+        data = {"duration": 10, "sampling_rate": 101}
+        form = RapidScanSettingForm(data)
+
+        self.assertFalse(form.is_valid())

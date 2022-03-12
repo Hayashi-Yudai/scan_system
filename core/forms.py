@@ -153,3 +153,42 @@ class StepScanSettingForm(forms.Form):
             raise forms.ValidationError("End position must be greater than start")
 
         return self.cleaned_data
+
+
+class RapidScanSettingForm(forms.Form):
+    duration = forms.IntegerField()
+    sampling_rate = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(RapidScanSettingForm, self).__init__(*args, **kwargs)
+
+        self.fields["duration"].widget.attrs.update(
+            {
+                "class": "form-input input-lg",
+                "id": "measurement-time-area",
+                "name": "measurement-time",
+                "placeholder": "Measurement time",
+            }
+        )
+        self.fields["sampling_rate"].widget.attrs.update(
+            {
+                "class": "form-input input-lg",
+                "id": "sampling-rate-area",
+                "name": "sampling-rate",
+                "placeholder": "Sampling rate",
+            }
+        )
+
+    def clean_duration(self):
+        duration = self.cleaned_data["duration"]
+        if duration <= 0:
+            raise forms.ValidationError("duration must be positive")
+
+        return duration
+
+    def clean_sampling_rate(self):
+        sampling_rate = self.cleaned_data["sampling_rate"]
+        if sampling_rate <= 0 or sampling_rate > 100:
+            raise forms.ValidationError("invalid sampling rate")
+
+        return sampling_rate
