@@ -2,7 +2,7 @@ from core.utils.Mark202 import Mark202
 from core.utils.SR830 import SR830
 from core.utils.IPS120_10 import IPS120
 from core.utils.waveform import WaveForm
-from core.models import TemporalData
+from core.models import TDSData
 import os
 import pandas as pd
 import numpy as np
@@ -92,9 +92,8 @@ def calc_fft(data: list) -> list:
     return freq, abs(np.fft.fft(data[1], 4096)).tolist()
 
 
-def tds_scan(
-    start: int, end: int, step: int, lockin_time: float, entry: TemporalData
-) -> bool:
+def tds_scan(start: int, end: int, step: int, lockin_time: float) -> bool:
+    entry = TDSData.objects.filter(measure_type="STEP").order_by("-measured_date")[0]
     wave = WaveForm.new(entry)
     try:
         gpib_sr = int(os.environ["SR830_GPIB_ADDRESS"])
@@ -135,7 +134,7 @@ def change_field(target_field: float) -> bool:
             # Restore from persistent mode
             ##############################
             instr.set_activity(1)  # Set point
-            time.sleep(20)
+            time.sleep(30)
             instr.set_activity(0)  # Hold
 
             #############

@@ -8,17 +8,10 @@
       method="POST"
     >
       <div class="input-group">
-        <input
-          class="form-input input-lg"
-          type="number"
-          name="slow-stage-target-position"
-          id="stage-position"
-        />
-        <input type="hidden" id="save-type" value="RAPID" />
+        {{ move_stage_form.position }}
         <span class="input-group-addon addon-lg">&mu;m</span>
         <button 
           class="btn btn-secondary btn-lg input-group-btn" 
-          id="slow-stage-move"
         >
           Move
         </button>
@@ -33,13 +26,7 @@
     <div class="form-module">
       <form class="form-group" id="sampling-rate-form" action="" method="POST">
         <div class="input-group">
-          <input 
-            class="form-input input-lg" 
-            type="number" 
-            id="sampling-rate-area" 
-            name="sampling-rate" 
-            placeholder="Sampling rate" 
-          />
+          {{ scan_setting_form.sampling_rate }}
           <span class="input-group-addon addon-lg">kHz</span>
         </div>
         <p class="hide" id="sampling-rate-alert">
@@ -50,13 +37,7 @@
     <div class="form-module">
       <form class="form-group">
         <div class="input-group">
-          <input 
-            class="form-input input-lg" 
-            type="number" 
-            id="measurement-time-area" 
-            name="measurement-time" 
-            placeholder="Measurement time"
-          />
+          {{ scan_setting_form.duration }}
           <span class="input-group-addon addon-lg">s</span>
         </div>
       </form>
@@ -137,12 +118,8 @@
         method="POST"
       >
         <div class="input-group">
-          <input 
-            class="form-input input-lg" 
-            type="text" 
-            id="save-area" 
-            value="{{ default_save_dir }}"
-          />
+          {{ save_form.filename }}
+          <input type="hidden" id="save-type" value="RAPID" />
           <button 
             class="btn btn-primary btn-lg input-btn-group" 
             id="save-button"

@@ -16,7 +16,7 @@
     <form class="form-group" id="stage-move" action="{% url 'core:move' %}">
       <label class="form-label" for="stage-position">Move step-motor stage:</label>
       <div class="input-group" id="move-stage-area">
-        <input class="form-input input-lg" type="number" id="stage-position" />
+        {{ move_stage_form.position }}
         <span class="input-group-addon addon-lg">&mu;m</span>
         <button class="btn btn-secondary btn-lg input-group-btn">
           Move
@@ -25,30 +25,15 @@
     </form>
     <form class="form-group" id="tds-settings" action="{% url 'core:tds_data' %}">
       <div class="input-group" id="stage-position-settings">
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="start-position" 
-          placeholder="Start"
-        />
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="end-position" 
-          placeholder="End"
-        />
-        <input 
-          class="form-input input-lg" 
-          type="number" 
-          id="moving-step" 
-          placeholder="Step"
-        />
+        {{ scan_setting_form.start }}
+        {{ scan_setting_form.end }}
+        {{ scan_setting_form.step }}
         <span class="input-group-addon addon-lg">&mu;m</span>
       </div>
 
       <label class="form-label" for="lockin-time">Lock-in time:</label>
       <div class="input-group">
-        <input class="form-input input-lg" type="number" id="lockin-time" />
+        {{ scan_setting_form.lockin }}
         <span class="input-group-addon addon-lg">ms</span>
       </div>
 
@@ -63,15 +48,10 @@
       </button>
       <div id="scan-status"></div>
     </form>
-    <form id="save-data" action="{% url 'core:save' %}">
+    <form id="save-data" action="{% url 'core:save' %}" method="POST">
       <div class="input-group">
-        <input 
-          class="form-input input-lg" 
-          type="text" 
-          id="save-area" 
-          value="{{ default_save_dir }}"
-        />
-        <input type="hidden" id="save-type" value="TDS" />
+        {{ save_form.filename }}
+        <input type="hidden" id="save-type" value="STEP" />
         <button class="btn btn-primary btn-lg input-group-btn" id="save-button">
           Save
         </button>

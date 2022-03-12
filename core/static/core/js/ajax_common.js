@@ -29,11 +29,12 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
   e.preventDefault();
 
   const url = document.getElementById("save-data").action;
+  const filename = document.getElementById("save-area").value;
   const type = document.getElementById("save-type").value;
-  const path = document.getElementById("save-area").value;
+  console.log("Filename: " + filename);
   fetch(url, {
     method: "POST",
-    body: `path=${path}&type=${type}`,
+    body: `filename=${filename}&measure_type=${type}`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     },
