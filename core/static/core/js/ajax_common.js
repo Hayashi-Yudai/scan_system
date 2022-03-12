@@ -17,7 +17,7 @@ document.getElementById("stage-move").addEventListener("submit", (e) => {
   })
     .then((response) => {
       if (!response.ok) {
-        alert("Error");
+        response.text().then(text => alert(text));
       }
     })
     .catch((_) => {
@@ -43,7 +43,7 @@ document.getElementById("save-data").addEventListener("submit", (e) => {
       if (response.ok) {
         alert("Saved successfully");
       } else {
-        alert("Invalid directory");
+        response.text().then(text => alert(text));
       }
     })
     .catch((_) => {

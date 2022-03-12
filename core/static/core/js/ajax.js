@@ -51,7 +51,7 @@ async function sendStartSignal(url, duration, samplingRate) {
       },
   }).then((response)=> {
     if (!response.ok) {
-      console.log("Error in starting measurement");
+      response.text().then(text => alert(text));
     }
   }).catch((_) => { console.log("Error to start scanning") });
 
@@ -102,7 +102,7 @@ async function changeMagneticFieldRequest(magneticField) {
   })
   .then((response) => {
     if (!response.ok) {
-      console.log("Error in changing magnetic field");
+      response.text().then(text => alert(text));
     }
   })
   .catch((err) => { console.log(err) });
@@ -128,7 +128,7 @@ async function saveData(suffix) {
   })
     .then((response) => {
       if (!response.ok) {
-        alert("Invalid directory");
+        response.text().then(text => alert(text));
       }
     })
     .catch((_) => {
