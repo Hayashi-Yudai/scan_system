@@ -88,6 +88,7 @@ async function updateCanvas() {
 
 // TODO: Set proper time-out
 async function changeMagneticFieldRequest(magneticField) {
+  let running;
   const controller = new AbortController();
   // Set timeout to 1 hour
   const timeout = setTimeout(() => { controller.abort() }, 1000 * 60 * 60);
@@ -109,7 +110,7 @@ async function changeMagneticFieldRequest(magneticField) {
 
   clearTimeout(timeout);
 
-  return;
+  return running;
 }
 
 async function saveData(suffix) {
